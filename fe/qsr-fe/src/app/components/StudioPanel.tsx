@@ -45,17 +45,16 @@ const focusTools: Tool[] = [
   { id: 'demand', name: 'Demand Forecaster', icon: TrendingUp, color: 'bg-green-50 text-green-600', group: 'focus' },
 ];
 
-const performanceTools: Tool[] = [
+const systemModeTools: Tool[] = [
   { id: 'trace', name: 'Trace Mode', icon: Zap, color: 'bg-blue-50 text-blue-600', group: 'performance' },
   { id: 'reasoning', name: 'Reasoning Mode', icon: Brain, color: 'bg-purple-50 text-purple-600', group: 'performance' },
+];
+
+const performanceTools: Tool[] = [
   { id: 'compare', name: 'Compare', icon: GitCompare, color: 'bg-orange-50 text-orange-600', group: 'performance' },
   { id: 'benchmark', name: 'Benchmark', icon: BarChart3, color: 'bg-indigo-50 text-indigo-600', group: 'performance' },
 ];
 
-const additionalTools: Tool[] = [
-  { id: 'guest-sensor', name: 'Sentiment Radar', icon: Radar, color: 'bg-pink-50 text-pink-600', group: 'tools' },
-  { id: 'staff-satisfaction', name: 'Retention Tool', icon: UserCheck, color: 'bg-teal-50 text-teal-600', group: 'tools' },
-];
 
 import { useServerStatus } from '../hooks/useApi';
 
@@ -148,9 +147,9 @@ export function StudioPanel({ isCollapsed, onToggle, onRunModel, isRunning, trac
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Performance Bench</h3>
+            <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">System Modes</h3>
             <div className="grid grid-cols-2 gap-2">
-              {performanceTools.map(tool => {
+              {systemModeTools.map(tool => {
                 const isActive = (tool.id === 'trace' && traceMode) || (tool.id === 'reasoning' && reasoningMode);
                 const activeColor = tool.id === 'trace' ? 'bg-blue-600 border-blue-700 shadow-blue-500/20' : 'bg-purple-600 border-purple-700 shadow-purple-500/20';
 
@@ -186,16 +185,24 @@ export function StudioPanel({ isCollapsed, onToggle, onRunModel, isRunning, trac
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Utility Agents</h3>
-            <div className="space-y-2">
-              {additionalTools.map(tool => (
-                <div key={tool.id} className="p-3 rounded-xl border border-slate-50 bg-slate-50/50 hover:bg-slate-100 transition-colors cursor-pointer flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${tool.color}`}><tool.icon className="h-4 w-4" /></div>
-                  <span className="text-xs font-medium text-slate-600">{tool.name}</span>
+            <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Performance</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {performanceTools.map(tool => (
+                <div
+                  key={tool.id}
+                  className="p-3 rounded-xl border border-slate-100 bg-white hover:bg-slate-50 transition-all cursor-pointer text-center flex flex-col items-center gap-1 text-slate-700"
+                >
+                  <div className={`p-2 rounded-lg ${tool.color} mb-1`}>
+                    <tool.icon className="h-4 w-4" />
+                  </div>
+                  <span className="text-[11px] font-bold">
+                    {tool.name}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
+
         </div>
       </div>
     </div>
