@@ -40,9 +40,7 @@ interface Tool {
 }
 
 const focusTools: Tool[] = [
-  { id: 'drive-thru', name: 'Standard Plan', icon: Car, color: 'bg-blue-50 text-blue-600', group: 'focus' },
-  { id: 'order-pickup', name: 'Quick Picks', icon: Package, color: 'bg-purple-50 text-purple-600', group: 'focus' },
-  { id: 'demand', name: 'Demand Forecaster', icon: TrendingUp, color: 'bg-green-50 text-green-600', group: 'focus' },
+  { id: 'drive-thru', name: 'Drive-Thru', icon: Car, color: 'bg-blue-50 text-blue-600', group: 'focus' },
 ];
 
 const systemModeTools: Tool[] = [
@@ -132,20 +130,6 @@ export function StudioPanel({ isCollapsed, onToggle, onRunModel, isRunning, trac
             </div>
           </div>
 
-          {/* Tools Grid */}
-          <div className="space-y-4">
-            <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Operational Focus</h3>
-            <div className="grid grid-cols-1 gap-2">
-              {focusTools.map(tool => (
-                <div key={tool.id} className={`p-3 rounded-xl border border-slate-100 bg-white hover:bg-slate-50 transition-colors cursor-pointer group flex items-center gap-3 ${tool.id === 'drive-thru' ? 'ring-2 ring-blue-500/10 border-blue-500/20' : ''}`}>
-                  <div className={`p-2 rounded-lg ${tool.color}`}><tool.icon className="h-4 w-4" /></div>
-                  <span className="text-sm font-semibold text-slate-700">{tool.name}</span>
-                  <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity"><MoreVertical className="h-4 w-4 text-slate-400" /></div>
-                </div>
-              ))}
-            </div>
-          </div>
-
           <div className="space-y-4">
             <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">System Modes</h3>
             <div className="grid grid-cols-2 gap-2">
@@ -181,6 +165,20 @@ export function StudioPanel({ isCollapsed, onToggle, onRunModel, isRunning, trac
                   </div>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Focus Group */}
+          <div className="space-y-4">
+            <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Focus</h3>
+            <div className="grid grid-cols-1 gap-2">
+              {focusTools.map(tool => (
+                <div key={tool.id} className={`p-3 rounded-xl border border-slate-100 bg-white hover:bg-slate-50 transition-colors cursor-pointer group flex items-center gap-3 ${tool.id === 'drive-thru' ? 'ring-2 ring-blue-500/10 border-blue-500/20' : ''}`}>
+                  <div className={`p-2 rounded-lg ${tool.color}`}><tool.icon className="h-4 w-4" /></div>
+                  <span className="text-sm font-semibold text-slate-700">{tool.name}</span>
+                  <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity"><MoreVertical className="h-4 w-4 text-slate-400" /></div>
+                </div>
+              ))}
             </div>
           </div>
 
