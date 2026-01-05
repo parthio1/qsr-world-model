@@ -13,23 +13,24 @@ This system uses a **world model** approach inspired by Meta's Code World Model 
 
 ## 🏗️ Architecture
 
-### Three Core Agents
+### Five Core Agents
 
-1. **World Model Simulator** - Predicts shift outcomes given scenario and staffing
-2. **Decision Maker** - Generates multiple staffing options to evaluate  
-3. **Scorer** - Evaluates options on profit, customer satisfaction, staff wellbeing
-4. **Evaluator** *(post-execution)* - Compares predictions vs actual, learns from errors
+1. **World Model Agent** (`world_model_agent.py`) - Predicts shift outcomes given scenario and staffing.
+2. **Operator Agent** (`operator_agent.py`) - Generates multiple staffing options to evaluate.
+3. **Scorer Agent** (`scorer_agent.py`) - Evaluates options on profit, customer satisfaction, staff wellbeing.
+4. **Evaluator Agent** (`evaluator_agent.py`) - Compares predictions vs actual, learns from errors.
+5. **World Context Agent** (`world_context_agent.py`) - Analyzes environmental factors like weather and holidays.
 
 ### Workflow
 
 ```
-Scenario Input → Decision Maker → Multiple Options
-                                      ↓
-                Each Option → World Model Simulator → Predicted Outcomes
-                                                           ↓
-                                                      Scorer → Scores
-                                      ↓
-                Select Best Option → Deploy → Compare vs Actual
+Scenario Input → Operator Agent → Multiple Options
+                                     ↓
+                Each Option → World Model Agent → Predicted Outcomes
+                                                       ↓
+                                                  Scorer → Scores
+                                     ↓
+              Select Best Option → Deploy → Compare vs Actual (Evaluator)
 ```
 
 ## 🚀 Quick Start
@@ -42,9 +43,8 @@ Scenario Input → Decision Maker → Multiple Options
 ### Installation
 
 ```bash
-# Clone repository
-git clone <repo-url>
-cd qsr-world-model
+# From the root directory
+cd be/qsr-be
 
 # Copy environment template
 cp .env.example .env
@@ -52,20 +52,17 @@ cp .env.example .env
 # Edit .env and add your Google API key
 nano .env
 
-# Make startup script executable
-chmod +x run.sh
-
-# Start API server
-./run.sh api
+# Start API server (default port 8081)
+./qsr_run.sh api --port 8081
 ```
 
 ### Using the API
 
-The API will be available at `http://localhost:8000`
+The API will be available at `http://localhost:8081`
 
 **Plan a shift:**
 ```bash
-curl -X POST http://localhost:8000/api/v1/plan \
+curl -X POST http://localhost:8081/api/v1/plan \
   -H "Content-Type: application/json" \
   -d '{
     "scenario": {
@@ -86,14 +83,14 @@ curl -X POST http://localhost:8000/api/v1/plan \
 ```
 
 **API Documentation:**
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
+- Swagger UI: `http://localhost:8081/docs`
+- ReDoc: `http://localhost:8081/redoc`
 
 ### Using the CLI
 
 **Plan a shift:**
 ```bash
-./run.sh cli plan \
+./qsr_run.sh cli plan \
   --shift dinner \
   --weather rainy \
   --day friday \
@@ -104,7 +101,7 @@ curl -X POST http://localhost:8000/api/v1/plan \
 
 **Evaluate completed shift:**
 ```bash
-./run.sh cli evaluate \
+./qsr_run.sh cli evaluate \
   --plan-file data/results/plan_<request_id>.json \
   --customers 298 \
   --revenue 4620 \
@@ -116,7 +113,7 @@ curl -X POST http://localhost:8000/api/v1/plan \
 
 **List recent results:**
 ```bash
-./run.sh cli list-results --limit 10
+./qsr_run.sh cli list-results --limit 10
 ```
 
 ## 📊 Example Output
@@ -172,9 +169,9 @@ Labor Cost: $950.00
   • Slightly underestimated Friday demand
 
 💡 Suggested Improvements
-  • [world_model_simulator] Add bulk_order_probability parameter
+  • [world_model_agent] Add bulk_order_probability parameter
     Impact: Reduce wait time prediction error by ~5%
-  • [world_model_simulator] Include equipment reliability factor
+  • [world_model_agent] Include equipment reliability factor
     Impact: More realistic capacity estimates
 
 ✓ Decision Quality
@@ -194,7 +191,7 @@ GOOGLE_API_KEY=your_key_here
 # Optional (with defaults)
 GEMINI_MODEL=gemini-2.0-flash-exp
 TEMPERATURE=0.7
-API_PORT=8000
+API_PORT=8081
 ```
 
 ### Alignment Weights
@@ -214,7 +211,7 @@ Weights must sum to 1.0.
 ## 🧪 Testing
 
 ```bash
-./run.sh test
+./qsr_run.sh test
 ```
 
 ## 📁 Project Structure
@@ -224,9 +221,11 @@ qsr-world-model/
 ├── src/
 │   ├── agents/              # AI agents
 │   │   ├── world_model_agent.py
-│   │   ├── decision_maker_agent.py
+│   │   ├── operator_agent.py
 │   │   ├── scorer_agent.py
-│   │   └── evaluator_agent.py
+│   │   ├── evaluator_agent.py
+│   │   ├── restaurant_agent.py
+│   │   └── world_context_agent.py
 │   ├── coordinator/         # Orchestration
 │   │   └── orchestrator.py
 │   ├── models/              # Data schemas

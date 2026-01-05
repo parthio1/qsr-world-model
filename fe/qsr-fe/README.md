@@ -110,7 +110,7 @@ Content-Type: application/json
 Update the API base URL in `/src/app/constants/index.ts`:
 
 ```typescript
-export const API_BASE_URL = 'http://localhost:8000';
+export const API_BASE_URL = 'http://localhost:8081';
 ```
 
 ## 🎨 Tech Stack
