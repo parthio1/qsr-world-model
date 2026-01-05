@@ -111,6 +111,12 @@ curl -X POST http://localhost:8081/api/v1/plan \
   --issues "Drive-thru sensor offline"
 ```
 
+**Run Batch Evaluation Runner:**
+```bash
+# Run evaluations for the operator agent against predefined scenarios
+./qsr_eval.sh agent=operator
+```
+
 **List recent results:**
 ```bash
 ./qsr_run.sh cli list-results --limit 10

@@ -107,11 +107,11 @@ Content-Type: application/json
 
 ### Configuration
 
-Update the API base URL in `/src/app/constants/index.ts`:
+The application features **Dynamic Backend Discovery**. Upon startup, it automatically scans ports `8080-8083` to find active backend instances.
 
-```typescript
-export const API_BASE_URL = 'http://localhost:8081';
-```
+- **Direct Selection**: Use the **Backend Selection** dropdown in the header to switch between discovered instances.
+- **Manual Rescan**: Click "Rescan Ports" in the dropdown if you've started a new backend instance.
+- **Default Fallback**: If no instances are found, it defaults to the `API_BASE_URL` defined in `/src/app/constants/index.ts`.
 
 ## 🎨 Tech Stack
 

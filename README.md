@@ -1,10 +1,16 @@
-# QSR World Model: Agentic Operations Planning
+# QSR World Model: Noob Playground
 
 A comprehensive AI-driven platform for Quick Service Restaurant (QSR) operations, utilizing a **World Model** approach to simulate and optimize staffing decisions.
 
 ## 🌟 Overview
 
 This project implements a multi-agent system that predicts operational outcomes (wait times, revenue, staff satisfaction) based on various scenarios and staffing levels. It allows operators to "test" decisions in a simulated environment before implementing them in the real world.
+
+### 🆕 Key Features
+- **Dynamic Backend Discovery**: Frontend automatically scans and connects to available backend instances on ports `8080-8083`.
+- **Simulation Control**: "Cancel Run" support for gracefully aborting active AI simulations.
+- **Agentic Reasoning**: Deep visibility into the Chain-of-Thought logic for all agents (Operator, World, Scorer).
+- **Proactive Evaluations**: Integrated evaluation runner for testing agent performance against recorded scenarios.
 
 ## 📂 Repository Structure
 
@@ -20,7 +26,7 @@ This project implements a multi-agent system that predicts operational outcomes 
 1. Navigate to the backend directory: `cd be/qsr-be`
 2. Configure your environment: `cp .env.example .env` (Add your `GOOGLE_API_KEY`)
 3. Install dependencies: `pip install -r requirements.txt`
-4. Run the API: `./qsr_run.sh api --port 8081`
+4. Run the API: `./qsr_run.sh api --port 8081` (Supports ports 8080-8083 for auto-discovery)
 
 For more details, see the [Backend README](./be/qsr-be/README.md).
 
@@ -28,6 +34,7 @@ For more details, see the [Backend README](./be/qsr-be/README.md).
 1. Navigate to the frontend directory: `cd fe/qsr-fe`
 2. Install dependencies: `npm install`
 3. Run the development server: `npm run dev`
+4. Use the **Backend Selection** dropdown in the header to switch between discovered instances.
 
 For more details, see the [Frontend README](./fe/qsr-fe/README.md).
 
@@ -36,16 +43,15 @@ For more details, see the [Frontend README](./fe/qsr-fe/README.md).
 The backend employs several specialized agents:
 - **World Model Agent**: Simulates the shift and predicts metrics.
 - **Operator Agent**: Generates staffing strategies.
-- **Scorer Agent**: Evaluates outcomes based on profit, customer, and staff objectives.
+- **Scorer Agent**: Evaluates outcomes based on explicit optimization formulas.
 - **Evaluator Agent**: Compares simulations to actual results for continuous learning.
 - **World Context Agent**: Provides environmental context (weather, events).
 - **Restaurant Agent**: Manages restaurant-specific configuration.
 
 ## 🛠 Tech Stack
-- **AI**: Google Gemini Pro (via agentic prompts)
+- **AI**: Google Gemini (via agentic prompts)
 - **Backend**: Python, FastAPI, Pydantic
 - **Frontend**: React, TypeScript, Vite, Tailwind CSS, shadcn/ui
-- **VCS**: Git/GitHub (parthio1/qsr-world-model)
 
 ---
 Built with ❤️ for the future of QSR operations.
