@@ -1,0 +1,337 @@
+{
+  "request_id": "fdf84829-dced-448d-9dab-d1f2f2d80cb4",
+  "timestamp": "2026-01-03T23:28:12.093970",
+  "scenario": {
+    "shift": "lunch",
+    "date": "2026-01-03",
+    "day_of_week": "friday",
+    "weather": "sunny",
+    "special_events": [],
+    "restaurant": {
+      "location": "Downtown Atlanta",
+      "has_drive_thru": true,
+      "drive_thru_lanes": 2,
+      "kitchen_capacity": "medium",
+      "dine_in_capacity": 50
+    }
+  },
+  "options_evaluated": [
+    {
+      "option": {
+        "id": "conservative_lean",
+        "strategy": "Conservative (Lean)",
+        "staffing": {
+          "drive_thru": 2,
+          "kitchen": 4,
+          "front_counter": 1,
+          "total": 7
+        },
+        "estimated_labor_cost": 420.0,
+        "risk_level": "high",
+        "rationale": "This allocation meets the absolute minimum requirements for a Friday lunch. It prioritizes kitchen throughput to prevent food bottlenecks but risks significant wait times in the dual-lane drive-thru and front counter during the downtown Atlanta lunch rush. Labor cost is minimized to maximize short-term profit."
+      },
+      "simulation": {
+        "predicted_metrics": {
+          "customers_served": 360,
+          "revenue": 5280.0,
+          "avg_wait_time_seconds": 545,
+          "max_queue_length": 42,
+          "labor_cost": 420.0,
+          "food_cost": 1478.4,
+          "staff_utilization": 1.0,
+          "order_accuracy": 0.87
+        },
+        "key_events": [
+          "11:15 AM: Early lunch rush arrives; Downtown foot traffic exceeds front counter capacity within 15 minutes.",
+          "12:00 PM: Drive-thru queue reaches maximum physical capacity (12 cars per lane); abandonment rate spikes to 25%.",
+          "12:45 PM: Kitchen reaches critical saturation; ticket times exceed 12 minutes, leading to several refund requests.",
+          "1:30 PM: High-stress levels result in a slight dip in order accuracy and service pace.",
+          "2:45 PM: Backlog finally cleared as the downtown office crowd returns to work."
+        ],
+        "bottlenecks": [
+          "Kitchen Capacity: 4 cooks can only produce ~90 orders/hr, while demand is peaking at 150/hr. This is the primary constraint.",
+          "Drive-Thru Staffing: 2 staff members for 2 lanes is insufficient for a Friday rush; one person is likely dual-tasking (taking orders and payment), slowing the flow.",
+          "Front Counter: A single staff member cannot manage the high-density walk-in demand typical of Downtown Atlanta on a Friday."
+        ],
+        "confidence": 0.92
+      },
+      "scores": {
+        "profit": {
+          "raw_score": 0.82,
+          "weighted": 0.328,
+          "details": {
+            "margin": 0.64,
+            "labor_ratio": 0.0795
+          }
+        },
+        "customer_satisfaction": {
+          "raw_score": 0.28,
+          "weighted": 0.098,
+          "details": {
+            "avg_wait_s": 545,
+            "service_rate": 0.75
+          }
+        },
+        "staff_wellbeing": {
+          "raw_score": 0.1,
+          "weighted": 0.025,
+          "details": {
+            "avg_utilization": 1.0,
+            "burnout_risk": "critical"
+          }
+        },
+        "overall_score": 0.451,
+        "ranking": "poor",
+        "strengths": [
+          "Extremely low labor cost ratio (7.95%)",
+          "High short-term profit margin per transaction",
+          "Kitchen throughput maintained at maximum theoretical capacity"
+        ],
+        "weaknesses": [
+          "Average wait times (545s) are nearly double the acceptable threshold",
+          "25% customer abandonment rate at peak hours represents significant lost revenue",
+          "Staff utilization at 1.0 is unsustainable and leads to burnout and errors",
+          "Order accuracy (87%) is below industry standards due to high stress"
+        ],
+        "recommendation": "Abandon the 'Conservative (Lean)' strategy for Friday lunch shifts. The current staffing levels are insufficient for Downtown Atlanta demand. Increase kitchen staff by 2 to resolve the primary bottleneck, add 1 dedicated drive-thru order taker to manage dual lanes, and add 1 front counter floater. This will reduce abandonment and improve long-term brand loyalty."
+      }
+    },
+    {
+      "option": {
+        "id": "balanced_standard",
+        "strategy": "Balanced (Standard)",
+        "staffing": {
+          "drive_thru": 4,
+          "kitchen": 5,
+          "front_counter": 1,
+          "total": 10
+        },
+        "estimated_labor_cost": 600.0,
+        "risk_level": "medium",
+        "rationale": "Aligned with the operator's priority. This setup allocates two staff members per drive-thru lane (order taker and window/runner) and provides a robust kitchen crew of five to handle the high volume expected on a sunny Friday. It balances labor spend with acceptable service speed."
+      },
+      "simulation": {
+        "predicted_metrics": {
+          "customers_served": 458,
+          "revenue": 6778.4,
+          "avg_wait_time_seconds": 512,
+          "max_queue_length": 24,
+          "labor_cost": 600.0,
+          "food_cost": 1897.95,
+          "staff_utilization": 0.96,
+          "order_accuracy": 0.91
+        },
+        "key_events": [
+          "11:30 AM: Early lunch rush begins; Downtown foot traffic increases significantly due to sunny weather.",
+          "12:15 PM: Kitchen reaches maximum throughput capacity; order buffer exceeds 15 tickets.",
+          "12:45 PM: Drive-thru queue reaches the street entrance; estimated 12% customer abandonment due to visible wait times.",
+          "1:20 PM: Front counter bottleneck causes 10+ minute waits for walk-in customers.",
+          "1:45 PM: Demand begins to stabilize, allowing kitchen to clear the backlog."
+        ],
+        "bottlenecks": [
+          "Kitchen Capacity: 5 cooks are insufficient for the 150+ orders/hr demand generated by a Downtown Friday lunch. The kitchen is the primary constraint.",
+          "Front Counter: A single staff member is unable to manage the high volume of downtown walk-in traffic, leading to high counter wait times.",
+          "Drive-Thru Lane 2: Underutilized because the kitchen cannot produce food fast enough to justify the second lane's full speed."
+        ],
+        "confidence": 0.92
+      },
+      "scores": {
+        "profit": {
+          "raw_score": 0.88,
+          "weighted": 0.352,
+          "details": {
+            "margin": 0.631,
+            "labor_ratio": 0.088
+          }
+        },
+        "customer_satisfaction": {
+          "raw_score": 0.42,
+          "weighted": 0.147,
+          "details": {
+            "avg_wait_s": 512,
+            "service_rate": 0.88
+          }
+        },
+        "staff_wellbeing": {
+          "raw_score": 0.25,
+          "weighted": 0.0625,
+          "details": {
+            "avg_utilization": 0.96,
+            "burnout_risk": "critical"
+          }
+        },
+        "overall_score": 0.5615,
+        "ranking": "fair",
+        "strengths": [
+          "Excellent labor cost efficiency (8.8% of revenue)",
+          "High gross margin despite operational friction",
+          "Strong revenue generation for the total headcount"
+        ],
+        "weaknesses": [
+          "Severe kitchen bottleneck causing 12% customer abandonment",
+          "Average wait times (512s) significantly exceed the 300s problematic threshold",
+          "Critical staff utilization (0.96) indicates high burnout risk and unsustainable pace",
+          "Front counter is severely understaffed for a downtown location"
+        ],
+        "recommendation": "Increase staffing levels immediately for the Friday lunch shift. Add at least 2 additional kitchen staff to resolve the primary bottleneck and 1 additional front counter staff to handle walk-in traffic. While labor costs will rise, the reduction in the 12% abandonment rate will likely offset the cost through recovered revenue and improved long-term customer retention."
+      }
+    },
+    {
+      "option": {
+        "id": "aggressive_growth",
+        "strategy": "Aggressive (Growth)",
+        "staffing": {
+          "drive_thru": 5,
+          "kitchen": 5,
+          "front_counter": 2,
+          "total": 12
+        },
+        "estimated_labor_cost": 720.0,
+        "risk_level": "very_low",
+        "rationale": "Utilizes the full available staff pool of 12. This strategy maximizes the dual-lane drive-thru capacity with dedicated runners and ensures the front counter can handle walk-in traffic from the downtown area without impacting the drive-thru. Ideal for capturing every possible sale during peak sunny weather conditions."
+      },
+      "simulation": {
+        "predicted_metrics": {
+          "customers_served": 452,
+          "revenue": 6508.8,
+          "avg_wait_time_seconds": 345,
+          "max_queue_length": 24,
+          "labor_cost": 720.0,
+          "food_cost": 1822.46,
+          "staff_utilization": 0.74,
+          "order_accuracy": 0.91
+        },
+        "key_events": [
+          "11:00 AM: Shift begins with steady downtown foot traffic; kitchen handling load easily.",
+          "12:15 PM: Friday lunch rush peaks; kitchen hits 100% utilization, causing a bottleneck.",
+          "12:45 PM: Drive-thru queue extends to the street entrance due to kitchen lag; 12 customers observed abandoning the queue.",
+          "1:30 PM: Front counter congestion eases, but kitchen remains at max capacity to clear backlogged orders.",
+          "2:45 PM: Service stabilizes as the downtown lunch window closes."
+        ],
+        "bottlenecks": [
+          "Kitchen Capacity: With only 5 cooks, the kitchen capped at ~113 orders/hr, while peak demand reached 150/hr. This caused the primary delay.",
+          "Drive-Thru Staffing Imbalance: 5 staff members in DT were underutilized (waiting on food) because the kitchen could not produce meals fast enough to match their window speed."
+        ],
+        "confidence": 0.92
+      },
+      "scores": {
+        "profit": {
+          "raw_score": 0.88,
+          "weighted": 0.352,
+          "details": {
+            "margin": 0.609,
+            "labor_ratio": 0.111
+          }
+        },
+        "customer_satisfaction": {
+          "raw_score": 0.55,
+          "weighted": 0.1925,
+          "details": {
+            "avg_wait_s": 345,
+            "service_rate": 0.974
+          }
+        },
+        "staff_wellbeing": {
+          "raw_score": 0.78,
+          "weighted": 0.195,
+          "details": {
+            "avg_utilization": 0.74,
+            "burnout_risk": "moderate"
+          }
+        },
+        "overall_score": 0.7395,
+        "ranking": "good",
+        "strengths": [
+          "Excellent labor cost to revenue ratio (11.1%)",
+          "High total revenue capture despite operational friction",
+          "Ideal average staff utilization (0.74) falls perfectly within the target range"
+        ],
+        "weaknesses": [
+          "Average wait time (345s) exceeds the 300s problematic threshold",
+          "Severe kitchen bottleneck (100% utilization) led to 12 customer abandonments",
+          "Staffing imbalance: Drive-thru staff were over-allocated relative to kitchen output capacity"
+        ],
+        "recommendation": "Rebalance the staffing mix for peak periods. Move 1-2 staff members from the Drive-Thru/Front Counter to the Kitchen. The current 'Aggressive' strategy is limited by physical kitchen throughput; increasing kitchen staff will reduce wait times and prevent the queue from reaching the street, likely capturing the 12 lost customers and further increasing profit."
+      }
+    }
+  ],
+  "best_decision": {
+    "option": {
+      "id": "aggressive_growth",
+      "strategy": "Aggressive (Growth)",
+      "staffing": {
+        "drive_thru": 5,
+        "kitchen": 5,
+        "front_counter": 2,
+        "total": 12
+      },
+      "estimated_labor_cost": 720.0,
+      "risk_level": "very_low",
+      "rationale": "Utilizes the full available staff pool of 12. This strategy maximizes the dual-lane drive-thru capacity with dedicated runners and ensures the front counter can handle walk-in traffic from the downtown area without impacting the drive-thru. Ideal for capturing every possible sale during peak sunny weather conditions."
+    },
+    "simulation": {
+      "predicted_metrics": {
+        "customers_served": 452,
+        "revenue": 6508.8,
+        "avg_wait_time_seconds": 345,
+        "max_queue_length": 24,
+        "labor_cost": 720.0,
+        "food_cost": 1822.46,
+        "staff_utilization": 0.74,
+        "order_accuracy": 0.91
+      },
+      "key_events": [
+        "11:00 AM: Shift begins with steady downtown foot traffic; kitchen handling load easily.",
+        "12:15 PM: Friday lunch rush peaks; kitchen hits 100% utilization, causing a bottleneck.",
+        "12:45 PM: Drive-thru queue extends to the street entrance due to kitchen lag; 12 customers observed abandoning the queue.",
+        "1:30 PM: Front counter congestion eases, but kitchen remains at max capacity to clear backlogged orders.",
+        "2:45 PM: Service stabilizes as the downtown lunch window closes."
+      ],
+      "bottlenecks": [
+        "Kitchen Capacity: With only 5 cooks, the kitchen capped at ~113 orders/hr, while peak demand reached 150/hr. This caused the primary delay.",
+        "Drive-Thru Staffing Imbalance: 5 staff members in DT were underutilized (waiting on food) because the kitchen could not produce meals fast enough to match their window speed."
+      ],
+      "confidence": 0.92
+    },
+    "scores": {
+      "profit": {
+        "raw_score": 0.88,
+        "weighted": 0.352,
+        "details": {
+          "margin": 0.609,
+          "labor_ratio": 0.111
+        }
+      },
+      "customer_satisfaction": {
+        "raw_score": 0.55,
+        "weighted": 0.1925,
+        "details": {
+          "avg_wait_s": 345,
+          "service_rate": 0.974
+        }
+      },
+      "staff_wellbeing": {
+        "raw_score": 0.78,
+        "weighted": 0.195,
+        "details": {
+          "avg_utilization": 0.74,
+          "burnout_risk": "moderate"
+        }
+      },
+      "overall_score": 0.7395,
+      "ranking": "good",
+      "strengths": [
+        "Excellent labor cost to revenue ratio (11.1%)",
+        "High total revenue capture despite operational friction",
+        "Ideal average staff utilization (0.74) falls perfectly within the target range"
+      ],
+      "weaknesses": [
+        "Average wait time (345s) exceeds the 300s problematic threshold",
+        "Severe kitchen bottleneck (100% utilization) led to 12 customer abandonments",
+        "Staffing imbalance: Drive-thru staff were over-allocated relative to kitchen output capacity"
+      ],
+      "recommendation": "Rebalance the staffing mix for peak periods. Move 1-2 staff members from the Drive-Thru/Front Counter to the Kitchen. The current 'Aggressive' strategy is limited by physical kitchen throughput; increasing kitchen staff will reduce wait times and prevent the queue from reaching the street, likely capturing the 12 lost customers and further increasing profit."
+    }
+  },
+  "execution_time_seconds": 70.29
+}

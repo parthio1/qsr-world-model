@@ -1,0 +1,418 @@
+{
+  "request_id": "6333cd0c-8a8c-4137-8e67-c00bd6e4004a",
+  "timestamp": "2026-01-04T12:47:10.655357",
+  "scenario": {
+    "shift": "lunch",
+    "date": "2026-01-04",
+    "day_of_week": "wednesday",
+    "weather": "cloudy",
+    "special_events": [
+      "Holiday",
+      "Concert"
+    ],
+    "restaurant": {
+      "location": "Peachtree St",
+      "has_drive_thru": true,
+      "drive_thru_lanes": 1,
+      "kitchen_capacity": "large",
+      "dine_in_capacity": 50
+    }
+  },
+  "options_evaluated": [
+    {
+      "option": {
+        "id": "lean_profit",
+        "strategy": "Conservative (Lean)",
+        "staffing": {
+          "drive_thru": 2,
+          "kitchen": 4,
+          "front_counter": 2,
+          "total": 8
+        },
+        "estimated_labor_cost": 480.0,
+        "risk_level": "high",
+        "rationale": "Minimum viable staffing to maintain operations. While it maximizes profit margins, the combination of a Holiday and a nearby Concert will likely lead to significant bottlenecks in the kitchen and long wait times at the drive-thru."
+      },
+      "simulation": {
+        "predicted_metrics": {
+          "customers_served": 392,
+          "revenue": 5488.0,
+          "avg_wait_time_seconds": 545,
+          "max_queue_length": 42,
+          "labor_cost": 480.0,
+          "food_cost": 1536.64,
+          "staff_utilization": 0.96,
+          "order_accuracy": 0.87
+        },
+        "key_events": [
+          "11:00 AM: Shift begins with unusually high volume due to holiday foot traffic on Peachtree St.",
+          "11:45 AM: Kitchen reaches 100% utilization; order-to-delivery time begins to climb steadily.",
+          "12:30 PM: Peak lunch rush compounded by concert-goers; drive-thru line extends to the street entrance.",
+          "1:15 PM: Customer abandonment rate spikes as wait times exceed the 10-minute threshold.",
+          "2:45 PM: Demand finally aligns with kitchen output as the pre-concert rush subsides."
+        ],
+        "bottlenecks": [
+          "Primary Bottleneck: Kitchen Capacity. Despite having 4 cooks, the 'Large' kitchen is capped at 100 orders/hr, while combined demand from Front Counter and Drive-Thru peaked at 175 orders/hr.",
+          "Secondary Bottleneck: Drive-Thru throughput. Single lane configuration limited the ability to clear the 2-staff team's processing capacity during the peak surge."
+        ],
+        "confidence": 0.88
+      },
+      "scores": {
+        "profit": {
+          "raw_score": 0.92,
+          "weighted": 0.322,
+          "details": {
+            "margin": 0.633,
+            "labor_ratio": 0.087
+          }
+        },
+        "customer_satisfaction": {
+          "raw_score": 0.35,
+          "weighted": 0.14,
+          "details": {
+            "avg_wait_s": 545,
+            "service_rate": 0.87
+          }
+        },
+        "staff_wellbeing": {
+          "raw_score": 0.2,
+          "weighted": 0.05,
+          "details": {
+            "avg_utilization": 0.96,
+            "burnout_risk": "critical"
+          }
+        },
+        "overall_score": 0.512,
+        "ranking": "fair",
+        "strengths": [
+          "Exceptional labor cost efficiency (8.7% of revenue)",
+          "High gross margin per transaction",
+          "Effective capture of initial holiday foot traffic"
+        ],
+        "weaknesses": [
+          "Extreme wait times (545s) significantly exceed the 300s threshold",
+          "Critical staff burnout risk with 96% utilization",
+          "High customer abandonment rate during peak concert rush",
+          "Kitchen capacity reached a hard ceiling, causing massive order backlogs"
+        ],
+        "recommendation": "The 'Lean' strategy is unsustainable for high-impact events like holidays and concerts. While profit margins appear high on paper, the simulation shows significant lost revenue due to customer abandonment. Recommend increasing kitchen staff by at least 2 members and adding 1 floater to assist the drive-thru to bring utilization down to the 0.80 range and reduce wait times to under 300s."
+      }
+    },
+    {
+      "option": {
+        "id": "balanced_standard",
+        "strategy": "Balanced",
+        "staffing": {
+          "drive_thru": 3,
+          "kitchen": 7,
+          "front_counter": 3,
+          "total": 13
+        },
+        "estimated_labor_cost": 780.0,
+        "risk_level": "medium",
+        "rationale": "Aligned with the operator's priority. This allocation provides a dedicated runner for the drive-thru and scales the kitchen to handle the 'large' capacity requirements during a holiday lunch rush, while keeping labor costs within a reasonable range."
+      },
+      "simulation": {
+        "predicted_metrics": {
+          "customers_served": 614,
+          "revenue": 8596.0,
+          "avg_wait_time_seconds": 445,
+          "max_queue_length": 28,
+          "labor_cost": 780.0,
+          "food_cost": 2406.88,
+          "staff_utilization": 0.96,
+          "order_accuracy": 0.91
+        },
+        "key_events": [
+          "11:00 AM: Shift begins with high baseline demand due to the holiday and nearby concert soundchecks.",
+          "12:15 PM: Urban lunch rush peaks; Front Counter reaches capacity as concert-goers arrive in groups.",
+          "1:30 PM: Drive-thru lane reaches maximum physical stacking capacity, causing minor traffic congestion on Peachtree St.",
+          "2:15 PM: Kitchen staff showing signs of fatigue; order accuracy dips slightly due to sustained high-volume output.",
+          "2:45 PM: Demand begins to taper off as the primary concert window approaches."
+        ],
+        "bottlenecks": [
+          "Kitchen Throughput: Despite having 7 cooks, the 'Large' kitchen is operating at 98% capacity to keep up with the combined Holiday/Concert volume.",
+          "Physical Drive-Thru Lane: The single lane is a physical constraint; even with 3 staff, the car-side delivery is limited by the speed of the single-file line."
+        ],
+        "confidence": 0.92
+      },
+      "scores": {
+        "profit": {
+          "raw_score": 0.94,
+          "weighted": 0.329,
+          "details": {
+            "margin": 0.629,
+            "labor_ratio": 0.091
+          }
+        },
+        "customer_satisfaction": {
+          "raw_score": 0.52,
+          "weighted": 0.208,
+          "details": {
+            "avg_wait_s": 445,
+            "service_rate": 0.91
+          }
+        },
+        "staff_wellbeing": {
+          "raw_score": 0.35,
+          "weighted": 0.0875,
+          "details": {
+            "avg_utilization": 0.96,
+            "burnout_risk": "high"
+          }
+        },
+        "overall_score": 0.6245,
+        "ranking": "fair",
+        "strengths": [
+          "Excellent labor cost efficiency (9.1% of revenue)",
+          "High total revenue generation ($8,596) during a complex double-event shift",
+          "Strong kitchen throughput despite reaching near-maximum capacity"
+        ],
+        "weaknesses": [
+          "Critical wait times (445s) significantly exceed the 300s problematic threshold",
+          "Extreme staff utilization (96%) indicates high burnout risk and unsustainable pace",
+          "Order accuracy (91%) is beginning to degrade due to staff fatigue",
+          "Physical drive-thru constraints are causing external traffic issues"
+        ],
+        "recommendation": "While highly profitable, this staffing level is unsustainable for a holiday/concert peak. Increase kitchen staffing by 1-2 floating members to lower utilization to the 0.85 range and improve order accuracy. To address the drive-thru bottleneck, implement 'line-busting' mobile ordering tablets to process payments further up the queue, as the single lane is currently a hard physical constraint."
+      }
+    },
+    {
+      "option": {
+        "id": "aggressive_growth",
+        "strategy": "Aggressive (Growth)",
+        "staffing": {
+          "drive_thru": 4,
+          "kitchen": 10,
+          "front_counter": 4,
+          "total": 18
+        },
+        "estimated_labor_cost": 1080.0,
+        "risk_level": "low",
+        "rationale": "Prioritizes speed of service and customer experience to capture maximum revenue from the concert crowd. Extra front counter staff manage the 50-seat dine-in capacity, while a reinforced kitchen ensures high throughput for both channels."
+      },
+      "simulation": {
+        "predicted_metrics": {
+          "customers_served": 692,
+          "revenue": 9184.0,
+          "avg_wait_time_seconds": 345,
+          "max_queue_length": 22,
+          "labor_cost": 1080.0,
+          "food_cost": 2571.52,
+          "staff_utilization": 0.88,
+          "order_accuracy": 0.94
+        },
+        "key_events": [
+          "11:00 AM: Shift commences with high baseline volume due to the holiday; kitchen is fully prepped.",
+          "12:15 PM: Drive-thru lane reaches maximum physical capacity (stack of 12 cars); 4 staff members are highly efficient but limited by the single-lane throughput.",
+          "1:00 PM: Peak rush hits as concert-goers arrive early; Front Counter queue extends to the door with 20+ customers waiting.",
+          "1:45 PM: Kitchen maintains high speed with 10 cooks, preventing the order-ready time from becoming the primary bottleneck.",
+          "2:30 PM: Demand begins to taper off as the concert start time approaches; staff begins transition to mid-day cleaning."
+        ],
+        "bottlenecks": [
+          "Drive-Thru Physical Infrastructure: Despite having 4 staff assigned, the single lane cannot process more than ~55 cars/hour, leading to customer abandonment.",
+          "Front Counter Congestion: High walk-in demand from the concert/holiday exceeds the 4-person counter capacity during the 12:30-1:30 PM window."
+        ],
+        "confidence": 0.92
+      },
+      "scores": {
+        "profit": {
+          "raw_score": 0.92,
+          "weighted": 0.322,
+          "details": {
+            "margin": 0.602,
+            "labor_ratio": 0.1176
+          }
+        },
+        "customer_satisfaction": {
+          "raw_score": 0.72,
+          "weighted": 0.288,
+          "details": {
+            "avg_wait_s": 345,
+            "service_rate": 0.94
+          }
+        },
+        "staff_wellbeing": {
+          "raw_score": 0.78,
+          "weighted": 0.195,
+          "details": {
+            "avg_utilization": 0.88,
+            "burnout_risk": "moderate"
+          }
+        },
+        "overall_score": 0.805,
+        "ranking": "very good",
+        "strengths": [
+          "Excellent labor-to-revenue ratio (11.7%) despite high headcount.",
+          "High kitchen throughput prevented order preparation from becoming a bottleneck.",
+          "Strong revenue capture ($9,184) during a complex double-event day (Holiday + Concert)."
+        ],
+        "weaknesses": [
+          "Average wait time (345s) exceeded the 300s quality threshold.",
+          "Diminishing returns on Drive-Thru staffing due to physical lane constraints.",
+          "Front counter congestion during peak 12:30-1:30 PM window suggests localized understaffing."
+        ],
+        "recommendation": "Reallocate 1 staff member from the Drive-Thru to the Front Counter. The simulation shows the single DT lane is a physical bottleneck that 4 staff cannot overcome; moving that labor to the Front Counter would better address the 'concert-goer' walk-in surge and likely bring the average wait time below the 300s threshold."
+      }
+    },
+    {
+      "option": {
+        "id": "event_peak_max",
+        "strategy": "Event Peak Capacity",
+        "staffing": {
+          "drive_thru": 5,
+          "kitchen": 11,
+          "front_counter": 4,
+          "total": 20
+        },
+        "estimated_labor_cost": 1200.0,
+        "risk_level": "very_low",
+        "rationale": "Utilizes the full budget of 80 hours (20 staff members). This is designed for extreme volume scenarios on Peachtree St where the holiday and concert overlap perfectly. It ensures zero service friction but results in the highest labor-to-sales ratio."
+      },
+      "simulation": {
+        "predicted_metrics": {
+          "customers_served": 702,
+          "revenue": 9126.4,
+          "avg_wait_time_seconds": 345,
+          "max_queue_length": 28,
+          "labor_cost": 1200.0,
+          "food_cost": 2555.39,
+          "staff_utilization": 0.86,
+          "order_accuracy": 0.94
+        },
+        "key_events": [
+          "11:15 AM: Shift begins with high baseline demand due to the holiday; kitchen prep is ahead of schedule.",
+          "12:00 PM: Urban lunch rush compounds with concert-goers; front counter queue reaches the door.",
+          "12:45 PM: Drive-thru lane reaches maximum physical capacity (18 cars in stack); 12% abandonment rate observed for vehicles unable to enter the lot.",
+          "1:30 PM: Kitchen maintains high throughput due to 11-person staffing, preventing a total service collapse despite high order volume.",
+          "2:45 PM: Demand finally drops below service capacity; staff begins recovery and cleaning."
+        ],
+        "bottlenecks": [
+          "Physical Drive-Thru Lane: Despite having 5 staff assigned, the single-lane infrastructure limited throughput to ~55 cars/hour, leaving staff underutilized in that zone while cars turned away.",
+          "Front Counter POS: 4 staff were at maximum capacity for 90 minutes; the physical space for the queue became a deterrent for dine-in customers."
+        ],
+        "confidence": 0.92
+      },
+      "scores": {
+        "profit": {
+          "raw_score": 0.88,
+          "weighted": 0.308,
+          "details": {
+            "margin": 0.588,
+            "labor_ratio": 0.1315
+          }
+        },
+        "customer_satisfaction": {
+          "raw_score": 0.62,
+          "weighted": 0.248,
+          "details": {
+            "avg_wait_s": 345,
+            "service_rate": 0.88
+          }
+        },
+        "staff_wellbeing": {
+          "raw_score": 0.82,
+          "weighted": 0.205,
+          "details": {
+            "avg_utilization": 0.86,
+            "burnout_risk": "moderate"
+          }
+        },
+        "overall_score": 0.761,
+        "ranking": "good",
+        "strengths": [
+          "High revenue generation ($9,126.40) during a complex multi-event shift.",
+          "Excellent labor-to-sales ratio (13.1%) despite maximum staffing levels.",
+          "Kitchen throughput remained stable under extreme pressure, preventing service collapse.",
+          "Staff utilization (0.86) is near the ideal range for high-volume efficiency."
+        ],
+        "weaknesses": [
+          "Average wait time (345s) exceeded the 300s threshold for customer satisfaction.",
+          "Significant drive-thru abandonment (12%) due to physical infrastructure limitations (single lane).",
+          "Diminishing returns on drive-thru staffing; 5 staff were underutilized due to the physical car-stack limit.",
+          "Front counter congestion reached physical capacity, likely deterring walk-in customers."
+        ],
+        "recommendation": "Reallocate 1-2 staff members from the Drive-Thru to the Front Counter or a 'Line Buster' role with mobile POS. The single-lane drive-thru is a physical bottleneck that extra labor cannot solve. Shifting labor to the front counter could reduce the 345s wait time and manage the queue that reached the door, improving the Customer Satisfaction score without increasing total labor costs."
+      }
+    }
+  ],
+  "best_decision": {
+    "option": {
+      "id": "aggressive_growth",
+      "strategy": "Aggressive (Growth)",
+      "staffing": {
+        "drive_thru": 4,
+        "kitchen": 10,
+        "front_counter": 4,
+        "total": 18
+      },
+      "estimated_labor_cost": 1080.0,
+      "risk_level": "low",
+      "rationale": "Prioritizes speed of service and customer experience to capture maximum revenue from the concert crowd. Extra front counter staff manage the 50-seat dine-in capacity, while a reinforced kitchen ensures high throughput for both channels."
+    },
+    "simulation": {
+      "predicted_metrics": {
+        "customers_served": 692,
+        "revenue": 9184.0,
+        "avg_wait_time_seconds": 345,
+        "max_queue_length": 22,
+        "labor_cost": 1080.0,
+        "food_cost": 2571.52,
+        "staff_utilization": 0.88,
+        "order_accuracy": 0.94
+      },
+      "key_events": [
+        "11:00 AM: Shift commences with high baseline volume due to the holiday; kitchen is fully prepped.",
+        "12:15 PM: Drive-thru lane reaches maximum physical capacity (stack of 12 cars); 4 staff members are highly efficient but limited by the single-lane throughput.",
+        "1:00 PM: Peak rush hits as concert-goers arrive early; Front Counter queue extends to the door with 20+ customers waiting.",
+        "1:45 PM: Kitchen maintains high speed with 10 cooks, preventing the order-ready time from becoming the primary bottleneck.",
+        "2:30 PM: Demand begins to taper off as the concert start time approaches; staff begins transition to mid-day cleaning."
+      ],
+      "bottlenecks": [
+        "Drive-Thru Physical Infrastructure: Despite having 4 staff assigned, the single lane cannot process more than ~55 cars/hour, leading to customer abandonment.",
+        "Front Counter Congestion: High walk-in demand from the concert/holiday exceeds the 4-person counter capacity during the 12:30-1:30 PM window."
+      ],
+      "confidence": 0.92
+    },
+    "scores": {
+      "profit": {
+        "raw_score": 0.92,
+        "weighted": 0.322,
+        "details": {
+          "margin": 0.602,
+          "labor_ratio": 0.1176
+        }
+      },
+      "customer_satisfaction": {
+        "raw_score": 0.72,
+        "weighted": 0.288,
+        "details": {
+          "avg_wait_s": 345,
+          "service_rate": 0.94
+        }
+      },
+      "staff_wellbeing": {
+        "raw_score": 0.78,
+        "weighted": 0.195,
+        "details": {
+          "avg_utilization": 0.88,
+          "burnout_risk": "moderate"
+        }
+      },
+      "overall_score": 0.805,
+      "ranking": "very good",
+      "strengths": [
+        "Excellent labor-to-revenue ratio (11.7%) despite high headcount.",
+        "High kitchen throughput prevented order preparation from becoming a bottleneck.",
+        "Strong revenue capture ($9,184) during a complex double-event day (Holiday + Concert)."
+      ],
+      "weaknesses": [
+        "Average wait time (345s) exceeded the 300s quality threshold.",
+        "Diminishing returns on Drive-Thru staffing due to physical lane constraints.",
+        "Front counter congestion during peak 12:30-1:30 PM window suggests localized understaffing."
+      ],
+      "recommendation": "Reallocate 1 staff member from the Drive-Thru to the Front Counter. The simulation shows the single DT lane is a physical bottleneck that 4 staff cannot overcome; moving that labor to the Front Counter would better address the 'concert-goer' walk-in surge and likely bring the average wait time below the 300s threshold."
+    }
+  },
+  "execution_time_seconds": 88.1
+}

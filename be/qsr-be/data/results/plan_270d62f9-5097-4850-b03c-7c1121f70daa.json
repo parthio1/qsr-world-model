@@ -1,0 +1,352 @@
+{
+  "request_id": "270d62f9-5097-4850-b03c-7c1121f70daa",
+  "timestamp": "2026-01-04T22:53:44.869059",
+  "scenario": {
+    "shift": "lunch",
+    "date": "2026-01-05",
+    "day_of_week": "sunday",
+    "weather": "sunny",
+    "special_events": [],
+    "restaurant": {
+      "location": "Peachtree St",
+      "has_drive_thru": true,
+      "drive_thru_lanes": 2,
+      "kitchen_staff_capacity": "medium",
+      "dine_in": true,
+      "dine_in_seat_capacity": 50
+    }
+  },
+  "options_evaluated": [
+    {
+      "option": {
+        "id": "balanced_standard",
+        "strategy": "Balanced Performance",
+        "estimated_total_guest": 100,
+        "estimated_peak_guest": 30,
+        "staffing": {
+          "drive_thru": 3,
+          "kitchen": 5,
+          "front_counter": 2,
+          "total": 10
+        },
+        "estimated_labor_cost": 1200.0,
+        "risk_level": "low",
+        "rationale": "With a budget of 80 hours and an 8-hour shift, we are capped at 10 total staff members. To meet the 'Balanced' priority, this plan allocates 50% of the workforce to the kitchen, which is identified as the primary operational bottleneck (80 orders/hr). Three staff members are assigned to the drive-thru to manage the dual lanes efficiently, while two staff members handle the front counter and dine-in area. This distribution ensures that intake channels do not overwhelm production while maintaining a manageable workload for the staff on a busy Sunday lunch shift."
+      },
+      "simulation": {
+        "predicted_metrics": {
+          "customers_served": 458,
+          "revenue": 8060.8,
+          "avg_wait_time_seconds": 445,
+          "peak_wait_time_seconds": 600,
+          "max_queue_length": 22,
+          "labor_cost": 600.0,
+          "food_cost": 2257.02,
+          "staff_utilization": 0.94,
+          "order_accuracy": 0.91
+        },
+        "key_events": [
+          "11:00 AM: Shift begins with a steady flow of 95 customers/hr; kitchen handling load well.",
+          "12:15 PM: Sunday lunch rush peaks at 170+ customers/hr; kitchen hits maximum throughput capacity.",
+          "12:45 PM: Drive-thru queue reaches the street; 10-minute wait threshold hit, resulting in approximately 15% customer abandonment (drive-offs).",
+          "1:30 PM: High utilization begins to impact order accuracy; minor errors reported in bag-out station.",
+          "2:45 PM: Demand tapers to 110 customers/hr; kitchen clears the backlog and wait times normalize."
+        ],
+        "bottlenecks": [
+          "Primary Bottleneck: Kitchen Capacity. With 5 cooks, the maximum throughput is ~112-120 orders/hr, which is significantly lower than the Sunday/Urban peak demand of 168/hr.",
+          "Secondary Bottleneck: Drive-thru merging. While 3 staff can handle the window/order-taking, the kitchen's inability to push food fast enough caused the dual lanes to stall."
+        ],
+        "confidence": 0.92
+      },
+      "scores": {
+        "profit": {
+          "raw_score": 0.82,
+          "weighted": 0.328,
+          "details": {
+            "margin": 0.645,
+            "labor_ratio": 0.074
+          }
+        },
+        "customer_satisfaction": {
+          "raw_score": 0.42,
+          "weighted": 0.147,
+          "details": {
+            "avg_wait_s": 445,
+            "service_rate": 0.85
+          }
+        },
+        "staff_wellbeing": {
+          "raw_score": 0.35,
+          "weighted": 0.0875,
+          "details": {
+            "avg_utilization": 0.94,
+            "burnout_risk": "critical"
+          }
+        },
+        "overall_score": 0.5625,
+        "ranking": "fair",
+        "strengths": [
+          "High revenue generation ($8,060.80) for the shift duration.",
+          "Extremely low labor cost ratio (7.4%), maximizing short-term profitability.",
+          "Effective initial handling of steady-state flow (95 customers/hr)."
+        ],
+        "weaknesses": [
+          "Significant kitchen bottleneck: capacity (120/hr) is far below peak demand (170/hr).",
+          "Poor customer experience: average wait times (445s) exceed the 300s problematic threshold.",
+          "High customer abandonment: 15% drive-off rate due to excessive queue lengths.",
+          "Staff burnout: 0.94 utilization is well above the ideal range, leading to decreased order accuracy (91%)."
+        ],
+        "recommendation": "Increase kitchen staffing levels or invest in high-capacity cooking equipment to bridge the 50 order/hr gap during Sunday peaks. The current 'Balanced' strategy is under-staffed for actual demand; increasing labor spend will likely reduce the 15% abandonment rate, potentially yielding higher total profit despite increased costs."
+      }
+    },
+    {
+      "option": {
+        "id": "balanced_throughput_optimization",
+        "strategy": "Balanced",
+        "estimated_total_guest": 100,
+        "estimated_peak_guest": 30,
+        "staffing": {
+          "drive_thru": 3,
+          "kitchen": 6,
+          "front_counter": 1,
+          "total": 10
+        },
+        "estimated_labor_cost": 1200.0,
+        "risk_level": "medium",
+        "rationale": "This plan addresses the critical kitchen bottleneck identified in previous shifts by increasing kitchen staff to 6, which is the maximum feasible within the 80-hour budget constraint (10 total staff for an 8-hour shift). By prioritizing the kitchen, we increase throughput capacity to better align with the 168 orders/hr peak demand. The drive-thru is allocated 3 staff to support dual-lane operations (order taking and window management), while the front counter is kept at the minimum of 1 to ensure all available labor is directed toward the highest-volume channels. This approach balances revenue growth through higher capacity with the need to reduce staff burnout and customer wait times."
+      },
+      "simulation": {
+        "predicted_metrics": {
+          "customers_served": 540,
+          "revenue": 9504.0,
+          "avg_wait_time_seconds": 485,
+          "peak_wait_time_seconds": 610,
+          "max_queue_length": 28,
+          "labor_cost": 600.0,
+          "food_cost": 2661.12,
+          "staff_utilization": 1.0,
+          "order_accuracy": 0.87
+        },
+        "key_events": [
+          "11:30 AM: Sunday lunch rush begins early due to church dismissals and sunny weather.",
+          "12:15 PM: Kitchen reaches 100% utilization; order backlog begins to accumulate.",
+          "12:45 PM: Drive-thru queue reaches maximum capacity, spilling toward Peachtree St entrance.",
+          "1:30 PM: Peak abandonment occurs as wait times exceed 10 minutes for walk-in customers.",
+          "2:45 PM: Demand begins to stabilize, but kitchen remains at max capacity to clear the backlog."
+        ],
+        "bottlenecks": [
+          "Kitchen Capacity: 6 cooks can only produce 135 orders/hr against a peak demand of 168/hr.",
+          "Front Counter: 1 staff member is insufficient for the 60+ walk-in customers/hr expected on a Sunday lunch in an urban area.",
+          "Drive-Thru: While 3 staff are present, the kitchen bottleneck prevents them from hitting their theoretical 90 cars/hr throughput."
+        ],
+        "confidence": 0.92
+      },
+      "scores": {
+        "profit": {
+          "raw_score": 0.92,
+          "weighted": 0.368,
+          "details": {
+            "margin": 0.657,
+            "labor_ratio": 0.063
+          }
+        },
+        "customer_satisfaction": {
+          "raw_score": 0.42,
+          "weighted": 0.147,
+          "details": {
+            "avg_wait_s": 485,
+            "service_rate": 0.803
+          }
+        },
+        "staff_wellbeing": {
+          "raw_score": 0.15,
+          "weighted": 0.0375,
+          "details": {
+            "avg_utilization": 1.0,
+            "burnout_risk": "critical"
+          }
+        },
+        "overall_score": 0.5525,
+        "ranking": "fair",
+        "strengths": [
+          "Exceptional labor cost efficiency (6.3% of revenue).",
+          "High total revenue generation ($9,504) despite bottlenecks.",
+          "Effective utilization of kitchen staff to near-maximum theoretical output."
+        ],
+        "weaknesses": [
+          "Critical staff burnout with 100% utilization across the shift.",
+          "Excessive wait times (485s average) significantly exceeding the 300s problematic threshold.",
+          "Significant revenue loss due to peak abandonment and drive-thru spillover.",
+          "Sub-optimal order accuracy (87%) likely caused by extreme staff pressure.",
+          "Severe front-counter bottleneck with only 1 staff member for high Sunday walk-in volume."
+        ],
+        "recommendation": "The current staffing level is under-resourced for Sunday peak demand. While highly profitable in the short term, the 100% utilization and 10-minute peak wait times will lead to long-term brand damage and staff turnover. Recommend increasing total headcount by 2-3 members: add 1 to Front Counter to alleviate walk-in congestion and 1-2 to the Kitchen to bridge the 33 order/hr gap between capacity (135) and peak demand (168)."
+      }
+    },
+    {
+      "option": {
+        "id": "balanced_peak_sync",
+        "strategy": "Balanced Peak Efficiency",
+        "estimated_total_guest": 100,
+        "estimated_peak_guest": 30,
+        "staffing": {
+          "drive_thru": 2,
+          "kitchen": 6,
+          "front_counter": 2,
+          "total": 10
+        },
+        "estimated_labor_cost": 1200.0,
+        "risk_level": "medium",
+        "rationale": "This plan addresses the 'Balanced' priority by specifically mitigating the bottlenecks identified in previous attempts while adhering to the 80-hour budget (10 staff x 8 hours). By increasing Kitchen staff to 6, we raise production capacity to approximately 135 orders/hr, which better aligns with the high Sunday demand. Doubling the Front Counter staff to 2 directly addresses the 'severe bottleneck' and high abandonment rates seen with walk-in customers on Peachtree St. Drive-thru is kept at the minimum of 2 to ensure both lanes are operational while prioritizing the kitchen and front-end balance to reduce overall customer wait times and staff burnout."
+      },
+      "simulation": {
+        "predicted_metrics": {
+          "customers_served": 542,
+          "revenue": 9756.0,
+          "avg_wait_time_seconds": 485,
+          "peak_wait_time_seconds": 600,
+          "max_queue_length": 24,
+          "labor_cost": 600.0,
+          "food_cost": 2731.68,
+          "staff_utilization": 0.98,
+          "order_accuracy": 0.91
+        },
+        "key_events": [
+          "11:30 AM: Shift begins with high baseline demand due to Sunday lunch and urban location (est. 168 customers/hr demand).",
+          "12:15 PM: Kitchen reaches maximum throughput capacity of 135 orders/hr; queue begins to build rapidly.",
+          "12:45 PM: Drive-thru lanes reach stacking capacity; wait times hit the 10-minute threshold, leading to approximately 15% customer abandonment.",
+          "1:30 PM: Peak intensity sustained; kitchen staff reporting high stress levels, order accuracy begins to dip.",
+          "2:45 PM: Demand finally drops below service capacity, allowing the team to clear the remaining backlog before shift end."
+        ],
+        "bottlenecks": [
+          "Primary Bottleneck: Kitchen Capacity. With only 6 cooks, the maximum output (135/hr) is significantly lower than the peak Sunday demand (168/hr).",
+          "Secondary Bottleneck: Drive-Thru Staffing. 2 staff members for 2 lanes during a peak Sunday rush created a data-entry lag, though the kitchen was the ultimate hard stop."
+        ],
+        "confidence": 0.92
+      },
+      "scores": {
+        "profit": {
+          "raw_score": 0.92,
+          "weighted": 0.368,
+          "details": {
+            "margin": 0.658,
+            "labor_ratio": 0.0615
+          }
+        },
+        "customer_satisfaction": {
+          "raw_score": 0.45,
+          "weighted": 0.1575,
+          "details": {
+            "avg_wait_s": 485,
+            "service_rate": 0.85
+          }
+        },
+        "staff_wellbeing": {
+          "raw_score": 0.2,
+          "weighted": 0.05,
+          "details": {
+            "avg_utilization": 0.98,
+            "burnout_risk": "critical"
+          }
+        },
+        "overall_score": 0.5755,
+        "ranking": "fair",
+        "strengths": [
+          "Exceptional revenue-to-labor cost efficiency (6.15% labor ratio).",
+          "High total revenue capture ($9,756) despite operational bottlenecks.",
+          "Strong order accuracy (91%) maintained under high pressure."
+        ],
+        "weaknesses": [
+          "Severe kitchen bottleneck: Capacity (135/hr) failed to meet Sunday demand (168/hr).",
+          "Unacceptable customer wait times: Average wait of 8+ minutes exceeds the 5-minute problematic threshold.",
+          "Critical staff burnout risk: 98% utilization is unsustainable and led to a 15% customer abandonment rate.",
+          "Drive-thru staffing was insufficient to handle data entry, compounding the kitchen delay."
+        ],
+        "recommendation": "Increase Kitchen staffing by at least 2 additional members to bridge the 33 order/hr gap between current capacity and peak demand. While the labor ratio is currently excellent, the 15% abandonment rate represents significant lost revenue that would more than offset the cost of additional staff. Aim to bring utilization down to the 0.80-0.85 range to stabilize service times and protect staff retention."
+      }
+    }
+  ],
+  "best_decision": {
+    "option": {
+      "id": "balanced_peak_sync",
+      "strategy": "Balanced Peak Efficiency",
+      "estimated_total_guest": 100,
+      "estimated_peak_guest": 30,
+      "staffing": {
+        "drive_thru": 2,
+        "kitchen": 6,
+        "front_counter": 2,
+        "total": 10
+      },
+      "estimated_labor_cost": 1200.0,
+      "risk_level": "medium",
+      "rationale": "This plan addresses the 'Balanced' priority by specifically mitigating the bottlenecks identified in previous attempts while adhering to the 80-hour budget (10 staff x 8 hours). By increasing Kitchen staff to 6, we raise production capacity to approximately 135 orders/hr, which better aligns with the high Sunday demand. Doubling the Front Counter staff to 2 directly addresses the 'severe bottleneck' and high abandonment rates seen with walk-in customers on Peachtree St. Drive-thru is kept at the minimum of 2 to ensure both lanes are operational while prioritizing the kitchen and front-end balance to reduce overall customer wait times and staff burnout."
+    },
+    "simulation": {
+      "predicted_metrics": {
+        "customers_served": 542,
+        "revenue": 9756.0,
+        "avg_wait_time_seconds": 485,
+        "peak_wait_time_seconds": 600,
+        "max_queue_length": 24,
+        "labor_cost": 600.0,
+        "food_cost": 2731.68,
+        "staff_utilization": 0.98,
+        "order_accuracy": 0.91
+      },
+      "key_events": [
+        "11:30 AM: Shift begins with high baseline demand due to Sunday lunch and urban location (est. 168 customers/hr demand).",
+        "12:15 PM: Kitchen reaches maximum throughput capacity of 135 orders/hr; queue begins to build rapidly.",
+        "12:45 PM: Drive-thru lanes reach stacking capacity; wait times hit the 10-minute threshold, leading to approximately 15% customer abandonment.",
+        "1:30 PM: Peak intensity sustained; kitchen staff reporting high stress levels, order accuracy begins to dip.",
+        "2:45 PM: Demand finally drops below service capacity, allowing the team to clear the remaining backlog before shift end."
+      ],
+      "bottlenecks": [
+        "Primary Bottleneck: Kitchen Capacity. With only 6 cooks, the maximum output (135/hr) is significantly lower than the peak Sunday demand (168/hr).",
+        "Secondary Bottleneck: Drive-Thru Staffing. 2 staff members for 2 lanes during a peak Sunday rush created a data-entry lag, though the kitchen was the ultimate hard stop."
+      ],
+      "confidence": 0.92
+    },
+    "scores": {
+      "profit": {
+        "raw_score": 0.92,
+        "weighted": 0.368,
+        "details": {
+          "margin": 0.658,
+          "labor_ratio": 0.0615
+        }
+      },
+      "customer_satisfaction": {
+        "raw_score": 0.45,
+        "weighted": 0.1575,
+        "details": {
+          "avg_wait_s": 485,
+          "service_rate": 0.85
+        }
+      },
+      "staff_wellbeing": {
+        "raw_score": 0.2,
+        "weighted": 0.05,
+        "details": {
+          "avg_utilization": 0.98,
+          "burnout_risk": "critical"
+        }
+      },
+      "overall_score": 0.5755,
+      "ranking": "fair",
+      "strengths": [
+        "Exceptional revenue-to-labor cost efficiency (6.15% labor ratio).",
+        "High total revenue capture ($9,756) despite operational bottlenecks.",
+        "Strong order accuracy (91%) maintained under high pressure."
+      ],
+      "weaknesses": [
+        "Severe kitchen bottleneck: Capacity (135/hr) failed to meet Sunday demand (168/hr).",
+        "Unacceptable customer wait times: Average wait of 8+ minutes exceeds the 5-minute problematic threshold.",
+        "Critical staff burnout risk: 98% utilization is unsustainable and led to a 15% customer abandonment rate.",
+        "Drive-thru staffing was insufficient to handle data entry, compounding the kitchen delay."
+      ],
+      "recommendation": "Increase Kitchen staffing by at least 2 additional members to bridge the 33 order/hr gap between current capacity and peak demand. While the labor ratio is currently excellent, the 15% abandonment rate represents significant lost revenue that would more than offset the cost of additional staff. Aim to bring utilization down to the 0.80-0.85 range to stabilize service times and protect staff retention."
+    }
+  },
+  "execution_time_seconds": 131.18
+}

@@ -1,0 +1,28 @@
+
+# Core Dependencies
+google-genai>=0.1.0
+google-cloud-aiplatform>=1.38.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# API Framework
+fastapi>=0.104.0
+uvicorn>=0.24.0
+python-multipart>=0.0.6
+
+# CLI
+click>=8.1.7
+rich>=13.7.0
+python-dotenv>=1.0.0
+
+# Data Processing
+python-json-logger>=2.0.7
+pandas>=2.1.0
+
+# Testing
+pytest>=7.4.3
+pytest-asyncio>=0.21.1
+httpx>=0.25.0
+
+# Utilities
+tenacity>=8.2.3

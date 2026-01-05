@@ -1,0 +1,184 @@
+{
+  "request_id": "3d05f193-2fd4-44b4-9c7d-da546daefdf9",
+  "timestamp": "2026-01-05T00:33:19.763829",
+  "scenario": {
+    "shift": "lunch",
+    "date": "2026-01-05",
+    "day_of_week": "monday",
+    "weather": "sunny",
+    "special_events": [],
+    "restaurant": {
+      "location": "Peachtree St",
+      "has_drive_thru": true,
+      "drive_thru_lanes": 2,
+      "kitchen_staff_capacity": "medium",
+      "dine_in": true,
+      "dine_in_seat_capacity": 50
+    }
+  },
+  "options_evaluated": [
+    {
+      "option": {
+        "id": "balanced_peachtree_lunch",
+        "strategy": "Balanced Growth Strategy",
+        "estimated_total_guest": 100,
+        "estimated_peak_guest": 30,
+        "staffing": {
+          "drive_thru": 3,
+          "kitchen": 5,
+          "front_counter": 2,
+          "total": 10
+        },
+        "estimated_labor_cost": 1200.0,
+        "risk_level": "medium",
+        "rationale": "This plan utilizes the full 80-hour budget (10 staff members) to address the identified kitchen bottleneck while maintaining service levels for the Monday lunch rush. With a 1.05 demand multiplier and high drive-thru preference, 3 staff members are allocated to the drive-thru to manage the two lanes efficiently. 5 staff members are placed in the kitchen to push production toward its 80 orders/hour physical limit. 2 staff members are assigned to the front counter to accommodate the increased walk-in traffic from nearby offices due to the sunny weather. The 'medium' risk level accounts for the fact that potential demand (110 orders/hr) still exceeds the kitchen's maximum physical capacity (80 orders/hr), meaning some wait times are unavoidable during the peak surge."
+      },
+      "simulation": {
+        "predicted_metrics": {
+          "customers_served": 442,
+          "revenue": 7956.0,
+          "avg_wait_time_seconds": 285,
+          "peak_wait_time_seconds": 510,
+          "max_queue_length": 18,
+          "labor_cost": 600.0,
+          "food_cost": 2227.68,
+          "staff_utilization": 0.92,
+          "order_accuracy": 0.94
+        },
+        "key_events": [
+          "11:00 AM: Shift begins with steady urban foot traffic; kitchen prep is ahead of schedule.",
+          "12:15 PM: Peak lunch rush hits; Peachtree St foot traffic increases walk-in volume by 25%.",
+          "12:45 PM: Kitchen reaches maximum throughput; 5-cook line is fully utilized.",
+          "1:20 PM: Drive-thru remains efficient with 3 staff, but kitchen backlog causes slight window delays.",
+          "2:30 PM: Rush subsides; staff transitions to post-lunch cleaning and restocking."
+        ],
+        "bottlenecks": [
+          "Kitchen Capacity: With 5 cooks and a peak demand of ~120 orders/hour, the kitchen is the primary constraint. Utilization hit 1.0 during the 12:30-1:15 PM window.",
+          "Front Counter: 2 staff members struggled slightly with the urban walk-in surge, leading to a max queue of 18 customers during the peak."
+        ],
+        "confidence": 0.92
+      },
+      "scores": {
+        "profit": {
+          "raw_score": 0.98,
+          "weighted": 0.392,
+          "details": {
+            "margin": 0.644,
+            "labor_ratio": 0.075
+          }
+        },
+        "customer_satisfaction": {
+          "raw_score": 0.75,
+          "weighted": 0.2625,
+          "details": {
+            "avg_wait_s": 285,
+            "service_rate": 0.98
+          }
+        },
+        "staff_wellbeing": {
+          "raw_score": 0.52,
+          "weighted": 0.13,
+          "details": {
+            "avg_utilization": 0.92,
+            "burnout_risk": "high"
+          }
+        },
+        "overall_score": 0.7845,
+        "ranking": "good",
+        "strengths": [
+          "Exceptional labor cost efficiency (7.5% of revenue).",
+          "High order accuracy (94%) despite high volume.",
+          "Strong revenue generation ($7,956) for a lunch shift."
+        ],
+        "weaknesses": [
+          "Critical staff burnout risk with 0.92 average utilization and kitchen hitting 1.0.",
+          "Peak wait times (510s) significantly exceed the 300s threshold.",
+          "Front counter bottlenecking led to a large queue of 18 customers."
+        ],
+        "recommendation": "While highly profitable, the current staffing level is unsustainable for long-term operations. The kitchen is a hard bottleneck. Recommend adding one additional staff member to the kitchen to reduce peak wait times and one 'floater' to assist the front counter during the 12:15 PM surge. This will lower utilization to the 'ideal' range (0.7-0.85) and protect against staff turnover."
+      }
+    }
+  ],
+  "best_decision": {
+    "option": {
+      "id": "balanced_peachtree_lunch",
+      "strategy": "Balanced Growth Strategy",
+      "estimated_total_guest": 100,
+      "estimated_peak_guest": 30,
+      "staffing": {
+        "drive_thru": 3,
+        "kitchen": 5,
+        "front_counter": 2,
+        "total": 10
+      },
+      "estimated_labor_cost": 1200.0,
+      "risk_level": "medium",
+      "rationale": "This plan utilizes the full 80-hour budget (10 staff members) to address the identified kitchen bottleneck while maintaining service levels for the Monday lunch rush. With a 1.05 demand multiplier and high drive-thru preference, 3 staff members are allocated to the drive-thru to manage the two lanes efficiently. 5 staff members are placed in the kitchen to push production toward its 80 orders/hour physical limit. 2 staff members are assigned to the front counter to accommodate the increased walk-in traffic from nearby offices due to the sunny weather. The 'medium' risk level accounts for the fact that potential demand (110 orders/hr) still exceeds the kitchen's maximum physical capacity (80 orders/hr), meaning some wait times are unavoidable during the peak surge."
+    },
+    "simulation": {
+      "predicted_metrics": {
+        "customers_served": 442,
+        "revenue": 7956.0,
+        "avg_wait_time_seconds": 285,
+        "peak_wait_time_seconds": 510,
+        "max_queue_length": 18,
+        "labor_cost": 600.0,
+        "food_cost": 2227.68,
+        "staff_utilization": 0.92,
+        "order_accuracy": 0.94
+      },
+      "key_events": [
+        "11:00 AM: Shift begins with steady urban foot traffic; kitchen prep is ahead of schedule.",
+        "12:15 PM: Peak lunch rush hits; Peachtree St foot traffic increases walk-in volume by 25%.",
+        "12:45 PM: Kitchen reaches maximum throughput; 5-cook line is fully utilized.",
+        "1:20 PM: Drive-thru remains efficient with 3 staff, but kitchen backlog causes slight window delays.",
+        "2:30 PM: Rush subsides; staff transitions to post-lunch cleaning and restocking."
+      ],
+      "bottlenecks": [
+        "Kitchen Capacity: With 5 cooks and a peak demand of ~120 orders/hour, the kitchen is the primary constraint. Utilization hit 1.0 during the 12:30-1:15 PM window.",
+        "Front Counter: 2 staff members struggled slightly with the urban walk-in surge, leading to a max queue of 18 customers during the peak."
+      ],
+      "confidence": 0.92
+    },
+    "scores": {
+      "profit": {
+        "raw_score": 0.98,
+        "weighted": 0.392,
+        "details": {
+          "margin": 0.644,
+          "labor_ratio": 0.075
+        }
+      },
+      "customer_satisfaction": {
+        "raw_score": 0.75,
+        "weighted": 0.2625,
+        "details": {
+          "avg_wait_s": 285,
+          "service_rate": 0.98
+        }
+      },
+      "staff_wellbeing": {
+        "raw_score": 0.52,
+        "weighted": 0.13,
+        "details": {
+          "avg_utilization": 0.92,
+          "burnout_risk": "high"
+        }
+      },
+      "overall_score": 0.7845,
+      "ranking": "good",
+      "strengths": [
+        "Exceptional labor cost efficiency (7.5% of revenue).",
+        "High order accuracy (94%) despite high volume.",
+        "Strong revenue generation ($7,956) for a lunch shift."
+      ],
+      "weaknesses": [
+        "Critical staff burnout risk with 0.92 average utilization and kitchen hitting 1.0.",
+        "Peak wait times (510s) significantly exceed the 300s threshold.",
+        "Front counter bottlenecking led to a large queue of 18 customers."
+      ],
+      "recommendation": "While highly profitable, the current staffing level is unsustainable for long-term operations. The kitchen is a hard bottleneck. Recommend adding one additional staff member to the kitchen to reduce peak wait times and one 'floater' to assist the front counter during the 12:15 PM surge. This will lower utilization to the 'ideal' range (0.7-0.85) and protect against staff turnover."
+    }
+  },
+  "execution_time_seconds": 40.87
+}
