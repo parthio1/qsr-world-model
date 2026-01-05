@@ -90,7 +90,8 @@ OUTPUT FORMAT (JSON):
   "ranking": "excellent" | "very good" | "good" | "fair" | "poor",
   "strengths": [<str>, ...],
   "weaknesses": [<str>, ...],
-  "recommendation": <str>
+  "recommendation": <str>,
+  "reasoning": "Detailed agentic reasoning explaining the mathematical breakdown, trade-off analysis, and alignment justification using a Chain of Thought framework."
 }
 
 Be analytical and data-driven in your evaluation."""
@@ -154,7 +155,8 @@ Return the scores in the specified JSON format.
                 ranking=result_dict["ranking"],
                 strengths=result_dict.get("strengths", []),
                 weaknesses=result_dict.get("weaknesses", []),
-                recommendation=result_dict.get("recommendation", "")
+                recommendation=result_dict.get("recommendation", ""),
+                reasoning=result_dict.get("reasoning")
             )
             
             logger.info(f"Scoring complete for {option.id}: {scores.overall_score:.3f}")

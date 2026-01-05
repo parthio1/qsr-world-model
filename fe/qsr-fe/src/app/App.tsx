@@ -12,6 +12,8 @@ import { API_BASE_URL } from './constants';
 export default function App() {
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false);
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false);
+  const [traceMode, setTraceMode] = useState(false);
+  const [reasoningMode, setReasoningMode] = useState(false);
 
   // State for shared form data from SourcePanel
   const [formData, setFormData] = useState<PlanFormData | null>(null);
@@ -72,6 +74,8 @@ export default function App() {
             isLoadingPlan={isLoadingPlan}
             isLoadingEvaluation={isLoadingEvaluation}
             error={planError || evaluationError}
+            traceMode={traceMode}
+            reasoningMode={reasoningMode}
           />
           <StudioPanel
             isCollapsed={rightPanelCollapsed}
@@ -80,6 +84,10 @@ export default function App() {
             isRunning={isLoadingPlan}
             currentPlan={plan}
             onEvaluationSubmit={evaluate}
+            traceMode={traceMode}
+            onTraceModeChange={setTraceMode}
+            reasoningMode={reasoningMode}
+            onReasoningModeChange={setReasoningMode}
           />
         </div>
       </div>

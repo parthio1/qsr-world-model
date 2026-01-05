@@ -11,6 +11,8 @@ import {
   BarChart3,
   Radar,
   UserCheck,
+  Zap,
+  Brain,
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
@@ -23,6 +25,10 @@ interface StudioPanelProps {
   isRunning: boolean;
   currentPlan: PlanResponse | null;
   onEvaluationSubmit: (request: any) => Promise<any>;
+  traceMode: boolean;
+  onTraceModeChange: (value: boolean) => void;
+  reasoningMode: boolean;
+  onReasoningModeChange: (value: boolean) => void;
 }
 
 interface Tool {
@@ -40,6 +46,8 @@ const focusTools: Tool[] = [
 ];
 
 const performanceTools: Tool[] = [
+  { id: 'trace', name: 'Trace Mode', icon: Zap, color: 'bg-blue-50 text-blue-600', group: 'performance' },
+  { id: 'reasoning', name: 'Reasoning Mode', icon: Brain, color: 'bg-purple-50 text-purple-600', group: 'performance' },
   { id: 'compare', name: 'Compare', icon: GitCompare, color: 'bg-orange-50 text-orange-600', group: 'performance' },
   { id: 'benchmark', name: 'Benchmark', icon: BarChart3, color: 'bg-indigo-50 text-indigo-600', group: 'performance' },
 ];
@@ -51,7 +59,7 @@ const additionalTools: Tool[] = [
 
 import { useServerStatus } from '../hooks/useApi';
 
-export function StudioPanel({ isCollapsed, onToggle, onRunModel, isRunning }: StudioPanelProps) {
+export function StudioPanel({ isCollapsed, onToggle, onRunModel, isRunning, traceMode, onTraceModeChange, reasoningMode, onReasoningModeChange }: StudioPanelProps) {
   const { isOnline, isLoading: isCheckingStatus, checkStatus } = useServerStatus();
 
   if (isCollapsed) {
@@ -142,12 +150,38 @@ export function StudioPanel({ isCollapsed, onToggle, onRunModel, isRunning }: St
           <div className="space-y-4">
             <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">Performance Bench</h3>
             <div className="grid grid-cols-2 gap-2">
-              {performanceTools.map(tool => (
-                <div key={tool.id} className="p-3 rounded-xl border border-slate-100 bg-white hover:bg-slate-50 transition-colors cursor-pointer text-center flex flex-col items-center gap-1">
-                  <div className={`p-2 rounded-lg ${tool.color} mb-1`}><tool.icon className="h-4 w-4" /></div>
-                  <span className="text-[11px] font-bold text-slate-700">{tool.name}</span>
-                </div>
-              ))}
+              {performanceTools.map(tool => {
+                const isActive = (tool.id === 'trace' && traceMode) || (tool.id === 'reasoning' && reasoningMode);
+                const activeColor = tool.id === 'trace' ? 'bg-blue-600 border-blue-700 shadow-blue-500/20' : 'bg-purple-600 border-purple-700 shadow-purple-500/20';
+
+                return (
+                  <div
+                    key={tool.id}
+                    onClick={() => {
+                      if (isRunning) return;
+                      if (tool.id === 'trace') {
+                        onTraceModeChange(!traceMode);
+                        if (!traceMode) onReasoningModeChange(false);
+                      }
+                      if (tool.id === 'reasoning') {
+                        onReasoningModeChange(!reasoningMode);
+                        if (!reasoningMode) onTraceModeChange(false);
+                      }
+                    }}
+                    className={`p-3 rounded-xl border transition-all flex flex-col items-center gap-1 ${isActive
+                      ? `${activeColor} shadow-lg text-white`
+                      : 'border-slate-100 bg-white hover:bg-slate-50 text-slate-700'
+                      } ${isRunning ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer text-center'}`}
+                  >
+                    <div className={`p-2 rounded-lg ${isActive ? 'bg-white/20 text-white' : tool.color} mb-1`}>
+                      <tool.icon className="h-4 w-4" />
+                    </div>
+                    <span className="text-[11px] font-bold">
+                      {tool.name}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

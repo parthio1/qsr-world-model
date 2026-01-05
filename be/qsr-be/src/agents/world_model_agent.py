@@ -80,7 +80,8 @@ OUTPUT FORMAT (JSON):
   "bottlenecks": [
     "Kitchen slightly overwhelmed 5:30-6:15 PM"
   ],
-  "confidence": <float 0-1>
+  "confidence": <float 0-1>,
+  "reasoning": "Detailed agentic reasoning explaining the simulation logic, demand assumptions, and queue dynamics using a Chain of Thought framework."
 }
 
 Be precise with numbers and provide realistic predictions."""
@@ -136,7 +137,8 @@ Simulate this {scenario.shift.value} shift and predict outcomes. Provide detaile
                 predicted_metrics=PredictedMetrics(**result_dict["predicted_metrics"]),
                 key_events=result_dict.get("key_events", []),
                 bottlenecks=result_dict.get("bottlenecks", []),
-                confidence=result_dict.get("confidence", 0.8)
+                confidence=result_dict.get("confidence", 0.8),
+                reasoning=result_dict.get("reasoning")
             )
             
             logger.info(f"Simulation complete: {simulation_result.predicted_metrics.customers_served} customers predicted")

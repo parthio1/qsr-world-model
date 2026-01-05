@@ -92,6 +92,7 @@ export interface SimulationResult {
   key_events: string[];
   bottlenecks: string[];
   confidence: number;
+  reasoning?: string;
 }
 
 export interface ScoreItem {
@@ -109,6 +110,7 @@ export interface Scores {
   strengths: string[];
   weaknesses: string[];
   recommendation: string;
+  reasoning?: string;
 }
 
 export interface OptionEvaluation {
@@ -121,9 +123,16 @@ export interface OptionEvaluation {
     estimated_labor_cost: number;
     risk_level: string;
     rationale: string;
+    reasoning?: string;
   };
   simulation: SimulationResult;
   scores: Scores;
+}
+
+export interface IterationTrace {
+  iteration_number: number;
+  evaluations: OptionEvaluation[];
+  feedback?: string;
 }
 
 export interface PlanResponse {
@@ -146,6 +155,7 @@ export interface PlanResponse {
   };
   options_evaluated: OptionEvaluation[];
   best_decision: OptionEvaluation;
+  iterations: IterationTrace[];
   execution_time_seconds: number;
 }
 

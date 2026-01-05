@@ -66,7 +66,8 @@ OUTPUT FORMAT (JSON):
     },
     "estimated_labor_cost": <float>,
     "risk_level": "very_low" | "low" | "medium" | "high" | "very_high",
-    "rationale": "Why this allocation makes sense for the strategy"
+    "rationale": "Why this allocation makes sense for the strategy",
+    "reasoning": "Detailed agentic reasoning explaining the trade-offs and bottleneck analysis using a Chain of Thought framework."
   },
   ...
 ]
@@ -143,7 +144,8 @@ Return the option in the specified JSON format.
                     staffing=staffing,
                     estimated_labor_cost=opt_data["estimated_labor_cost"],
                     risk_level=RiskLevel(opt_data["risk_level"]),
-                    rationale=opt_data["rationale"]
+                    rationale=opt_data["rationale"],
+                    reasoning=opt_data.get("reasoning")
                 )
                 options.append(option)
             

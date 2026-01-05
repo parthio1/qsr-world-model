@@ -98,6 +98,7 @@ class StaffingPlan(BaseModel):
     estimated_labor_cost: float
     risk_level: RiskLevel
     rationale: str
+    reasoning: Optional[str] = None
 
 class PredictedMetrics(BaseModel):
     """Predicted operational metrics"""
@@ -117,6 +118,7 @@ class SimulationResult(BaseModel):
     key_events: List[str] = []
     bottlenecks: List[str] = []
     confidence: float = Field(ge=0, le=1)
+    reasoning: Optional[str] = None
 
 class ScoreDetails(BaseModel):
     """Detailed score breakdown"""
@@ -134,6 +136,7 @@ class Scores(BaseModel):
     strengths: List[str] = []
     weaknesses: List[str] = []
     recommendation: str
+    reasoning: Optional[str] = None
 
 class EvaluationResult(BaseModel):
     """Post-execution evaluation"""
@@ -159,6 +162,12 @@ class OptionEvaluation(BaseModel):
     simulation: SimulationResult
     scores: Scores
 
+class IterationTrace(BaseModel):
+    """Trace data for a single reasoning iteration"""
+    iteration_number: int
+    evaluations: List[OptionEvaluation]
+    feedback: Optional[str] = None
+
 class PlanningResponse(BaseModel):
     """Complete planning response"""
     request_id: str
@@ -166,6 +175,7 @@ class PlanningResponse(BaseModel):
     scenario: Scenario
     options_evaluated: Optional[List[OptionEvaluation]] = None
     best_decision: Optional[OptionEvaluation] = None
+    iterations: List[IterationTrace] = []
     execution_time_seconds: float
 
 

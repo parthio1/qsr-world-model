@@ -13,8 +13,7 @@ from src.agents.restaurant_agent import RestaurantModelAgent
 from src.models.schemas import (
     PlanningRequest, PlanningResponse, OptionEvaluation,
     EvaluationRequest, EvaluationResponse, Constraints,
-    EvaluationRequest, EvaluationResponse, Constraints,
-    AlignmentWeights
+    AlignmentWeights, IterationTrace
 )
 import json
 from src.utils.logger import setup_logger
@@ -88,10 +87,11 @@ class QSROrchestrator:
         
         # ===== AGENTIC REASONING LOOP WITH QSR WORLD MODE =====
         evaluations: List[OptionEvaluation] = []
+        iterations: List[IterationTrace] = []
         feedback = None
         attempts = 0
-        MAX_ATTEMPTS = 2
-        TARGET_SCORE = 0.95  # Threshold for "Good Enough"
+        MAX_ATTEMPTS = 2 # Increased to show more tracing as per discussion
+        TARGET_SCORE = 0.90  # Threshold for "Good Enough"
         
         while attempts < MAX_ATTEMPTS:
             attempts += 1
@@ -143,6 +143,14 @@ class QSROrchestrator:
                 evaluations.append(evaluation)  # Keep history of all attempts
                 logger.info(f"Score: {scores.overall_score:.3f}")
 
+            # Capture this iteration's trace
+            iteration_trace = IterationTrace(
+                iteration_number=attempts,
+                evaluations=[e for e in current_iteration_evals],
+                feedback=feedback
+            )
+            iterations.append(iteration_trace)
+
             # Step 4: Check Threshold & Prepare Feedback
             if not current_iteration_evals:
                 logger.warning("No options generated in this iteration.")
@@ -159,13 +167,11 @@ class QSROrchestrator:
             if attempts < MAX_ATTEMPTS:
                 logger.info(f"Score {best_of_run.scores.overall_score:.3f} below target. Preparing feedback for next iteration...")
                 feedback = f"Attempt {attempts} result: Score {best_of_run.scores.overall_score:.3f}. "
-                logger.info(f"Feedback b4: {feedback}")
                 if best_of_run.simulation.bottlenecks:
                     feedback += f"Bottlenecks identified: {', '.join(best_of_run.simulation.bottlenecks)}. "
                 if best_of_run.scores.weaknesses:
                     feedback += f"Weaknesses: {', '.join(best_of_run.scores.weaknesses)}. "
                 feedback += "Please adjust staffing to address these specific issues."
-                logger.info(f"Feedback after: {feedback}")
 
         # Final Selection
         if not evaluations:
@@ -182,6 +188,7 @@ class QSROrchestrator:
             scenario=request.scenario,
             options_evaluated=evaluations,
             best_decision=best_overall,
+            iterations=iterations,
             execution_time_seconds=round(execution_time, 2)
         )
         
