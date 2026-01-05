@@ -1,0 +1,88 @@
+{
+  "timestamp": "2026-01-05T11:28:33.072640",
+  "model_name": "gemini-2.0-flash-lite-preview",
+  "total_cases": 3,
+  "passed_cases": 2,
+  "pass_rate": 0.6666666666666666,
+  "avg_priority_score": 5.0,
+  "avg_reasoning_score": 4.666666666666667,
+  "results": [
+    {
+      "case_id": "scenario_stormy_rush",
+      "passed": true,
+      "plan_generated": {
+        "id": "customer_centric_peak",
+        "strategy": "Aggressive (Growth) - Customer First",
+        "estimated_total_guest": 100,
+        "estimated_peak_guest": 30,
+        "staffing": {
+          "drive_thru": 5,
+          "kitchen": 7,
+          "front_counter": 3,
+          "total": 15
+        },
+        "estimated_labor_cost": 1800.0,
+        "risk_level": "low",
+        "rationale": "This plan maximizes the available staff pool to ensure zero-bottleneck service during a high-demand Friday night complicated by a rock concert and stormy weather. By prioritizing the kitchen and drive-thru, we ensure speed of service remains high despite the external environmental challenges.",
+        "reasoning": "UNDERSTAND OPERATOR PRIORITY: The priority is 'customer_first', which dictates that service speed and order accuracy take precedence over labor cost optimization. ANALYZE OPERATIONAL SCENARIO: A Friday dinner shift in Downtown Atlanta with a local rock concert suggests high volume. However, the 'stormy' weather will likely shift the majority of that volume to the Drive-Thru and delivery, as customers avoid walking in the rain. BOTTLENECK IDENTIFICATION: The primary bottleneck will be the Kitchen (due to high volume) and the Drive-Thru (due to weather-induced demand and the 2-lane configuration). REASON TRADE-OFFS: I have allocated the maximum available staff (15). I am shifting resources heavily into the Kitchen (7) to ensure food is prepared faster than it is ordered. The Drive-Thru is staffed with 5 people to manage both lanes and ensure a dedicated runner/expeditor is available so customers aren't idling in the storm. The Front Counter is kept at 3 to handle the concert-goers who do brave the weather, ensuring they are served quickly to make their show. RISK ANALYSIS: The main risk is 'very low' for the customer but 'high' for short-term profit margins due to maximum labor spend. There is also a minor risk of kitchen congestion if the 'medium' capacity cannot physically accommodate 7 people, but this is necessary to prevent long ticket times. STAFF ALLOCATION: 5 DT, 7 Kitchen, 3 Front Counter. ESTIMATED LABOR COST: 15 staff * 8 hours * $15/hr (estimated) = $1,800.00."
+      },
+      "constraint_violations": [],
+      "priority_score": 5,
+      "reasoning_quality_score": 5,
+      "judge_feedback": "The plan is excellent. It correctly identifies the key bottlenecks (kitchen and drive-thru) and allocates resources effectively to address them, prioritizing speed and customer experience given the customer-first priority. The rationale is clear, and the trade-off analysis is well-considered, especially the risk analysis. The estimated labor cost is also provided.",
+      "error": null
+    },
+    {
+      "case_id": "scenario_budget_squeeze",
+      "passed": false,
+      "plan_generated": {
+        "id": "lean_skeleton_crew",
+        "strategy": "Conservative (Lean)",
+        "estimated_total_guest": 100,
+        "estimated_peak_guest": 30,
+        "staffing": {
+          "drive_thru": 2,
+          "kitchen": 2,
+          "front_counter": 1,
+          "total": 5
+        },
+        "estimated_labor_cost": 600.0,
+        "risk_level": "very_high",
+        "rationale": "This plan prioritizes the 'minimize_cost' goal by strictly adhering to the 40-hour budget constraint. By deploying only 5 staff members for the 8-hour shift, we maintain the absolute minimum presence required to keep all channels (Drive-Thru, Front Counter, Kitchen) open, though it falls below the usual minimum for kitchen staffing.",
+        "reasoning": "Chain of Thought: 1. **Operator Priority Analysis**: The primary goal is 'minimize_cost'. With a hard constraint of 40 budget hours and a standard shift duration of 8 hours, the maximum allowable headcount is 5 staff members (40 / 8 = 5). 2. **Operational Scenario Analysis**: It is a sunny Saturday lunch in Downtown Atlanta. This typically indicates high demand from both local foot traffic and drive-thru customers. 3. **Constraint Reconciliation**: The 'usual' minimum staffing requires 6 people (2 DT, 3 Kitchen, 1 FC). However, 6 people would require 48 hours, exceeding the 40-hour budget. To meet the 'minimize_cost' priority, the headcount must be reduced to 5. 4. **Bottleneck Identification**: The Kitchen is the primary bottleneck. Reducing kitchen staff to 2 (below the usual minimum of 3) during a peak Saturday lunch will result in significantly increased ticket times and order backing. 5. **Trade-offs**: We are sacrificing customer experience (wait times) and staff wellbeing (high stress/workload) to satisfy the strict labor budget. The Front Counter and Drive-Thru are kept at their minimums to ensure orders can at least be taken, even if fulfillment is slow. 6. **Risk Analysis**: There is a very high risk of 'walk-outs' and negative reviews due to long waits. Additionally, a 2-person kitchen on a busy Saturday poses a risk of staff burnout and potential safety lapses due to overexertion."
+      },
+      "constraint_violations": [
+        "kitchen staffed at 2, minimum required is 3"
+      ],
+      "priority_score": 5,
+      "reasoning_quality_score": 4,
+      "judge_feedback": "The plan effectively minimizes cost by adhering to the budget constraint, but at a significant risk to customer experience and staff well-being. The reasoning is sound, identifying the kitchen as the bottleneck and acknowledging the trade-offs. The high risk of negative consequences should be explicitly flagged as a major downside in the final decision.",
+      "error": null
+    },
+    {
+      "case_id": "scenario_ghost_town",
+      "passed": true,
+      "plan_generated": {
+        "id": "balanced_commuter_flow",
+        "strategy": "Balanced Strategy",
+        "estimated_total_guest": 100,
+        "estimated_peak_guest": 30,
+        "staffing": {
+          "drive_thru": 3,
+          "kitchen": 5,
+          "front_counter": 2,
+          "total": 10
+        },
+        "estimated_labor_cost": 1200.0,
+        "risk_level": "low",
+        "rationale": "This allocation utilizes the full available staff of 10 to balance the high-speed demands of a downtown breakfast shift. It prioritizes kitchen throughput to prevent bottlenecks while ensuring both the drive-thru and front counter have enough coverage for morning commuters.",
+        "reasoning": "UNDERSTAND OPERATOR PRIORITY: The priority is 'balanced', requiring a middle-ground approach that protects margins without sacrificing service speed or employee morale. ANALYZE OPERATIONAL SCENARIO: A Tuesday breakfast in Downtown Atlanta suggests high commuter traffic. Sunny weather likely increases walk-in traffic from nearby offices, but the 2-lane drive-thru will be the primary revenue driver. BOTTLENECK IDENTIFICATION: The kitchen is the primary bottleneck during breakfast due to the high volume of small, time-sensitive orders. A secondary bottleneck exists at the drive-thru if only the minimum staff are present to manage two lanes. REASON TRADE-OFFS: I have allocated 5 staff to the kitchen (2 above minimum) to ensure food is ready as fast as orders are taken. The drive-thru receives 3 staff to allow for dedicated order-taking and window service, while the front counter is set to 2 to handle the downtown foot traffic. This prevents the 'hero' mentality where one person tries to cover too many roles, supporting staff wellbeing. RISK ANALYSIS: The main risk is a slight increase in labor cost compared to a lean model, but this is mitigated by the potential for higher throughput and lower error rates. There is a low risk of overstaffing if the morning rush is shorter than expected."
+      },
+      "constraint_violations": [],
+      "priority_score": 5,
+      "reasoning_quality_score": 5,
+      "judge_feedback": "The plan demonstrates a strong understanding of the 'balanced' priority, providing a well-reasoned allocation of staff that considers both efficiency and service speed. The reasoning clearly identifies potential bottlenecks and justifies staffing levels to mitigate risks and support employee wellbeing. Excellent analysis and planning.",
+      "error": null
+    }
+  ]
+}

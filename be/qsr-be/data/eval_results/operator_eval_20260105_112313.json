@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-01-05T11:23:13.440381",
+  "model_name": "gemini-2.0-flash-lite-preview",
+  "total_cases": 3,
+  "passed_cases": 2,
+  "pass_rate": 0.6666666666666666,
+  "avg_priority_score": 3.0,
+  "avg_reasoning_score": 3.3333333333333335,
+  "results": [
+    {
+      "case_id": "scenario_stormy_rush",
+      "passed": true,
+      "plan_generated": {
+        "id": "customer_centric_peak",
+        "strategy": "Aggressive (Growth/Customer First)",
+        "estimated_total_guest": 100,
+        "estimated_peak_guest": 30,
+        "staffing": {
+          "drive_thru": 4,
+          "kitchen": 8,
+          "front_counter": 3,
+          "total": 15
+        },
+        "estimated_labor_cost": 1800.0,
+        "risk_level": "low",
+        "rationale": "This plan utilizes the maximum available staff to ensure zero bottlenecks during a high-demand Friday night concert event, prioritizing speed of service and order accuracy despite the challenging stormy weather.",
+        "reasoning": "UNDERSTAND OPERATOR PRIORITY: The priority is 'customer_first', which dictates that service speed and quality take precedence over labor cost optimization. ANALYZE OPERATIONAL SCENARIO: A Friday dinner shift in Downtown Atlanta during a rock concert suggests high foot traffic, while stormy weather typically pushes more volume toward the drive-thru. BOTTLENECK IDENTIFICATION: The kitchen is the primary bottleneck; with a 'medium' capacity and high demand from both the concert and drive-thru, it requires maximum manning to prevent order backing. The drive-thru is the secondary bottleneck due to the storm increasing vehicle volume. REASON TRADE-OFFS: I have allocated 8 staff to the kitchen (the maximum reasonable for a medium kitchen) to ensure food is ready as fast as it is ordered. I allocated 4 to the drive-thru to manage both lanes efficiently in the rain, and 3 to the front counter to handle the influx of concert-goers. This maximizes labor hours (120/120) to eliminate wait times. RISK ANALYSIS: The main risk is 'low' regarding service failure, but there is a financial risk of overstaffing if the storm becomes severe enough to cancel the concert or keep all customers home. However, for a 'customer first' priority, this is an acceptable trade-off. STAFF ALLOCATION: 15 total staff (8 Kitchen, 4 Drive-Thru, 3 Front Counter). ESTIMATED LABOR COST: 15 staff * 8 hours * $15/hr (assumed avg rate) = $1,800."
+      },
+      "constraint_violations": [],
+      "priority_score": 5,
+      "reasoning_quality_score": 5,
+      "judge_feedback": "The plan demonstrates an excellent understanding of the scenario and the operator's priority. The aggressive staffing approach, focused on speed of service and bottleneck prevention, is well-justified. The risk analysis acknowledges the potential financial downsides of overstaffing but correctly prioritizes customer satisfaction. The reasoning is clear, logical, and thoroughly considers the given context (weather, concert, drive-thru). The staff allocation is appropriate.",
+      "error": null
+    },
+    {
+      "case_id": "scenario_budget_squeeze",
+      "passed": false,
+      "plan_generated": null,
+      "constraint_violations": [],
+      "priority_score": 0,
+      "reasoning_quality_score": 0,
+      "judge_feedback": "Internal Error during evaluation",
+      "error": "Invalid JSON response from model: Unterminated string starting at: line 13 column 18 (char 462)"
+    },
+    {
+      "case_id": "scenario_ghost_town",
+      "passed": true,
+      "plan_generated": {
+        "id": "balanced_commuter_rush",
+        "strategy": "Balanced Breakfast Rush",
+        "estimated_total_guest": 100,
+        "estimated_peak_guest": 30,
+        "staffing": {
+          "drive_thru": 4,
+          "kitchen": 4,
+          "front_counter": 2,
+          "total": 10
+        },
+        "estimated_labor_cost": 1200.0,
+        "risk_level": "low",
+        "rationale": "This allocation utilizes the full available staff pool to handle the high-volume commuter demand typical of a Downtown Atlanta breakfast shift. By doubling the minimum requirements for the drive-thru and front counter, we ensure speed of service for time-sensitive customers while maintaining a manageable workload for the kitchen.",
+        "reasoning": "UNDERSTAND OPERATOR PRIORITY: The priority is 'balanced', requiring a middle-ground approach that doesn't sacrifice customer experience for profit, nor overspend to the point of inefficiency. ANALYZE OPERATIONAL SCENARIO: A Tuesday breakfast in Downtown Atlanta suggests a high volume of commuters. With two drive-thru lanes and a 50-seat dine-in capacity, the restaurant must handle simultaneous pressure from vehicles and walk-in office workers. BOTTLENECK IDENTIFICATION: The primary bottleneck is likely the Drive-Thru due to the two-lane configuration and the 'rush' nature of breakfast. A secondary bottleneck is the Kitchen's ability to keep pace with high-frequency, low-complexity breakfast orders. REASON TRADE-OFFS: I have allocated 4 staff to the Drive-Thru (2 per lane/station) to ensure rapid throughput. The Kitchen is set at 4 (1 above minimum) to balance assembly and prep without overcrowding the 'medium' capacity space. The Front Counter receives 2 staff to handle the downtown walk-in traffic, ensuring one person can focus on orders while the other manages hand-offs. RISK ANALYSIS: The risk is low. The main risk is a slight inflation in labor cost if the 'sunny' weather doesn't translate to the expected foot traffic, but this is mitigated by the high probability of a standard downtown rush. STAFF ALLOCATION: 4 DT, 4 Kitchen, 2 FC. ESTIMATED LABOR COST: 10 staff * 8 hours * $15/hr (estimated Atlanta market rate) = $1200.00."
+      },
+      "constraint_violations": [],
+      "priority_score": 4,
+      "reasoning_quality_score": 5,
+      "judge_feedback": "The plan demonstrates a strong understanding of the 'balanced' priority by considering both customer experience and operational efficiency. The reasoning is logical, breaks down the scenario effectively, identifies potential bottlenecks, and provides a clear rationale for the staff allocation. The risk analysis is appropriate, and the estimated labor cost adds valuable context. The plan could be improved by slightly more emphasis on 'efficiency' aspects, such as task delegation within the staff roles. Overall, a well-executed plan.",
+      "error": null
+    }
+  ]
+}

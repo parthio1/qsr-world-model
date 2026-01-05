@@ -34,7 +34,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
     return (
       <div className="flex-1 bg-white flex flex-col overflow-hidden">
         <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0">
-          <h1 className="text-2xl font-semibold text-slate-900">Modeling Canvas</h1>
+          <h1 className="text-2xl font-semibold text-slate-900">Canvas</h1>
         </div>
         <div className="flex-1 flex items-center justify-center p-8">
           <div className="max-w-md text-center">
@@ -53,7 +53,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
     return (
       <div className="flex-1 bg-white flex flex-col overflow-hidden">
         <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0">
-          <h1 className="text-2xl font-semibold text-slate-900">Modeling Canvas</h1>
+          <h1 className="text-2xl font-semibold text-slate-900">Canvas</h1>
         </div>
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-4">
@@ -162,14 +162,14 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
 
                   {/* Monologue Box */}
                   <div className={`bg-white rounded-3xl p-8 shadow-xl border-t-8 transition-all ${activeAgentId === 'operator' ? 'border-blue-500' :
-                      activeAgentId === 'world' ? 'border-orange-500' :
-                        'border-green-500'
+                    activeAgentId === 'world' ? 'border-orange-500' :
+                      'border-green-500'
                     }`}>
                     <div className="flex items-center justify-between mb-6">
                       <div className="flex items-center gap-3">
                         <div className={`p-3 rounded-2xl ${activeAgentId === 'operator' ? 'bg-blue-50 text-blue-600' :
-                            activeAgentId === 'world' ? 'bg-orange-50 text-orange-600' :
-                              'bg-green-50 text-green-600'
+                          activeAgentId === 'world' ? 'bg-orange-50 text-orange-600' :
+                            'bg-green-50 text-green-600'
                           }`}>
                           <MessageSquare className="h-5 w-5" />
                         </div>
@@ -565,7 +565,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
     <div className="flex-1 bg-white flex flex-col overflow-hidden">
       {/* Header */}
       <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0">
-        <h1 className="text-2xl font-semibold text-slate-900">Modeling Canvas</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">Canvas</h1>
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-8">

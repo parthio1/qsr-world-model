@@ -12,12 +12,22 @@ class ApiError extends Error {
   }
 }
 
+let currentBaseUrl = API_BASE_URL;
+
+export function setBaseUrl(url: string) {
+  currentBaseUrl = url;
+}
+
+export function getBaseUrl() {
+  return currentBaseUrl;
+}
+
 async function fetchApi<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(`${currentBaseUrl}${endpoint}`, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
@@ -47,10 +57,11 @@ async function fetchApi<T>(
   }
 }
 
-export async function submitPlan(request: PlanRequest): Promise<PlanResponse> {
+export async function submitPlan(request: PlanRequest, options: RequestInit = {}): Promise<PlanResponse> {
   return fetchApi<PlanResponse>(API_ENDPOINTS.PLAN, {
     method: 'POST',
     body: JSON.stringify(request),
+    ...options
   });
 }
 

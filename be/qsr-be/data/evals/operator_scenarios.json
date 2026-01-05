@@ -1,0 +1,111 @@
+[
+    {
+        "id": "scenario_stormy_rush",
+        "description": "High demand scenario with stormy weather and local concert.",
+        "scenario": {
+            "shift": "dinner",
+            "date": "2026-01-09",
+            "day_of_week": "friday",
+            "weather": "stormy",
+            "special_events": [
+                "Local Rock Concert"
+            ],
+            "restaurant": {
+                "location": "Downtown Atlanta",
+                "has_drive_thru": true,
+                "drive_thru_lanes": 2,
+                "kitchen_staff_capacity": "medium",
+                "dine_in": true,
+                "dine_in_seat_capacity": 50
+            }
+        },
+        "constraints": {
+            "available_staff": 15,
+            "budget_hours": 120,
+            "min_staff_per_station": {
+                "drive_thru": 2,
+                "kitchen": 3,
+                "front_counter": 1
+            }
+        },
+        "operator_priority": "customer_first",
+        "expected_focus": [
+            "stormy",
+            "drive_thru",
+            "concert",
+            "bottleneck"
+        ],
+        "max_labor_cost_threshold": 1000
+    },
+    {
+        "id": "scenario_budget_squeeze",
+        "description": "High demand day but very tight budget constraints.",
+        "scenario": {
+            "shift": "lunch",
+            "date": "2026-01-10",
+            "day_of_week": "saturday",
+            "weather": "sunny",
+            "special_events": [],
+            "restaurant": {
+                "location": "Downtown Atlanta",
+                "has_drive_thru": true,
+                "drive_thru_lanes": 2,
+                "kitchen_staff_capacity": "medium",
+                "dine_in": true,
+                "dine_in_seat_capacity": 50
+            }
+        },
+        "constraints": {
+            "available_staff": 20,
+            "budget_hours": 40,
+            "min_staff_per_station": {
+                "drive_thru": 2,
+                "kitchen": 3,
+                "front_counter": 1
+            }
+        },
+        "operator_priority": "minimize_cost",
+        "expected_focus": [
+            "minimize_cost",
+            "budget",
+            "lean",
+            "trade-off"
+        ],
+        "max_labor_cost_threshold": 500
+    },
+    {
+        "id": "scenario_ghost_town",
+        "description": "Low demand Tuesday morning.",
+        "scenario": {
+            "shift": "breakfast",
+            "date": "2026-01-13",
+            "day_of_week": "tuesday",
+            "weather": "sunny",
+            "special_events": [],
+            "restaurant": {
+                "location": "Downtown Atlanta",
+                "has_drive_thru": true,
+                "drive_thru_lanes": 2,
+                "kitchen_staff_capacity": "medium",
+                "dine_in": true,
+                "dine_in_seat_capacity": 50
+            }
+        },
+        "constraints": {
+            "available_staff": 10,
+            "budget_hours": 80,
+            "min_staff_per_station": {
+                "drive_thru": 2,
+                "kitchen": 3,
+                "front_counter": 1
+            }
+        },
+        "operator_priority": "balanced",
+        "expected_focus": [
+            "low demand",
+            "minimal staffing",
+            "efficiency"
+        ],
+        "max_labor_cost_threshold": 600
+    }
+]

@@ -1,3 +1,8 @@
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
+
+@keyframes progress {
+  0% { left: -40%; }
+  100% { left: 100%; }
+}

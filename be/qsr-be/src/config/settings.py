@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     
     # Model Configuration
     gemini_model: str = "gemini-3-flash-preview"
-    temperature: float = 0.5
-    max_output_tokens: int = 8192
+    temperature: float = 0.25
+    max_output_tokens: int = 16384
     
     # API Configuration
     api_host: str = "0.0.0.0"

@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-01-05T11:29:10.412227",
+  "model_name": "gemini-2.0-flash-lite-preview",
+  "total_cases": 3,
+  "passed_cases": 2,
+  "pass_rate": 0.6666666666666666,
+  "avg_priority_score": 3.0,
+  "avg_reasoning_score": 3.3333333333333335,
+  "results": [
+    {
+      "case_id": "scenario_stormy_rush",
+      "passed": true,
+      "plan_generated": {
+        "id": "customer_centric_peak",
+        "strategy": "Aggressive (Growth)",
+        "estimated_total_guest": 100,
+        "estimated_peak_guest": 30,
+        "staffing": {
+          "drive_thru": 5,
+          "kitchen": 7,
+          "front_counter": 3,
+          "total": 15
+        },
+        "estimated_labor_cost": 1800.0,
+        "risk_level": "low",
+        "rationale": "This plan maximizes the available staff pool to ensure high-speed service during a high-demand Friday night concert rush, specifically accounting for a weather-driven shift toward the drive-thru while maintaining enough front-counter presence for dine-in shelter-seekers.",
+        "reasoning": "### 1. Priority Analysis: Customer First\nUnder the 'customer_first' priority, the primary objective is to minimize wait times (SOS) and maximize order accuracy. Labor cost is a secondary concern compared to the potential loss of brand loyalty or negative reviews during a high-profile event like a downtown concert.\n\n### 2. Operational Scenario & Bottleneck Identification\n- **Demand Drivers:** Friday dinner + Rock Concert = Extreme volume. \n- **Weather Impact:** Stormy conditions typically drive customers away from the front counter and toward the drive-thru. However, in a 'Downtown' setting, the front counter often sees a surge of pedestrians seeking shelter and a quick meal before the event.\n- **Bottleneck:** The 'Medium' capacity kitchen is the primary bottleneck. If the kitchen cannot produce food fast enough to feed both the 2-lane drive-thru and the 50-seat dine-in area, the customer experience will collapse regardless of how many people are at the registers.\n\n### 3. Trade-offs & Allocation Strategy\n- **Kitchen (7 staff):** Allocated the maximum effective capacity. This allows for dedicated roles: 2 on assembly, 1 on grill, 1 on fry, 1 on prep/backup, and 2 on bagging/expediting for both channels. This mitigates the risk of order backlogs.\n- **Drive-Thru (5 staff):** With 2 lanes and stormy weather, the DT will be the preferred channel. 5 staff allow for 2 dedicated order takers, 1 payment window operator, 1 presenter, and 1 runner to assist with high-volume bagging.\n- **Front Counter (3 staff):** Despite the storm, the concert ensures foot traffic. 3 staff allow for 2 active registers and 1 lobby attendant to ensure the dine-in area remains clean and orders are expedited to the tables quickly.\n\n### 4. Risk Analysis\n- **Service Risk:** Very Low. The high staffing level ensures that even if one channel is slammed, there is enough 'flex' staff to maintain speed.\n- **Financial Risk:** High. If the storm is severe enough to cancel the concert or keep everyone home, the restaurant will be significantly overstaffed, leading to a high labor-to-sales ratio. However, this risk is accepted to satisfy the 'Customer First' priority.\n\n### 5. Labor Cost Calculation\n- Total Staff: 15\n- Shift Duration: 8 hours\n- Total Hours: 120 (15 * 8)\n- Estimated Cost: 120 hours * $15.00/hr (standardized rate) = $1,800.00."
+      },
+      "constraint_violations": [],
+      "priority_score": 5,
+      "reasoning_quality_score": 5,
+      "judge_feedback": "The plan is well-reasoned and prioritizes customer experience, especially considering the anticipated bottlenecks. The staffing allocation is logical, and the risk analysis is thorough. The plan effectively addresses the operator's priorities.",
+      "error": null
+    },
+    {
+      "case_id": "scenario_budget_squeeze",
+      "passed": false,
+      "plan_generated": null,
+      "constraint_violations": [],
+      "priority_score": 0,
+      "reasoning_quality_score": 0,
+      "judge_feedback": "Internal Error during evaluation",
+      "error": "Invalid JSON response from model: Unterminated string starting at: line 13 column 18 (char 654)"
+    },
+    {
+      "case_id": "scenario_ghost_town",
+      "passed": true,
+      "plan_generated": {
+        "id": "balanced_downtown_rush",
+        "strategy": "Balanced Operational Strategy",
+        "estimated_total_guest": 100,
+        "estimated_peak_guest": 30,
+        "staffing": {
+          "drive_thru": 3,
+          "kitchen": 5,
+          "front_counter": 2,
+          "total": 10
+        },
+        "estimated_labor_cost": 1200.0,
+        "risk_level": "low",
+        "rationale": "This plan utilizes the full available staff pool to manage the high-velocity breakfast demand typical of a Downtown Atlanta location. By prioritizing kitchen throughput and adding support to the drive-thru and front counter, we balance speed of service with staff wellbeing.",
+        "reasoning": "UNDERSTAND OPERATOR PRIORITY: The priority is 'balanced,' which requires a middle-ground approach that doesn't sacrifice customer experience for profit, nor overspend to the point of inefficiency. ANALYZE OPERATIONAL SCENARIO: A Tuesday breakfast in Downtown Atlanta is a high-volume period driven by commuters and office workers. Sunny weather suggests high foot traffic and full drive-thru lanes. BOTTLENECK IDENTIFICATION: The kitchen is the primary bottleneck; if breakfast sandwiches and coffee orders aren't produced rapidly, both the 2-lane drive-thru and the front counter will experience significant backups. REASON TRADE-OFFS: We are allocating 5 staff to the kitchen (2 above minimum) to ensure the 'engine' of the restaurant keeps up with the dual-channel demand. We allocate 3 to the drive-thru to manage the two lanes (one for window, two for order-taking/staging) and 2 to the front counter to handle the 'grab-and-go' office crowd. This prevents staff burnout during the 8-hour shift while keeping wait times low. RISK ANALYSIS: The primary risk is a slightly higher labor cost if the morning rush ends earlier than expected, but this is mitigated by the high revenue potential of a fully-staffed downtown peak shift. There is a very low risk of customer dissatisfaction."
+      },
+      "constraint_violations": [],
+      "priority_score": 4,
+      "reasoning_quality_score": 5,
+      "judge_feedback": "The plan is well-reasoned and addresses the expected high-volume breakfast demand in a balanced manner. The allocation of staff appears appropriate for the scenario. The reasoning clearly identifies potential bottlenecks and justifies the staffing decisions based on the operational context. While the labor cost risk is acknowledged, the justification for the staffing levels is sound given the potential revenue.",
+      "error": null
+    }
+  ]
+}

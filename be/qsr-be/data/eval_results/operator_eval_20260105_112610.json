@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-01-05T11:26:10.013935",
+  "model_name": "gemini-2.0-flash-lite-preview",
+  "total_cases": 3,
+  "passed_cases": 2,
+  "pass_rate": 0.6666666666666666,
+  "avg_priority_score": 3.0,
+  "avg_reasoning_score": 3.3333333333333335,
+  "results": [
+    {
+      "case_id": "scenario_stormy_rush",
+      "passed": true,
+      "plan_generated": {
+        "id": "customer_centric_peak",
+        "strategy": "Aggressive (Growth) - Customer First Focus",
+        "estimated_total_guest": 100,
+        "estimated_peak_guest": 30,
+        "staffing": {
+          "drive_thru": 5,
+          "kitchen": 7,
+          "front_counter": 3,
+          "total": 15
+        },
+        "estimated_labor_cost": 1800.0,
+        "risk_level": "low",
+        "rationale": "This plan utilizes the full available staff pool to ensure maximum throughput and minimum wait times during a high-demand Friday night concert event, accounting for a shift toward drive-thru due to stormy weather.",
+        "reasoning": "UNDERSTAND OPERATOR PRIORITY: The priority is 'customer_first', which necessitates prioritizing speed of service and order accuracy over labor cost optimization. ANALYZE OPERATIONAL SCENARIO: A Friday dinner shift in Downtown Atlanta with a rock concert suggests high volume. However, the 'stormy' weather will likely pivot the service mix heavily toward Drive-Thru and delivery, as customers avoid walking in the rain. BOTTLENECK IDENTIFICATION: The Kitchen is the primary bottleneck; with 'medium' capacity, it must be fully staffed to prevent a backlog that affects both channels. The Drive-Thru is the secondary bottleneck due to the weather-induced surge and the 2-lane configuration. REASON TRADE-OFFS: I have allocated 15 staff (the maximum) to ensure that even with high complexity and weather delays, the customer experience remains seamless. I moved staff from the front counter (keeping it at 3 to handle mobile orders and concert-goers) to the Kitchen and Drive-Thru to mitigate the stress of the storm-driven rush. RISK ANALYSIS: The primary risk is financial—if the storm is severe enough to cancel the concert or keep everyone home, the restaurant will be significantly overstaffed. However, per the 'customer_first' priority, the risk of a poor experience during a potential rush outweighs the risk of high labor costs. STAFF ALLOCATION: 7 Kitchen (maximum production), 5 Drive-Thru (handling 2 lanes plus bagging), 3 Front Counter (handling dine-in and the inevitable surge of delivery drivers). ESTIMATED LABOR COST: Calculated at 15 staff * 8 hours * $15.00/hr average wage = $1,800.00."
+      },
+      "constraint_violations": [],
+      "priority_score": 5,
+      "reasoning_quality_score": 5,
+      "judge_feedback": "The plan demonstrates a strong understanding of the 'customer-first' priority and effectively addresses the expected bottlenecks. The rationale is well-articulated, considering weather and event factors. The staffing allocation appears appropriate for the scenario. The cost estimation is a valuable addition.",
+      "error": null
+    },
+    {
+      "case_id": "scenario_budget_squeeze",
+      "passed": false,
+      "plan_generated": null,
+      "constraint_violations": [],
+      "priority_score": 0,
+      "reasoning_quality_score": 0,
+      "judge_feedback": "Internal Error during evaluation",
+      "error": "Invalid JSON response from model: Unterminated string starting at: line 13 column 18 (char 522)"
+    },
+    {
+      "case_id": "scenario_ghost_town",
+      "passed": true,
+      "plan_generated": {
+        "id": "balanced_downtown_rush",
+        "strategy": "Balanced Performance Strategy",
+        "estimated_total_guest": 100,
+        "estimated_peak_guest": 30,
+        "staffing": {
+          "drive_thru": 3,
+          "kitchen": 5,
+          "front_counter": 2,
+          "total": 10
+        },
+        "estimated_labor_cost": 1200.0,
+        "risk_level": "low",
+        "rationale": "This allocation utilizes the full available staff pool to handle the high-intensity breakfast rush typical of a Downtown Atlanta location. By prioritizing the kitchen with 5 staff members, we ensure that the 'engine' of the restaurant can keep up with both drive-thru and walk-in demand, maintaining a balance between speed of service and staff wellbeing.",
+        "reasoning": "UNDERSTAND OPERATOR PRIORITY: The 'balanced' priority requires a middle-ground approach that protects profit margins without sacrificing the customer experience or overworking the team. ANALYZE OPERATIONAL SCENARIO: A Tuesday breakfast in Downtown Atlanta suggests a high volume of commuters (Drive-Thru) and office workers (Front Counter). Sunny weather typically increases foot traffic. BOTTLENECK IDENTIFICATION: The kitchen is the primary bottleneck; if food production lags, both service channels fail. With a 'medium' capacity kitchen, 5 staff members allow for dedicated roles (prep, assembly, toast/eggs, and coordination). REASON TRADE-OFFS: We allocated 3 staff to the Drive-Thru (Order/Pay/Present) to manage the 2 lanes efficiently, and 2 to the Front Counter to handle dine-in and walk-ins. While 10 staff members hits the maximum budget, it prevents the 'hidden costs' of long wait times (lost future revenue) and staff burnout. RISK ANALYSIS: The primary risk is a higher labor-to-sales ratio if the morning rush is shorter than expected; however, the risk of customer dissatisfaction due to slow service in a time-sensitive breakfast window is much higher if we staff lower."
+      },
+      "constraint_violations": [],
+      "priority_score": 4,
+      "reasoning_quality_score": 5,
+      "judge_feedback": "The plan demonstrates a strong understanding of a 'balanced' approach, considering both customer experience and operational efficiency. The reasoning is well-structured and uses Chain of Thought to justify the staffing decisions, correctly identifying the kitchen as the primary bottleneck and weighing the risks. However, the plan could include a specific strategy to handle a potential slow down to offset the higher labor-to-sales risk.",
+      "error": null
+    }
+  ]
+}

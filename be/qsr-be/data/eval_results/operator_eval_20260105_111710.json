@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-01-05T11:17:10.266693",
+  "model_name": "gemini-3-flash-lite-preview",
+  "total_cases": 3,
+  "passed_cases": 0,
+  "pass_rate": 0.0,
+  "avg_priority_score": 0.0,
+  "avg_reasoning_score": 0.0,
+  "results": [
+    {
+      "case_id": "scenario_stormy_rush",
+      "passed": false,
+      "plan_generated": null,
+      "constraint_violations": [],
+      "priority_score": 0,
+      "reasoning_quality_score": 0,
+      "judge_feedback": "Internal Error during evaluation",
+      "error": "404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-3-flash-lite-preview is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}"
+    },
+    {
+      "case_id": "scenario_budget_squeeze",
+      "passed": false,
+      "plan_generated": null,
+      "constraint_violations": [],
+      "priority_score": 0,
+      "reasoning_quality_score": 0,
+      "judge_feedback": "Internal Error during evaluation",
+      "error": "Invalid JSON response from model: Unterminated string starting at: line 13 column 18 (char 515)"
+    },
+    {
+      "case_id": "scenario_ghost_town",
+      "passed": false,
+      "plan_generated": null,
+      "constraint_violations": [],
+      "priority_score": 0,
+      "reasoning_quality_score": 0,
+      "judge_feedback": "Internal Error during evaluation",
+      "error": "404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-3-flash-lite-preview is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}"
+    }
+  ]
+}
