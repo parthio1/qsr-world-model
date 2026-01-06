@@ -123,7 +123,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
   if (error) {
     return (
       <div className="flex-1 bg-white flex flex-col overflow-hidden">
-        <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0">
+        <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0 flex justify-center">
           <h1 className="text-2xl font-semibold text-slate-900">Canvas</h1>
         </div>
         <div className="flex-1 flex items-center justify-center p-8">
@@ -142,7 +142,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
   if (isLoadingPlan) {
     return (
       <div className="flex-1 bg-white flex flex-col overflow-hidden">
-        <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0">
+        <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0 flex justify-center">
           <h1 className="text-2xl font-semibold text-slate-900">Canvas</h1>
         </div>
         <div className="flex-1 flex items-center justify-center">
@@ -169,10 +169,10 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
       return (
         <div className="flex-1 bg-slate-50 flex flex-col overflow-hidden">
           <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0 bg-white shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex items-center justify-center relative">
+              <div className="flex flex-col items-center">
                 <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-semibold text-slate-900">Agentic Reasoning</h1>
+                  <h1 className="text-2xl font-semibold text-slate-900">Canvas</h1>
                   <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
                     Reasoning Active
                   </Badge>
@@ -337,10 +337,10 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
       return (
         <div className="flex-1 bg-slate-50 flex flex-col overflow-hidden">
           <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0 bg-white shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex items-center justify-center relative">
+              <div className="flex flex-col items-center">
                 <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-semibold text-slate-900">Reasoning Trace</h1>
+                  <h1 className="text-2xl font-semibold text-slate-900">Canvas</h1>
                   <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 animate-pulse">
                     Trace Active
                   </Badge>
@@ -432,20 +432,22 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
     return (
       <div className="flex-1 bg-white flex flex-col overflow-hidden">
         <div className="border-b border-slate-100 px-8 py-6 flex-shrink-0 bg-white/80 backdrop-blur-md sticky top-0 z-10">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between relative">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-slate-900 rounded-2xl shadow-lg shadow-slate-200">
                 <FlaskConical className="h-6 w-6 text-blue-400" />
               </div>
-              <div>
-                <h1 className="text-2xl font-black text-slate-900 tracking-tight">Simulation Playground</h1>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
-                    {formatDate(plan.scenario.date)}
-                  </span>
-                </div>
+            </div>
+
+            <div className="absolute left-1/2 -translate-x-1/2 text-center">
+              <h1 className="text-2xl font-black text-slate-900 tracking-tight">Canvas</h1>
+              <div className="flex items-center justify-center gap-2 mt-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  {formatDate(plan.scenario.date)}
+                </span>
               </div>
             </div>
+
             <div className="flex items-center gap-3">
               <Button variant="outline" size="sm" className="rounded-full text-[10px] font-bold uppercase tracking-widest border-slate-200">
                 <Copy className="h-3 w-3 mr-2 text-slate-400" /> Export
@@ -577,7 +579,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
 
   return (
     <div className="flex-1 bg-white flex flex-col overflow-hidden">
-      <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0">
+      <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0 flex justify-center">
         <h1 className="text-2xl font-semibold text-slate-900">Canvas</h1>
       </div>
       <div className="flex-1 overflow-y-auto px-6 py-8">
