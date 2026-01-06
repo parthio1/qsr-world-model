@@ -88,41 +88,52 @@ Prep: Google ADK + FunctionGemma (not included here)
 
 ## Quick Start
 
-1. Configure Your Restaurant & Key Parameters using the left panel
+### User Interface layout - Three Panels Interaction Model
 
-📍 Current Restaurant
-   └─ Downtown Atlanta, Peachtree St
+┌─────────────────────────────────────────────────────────┐
+│  Settings          Canvas (Results)          Studio     │
+│  (Configure)       (View Results)            (Controls) │
+├──────────────┬─────────────────────────────┬────────────┤
+│              │                             │            │
+│  📍 Location │  📊 Optimization Results    │ ▶️ Run     │
+│  🌍 World    │  - Target Scores            │            │
+│  🎯 Priority │  - Key Metrics              │ ⚡ Trace   │
+│  🍔 Config   │  - Optimization Delta       │ 🧠 Reason  │
+│  🎚️ Targets  │  - Agent Feedback           │            │
+│              │                             │ 🚗 Focus   │
+│              │                             │ 📊 Compare │
+│              │                             │            │
+└──────────────┴─────────────────────────────┴────────────┘
 
-🌍 World Context
-   └─ Weather, day, special events
+### Configure Your Restaurant & Key Parameters using the left panel
 
-🎯 Operator Priority
-   └─ Select your optimization focus
+📍 Current Restaurant -> Downtown Atlanta, Peachtree St
 
-🍔 Restaurant Context
-   └─ Capacity
+🌍 World Context -> Weather, day, special events
 
-🎚️ Alignment Targets
-   ├─ Max Labor Cost: 30%
-   ├─ Max Wait Time: 180s
-   └─ Target Utilization: 0.82
+🎯 Operator Priority -> Select your optimization focus
 
-Example input screenshot
-![Input sreenshot](img/qsr_key_input.png)
+🍔 Restaurant Context -> Capacity
 
-2. Run the World Model using the right panel
+🎚️ Alignment Targets -> Max Labor Cost: 30%, Max Wait Time: 180s, Target Utilization: 0.82
 
-Click "Run World Model" button
+#### Example input screenshot
+![Input sreenshot](qsr-world-model/img/qsr_key_input.png)
 
-Example run time screenshot
-![Runtime screenshot](img/qsr_results.png)
+### Run the World Model using the right panel
 
+🎯 Click "Run World Model" button and wait ;-) 
 
-3. Fiddle with Trace and Reason Modes t 
+#### Example run time screenshot
+![Runtime screenshot](qsr-world-model/img/qsr_results.png)
 
-Example trace and reason screenshots
-![Trace screenshot](img/qsr_trace.png)
-![Reason screenshot](img/qsr_reasoning.png)
+### Fiddle with Trace and Reason Modes  
+
+🎯 Click "Trace and Reason" mode after successful completion of "Run World Model" 
+
+#### Example trace and reason screenshots
+![Trace screenshot](qsr-world-model/img/qsr_trace.png)
+![Reason screenshot](qsr-world-model/img/qsr_reasoning.png)
 
 ## Implementation Introduction
 
