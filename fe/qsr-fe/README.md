@@ -226,8 +226,6 @@ The build outputs to `/dist` and can be deployed to any static hosting service.
 ## 📚 Documentation
 
 - [Architecture Guide](./ARCHITECTURE.md) - Detailed architecture documentation
-- [API Documentation](./API.md) - Backend API specifications (coming soon)
-- [Component Library](./COMPONENTS.md) - UI component catalog (coming soon)
 
 ## 🤝 Contributing
 

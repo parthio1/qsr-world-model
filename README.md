@@ -122,6 +122,23 @@ The tension between three competing goals is modeled using configurable weights 
 *   **Different Scenarios:** Take into consideration weather, special events (post-game rush), and day-part variations.
 *   **Transparency:** Full visibility into the "Inner Reasoning Monologue" of every agent via the UI.
 
+## 🧪 Evaluations
+
+This project includes a dedicated evaluation harness in the backend to "grade" the agents against known scenarios.
+
+**Ground Truth Validation:**
+The `Evaluator Agent` and `qsr_eval.sh` script compare agent outputs against expected baselines to ensure:
+1.  **Reasoning Quality:** Does the agent's logic make sense?
+2.  **Priority Alignment:** Did the agent actually follow the "Minimize Cost" or "Customer First" instruction?
+3.  **Simulation Accuracy:** Are the predicted metrics (wait times, revenue) within realistic bounds?
+
+**Running Evals:**
+```bash
+cd be/qsr-be
+./qsr_eval.sh agent=operator
+```
+*Outputs a detailed JSON report with Pass/Fail rates and alignment scores.*
+
 
 ## 🚧 Known Issues & Learning Gaps
 
