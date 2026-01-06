@@ -30,51 +30,10 @@ Observe → Encode (V) → Predict (M) → Act (C) → Observe...
 ### QSR World Model Loop
 
 #### Operator Flow (Huaman decision):
-Scenario → Encode Context → Consider Priorities → Make Decision
-   ↓            ↓                    ↓                 ↓
-Friday      Weather, Day    Profit vs Service    "10 staff"
-Dinner      Events, Config  Personal judgment    Based on gut
+Scenario → Encode (World Context) → Simulate World Model (Demand) → Operator Priority → Operator Staffing Decision 
 
-Scenario → Encode (World Context) → Simulate (World Model) → Real World Operator Priority → Operator Staffing Decision 
-
-#### Shadow Operator Loop (LLM based optimization):
-Same Scenario → Encode → Simulate Outcomes →         Optimization Loop
-                  ↓           ↓                             ↓
-              Structured   LLM agent as World Model  Shadow Operator
-              Context      Predicts                  Generates & Tests
-                           Performance               Multiple Options
-                                                     Select Best Fit
-
- #### Feedback Loop                                                    
- Operator (Human)           Shadow Operator (AI)
-      ↓                            ↓
-  Experience                  Simulation
-  Intuition                   Multi-objective
-  Fast                        Systematic
-      ↓                            ↓
-      └─────── Both Executed ──────┘
-                    ↓
-              Real Results
-                    ↓
-        ┌───────────┴────────────┐
-        ↓                        ↓
-   Compare Decisions      Compare Predictions with Real World Results
-   (Short-term learn)     (Long-term learn)
-
-
-### Development cycle:
-Step 1: Research world models + agentic AI → Architecture design
-Step 2: Implement few agents + orchestration + evals → Backend  
-Step 3: Build UX + integration + Test Harness → Working prototype  
-Step 4: Iterate on feedback → Polishing + Documentation
-
-### Built with:
-Google Gemini 3.0 Flash (reasoning)
-AntiGravity (IDE) for development
-Figma (rapid UI prototyping)
-Claude & OpenAI for documentation and concept refinement
-FastAPI + React + TypeScript (production-quality stack)
-Prep: Google ADK + FunctionGemma (not included here)
+#### Shadow Operator Loop (LLM based scoring & optimization):
+Same Scenario → Encode (World Context) → Simulate World Model (Demand) → Optimization Loop (scoring) → Shadow Operator Staffing Decision (best fit) 
 
 ### Inspiration:
 * Ha & Schmidhuber's World Models (2018)
@@ -178,6 +137,21 @@ The tension between three competing goals is modeled using configurable weights 
 *   **Evaluation:** Compare predictions vs actuals (post-execution).
 *   **Evals and Test Harness:** Compare predictions vs actuals (post-execution).
 
+### Development cycle:
+Step 1: Research world models + agentic AI → Architecture design
+Step 2: Implement few agents + orchestration + evals → Backend  
+Step 3: Build UX + integration + Test Harness → Working prototype  
+Step 4: Iterate on feedback → Polishing + Documentation
+
+### Built with:
+Google Gemini 3.0 Flash (reasoning)
+AntiGravity (IDE) for development
+Figma (rapid UI prototyping)
+Claude & OpenAI for documentation and concept refinement
+FastAPI + React + TypeScript (production-quality stack)
+Prep: Google ADK + FunctionGemma (not included here)
+
+
 **Running Evals:**
 ```bash
 cd be/qsr-be
@@ -189,18 +163,23 @@ cd be/qsr-be
 ## 🚧 Known Issues & Learning Gaps
 
 **Conceptual Limitations:**
--   **Not a true world model:** Uses LLM reasoning as an approximation, not learned neural dynamics.
--   **Limited causality:** Relies on correlational patterns in the LLM's training data, not deep causal understanding of physics or logistics.
+-   **Not a true world model:** Uses LLM reasoning as an approximation no RL.
+-   **Limited causality:** Relies on correlational patterns in the out of the box model or system prompting, not deep causal understanding of the world
 
-**Implementation Gaps:**
--   **No persistent state:** Learning doesn't persist between sessions yet.
--   **Manual data entry:** No automated integrations with POS systems.
--   **Simplified simulation:** Does not yet account for equipment failures, shift overlaps, or individual staff skill levels.
+**Implementation Gaps / Roadmap Items:**
+-   **No real time data**
+-   **No memory or persistent state**  
+-   **No latency optimization**  
+-   **No model fine tuning / mid training**
+-   **No functiongemma usage or training for local function calls**
+-   **No tool callongn**
+-   **No MCP**
+-   **No AuthN & AuthZ**
+-   **No model guardrails**
 
 **Domain Knowledge Gaps:**
 -   Admittedly, I'm not a QSR expert. The model likely oversimplifies staffing complexity (breaks, training) and non-linear demand patterns.
 -   **But that's the point**—this is a learning exercise to see how far agentic reasoning can go.
-
 
 ## 📂 Project Structure
 
