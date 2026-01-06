@@ -16,23 +16,32 @@ This system uses a **world model** approach inspired by Meta's Code World Model 
 ### Five Core Agents
 
 1. **World Model Agent** (`world_model_agent.py`) - Predicts shift outcomes given scenario and staffing.
-2. **Operator Agent** (`operator_agent.py`) - Generates multiple staffing options to evaluate.
-3. **Scorer Agent** (`scorer_agent.py`) - Evaluates options on profit, customer satisfaction, staff wellbeing.
-4. **Evaluator Agent** (`evaluator_agent.py`) - Compares predictions vs actual, learns from errors.
-5. **World Context Agent** (`world_context_agent.py`) - Analyzes environmental factors like weather and holidays.
+2. **Restaurant Operator Agent** (`restaurant_operator_agent.py`) - Generates the initial baseline staffing plan.
+3. **Shadow Operator Agent** (`shadow_operator_agent.py`) - Iteratively refines the plan based on World Model feedback.
+4. **Scorer Agent** (`scorer_agent.py`) - Evaluates options on profit, customer satisfaction, staff wellbeing.
+5. **Evaluator Agent** (`evaluator_agent.py`) - Compares predictions vs actual, learns from errors.
+6. **World Context Agent** (`world_context_agent.py`) - Analyzes environmental factors like weather and holidays.
+7. **Restaurant Agent** (`restaurant_agent.py`) - Analyzes restaurant-specific capacity and bottlenecks.
 
 ### Workflow
 
 ```
-Scenario Input → Operator Agent → Multiple Options
-                                     ↓
-                Each Option → World Model Agent → Predicted Outcomes
-                                                       ↓
-                                                  Scorer → Scores
-                                     ↓
-              Select Best Option → Deploy → Compare vs Actual (Evaluator)
+Scenario Input → World Context Agent → Demand Prediction
+               ↓
+               → Restaurant Agent → Capacity Analysis
+               ↓
+Context & Analysis → Restaurant Operator → Initial Plan
+                                             ↓
+                        LOOP: Initial Plan → World Model → Predicted Outcomes
+                                             ↓
+                                           Scorer → Feedback
+                                             ↓
+                        Shadow Operator ← Feedback & Plan
+                                             ↓
+                        Updated Plan → World Model (Repeat)
+                                             ↓
+                    Final Best Option → Deploy → Compare vs Actual (Evaluator)
 ```
-
 ## 🚀 Quick Start
 
 ### Prerequisites

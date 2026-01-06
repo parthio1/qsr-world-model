@@ -8,6 +8,7 @@ This project implements a multi-agent system that predicts operational outcomes 
 
 ### 🆕 Key Features
 - **Dynamic Backend Discovery**: Frontend automatically scans and connects to available backend instances on ports `8080-8083`.
+- **Iterative Shadow Optimization**: Multi-step refinement process where a Shadow Operator agent optimizes the initial human-like plan.
 - **Simulation Control**: "Cancel Run" support for gracefully aborting active AI simulations.
 - **Agentic Reasoning**: Deep visibility into the Chain-of-Thought logic for all agents (Operator, World, Scorer).
 - **Proactive Evaluations**: Integrated evaluation runner for testing agent performance against recorded scenarios.
@@ -42,11 +43,12 @@ For more details, see the [Frontend README](./fe/qsr-fe/README.md).
 
 The backend employs several specialized agents:
 - **World Model Agent**: Simulates the shift and predicts metrics.
-- **Operator Agent**: Generates staffing strategies.
-- **Scorer Agent**: Evaluates outcomes based on explicit optimization formulas.
+- **Restaurant Operator Agent**: Generates initial staffing strategies with typical human operational bias.
+- **Shadow Operator Agent**: Iteratively refines the initial plan to find a more rational optimal.
+- **Scorer Agent**: Evaluates outcomes based on explicit optimization formulas and multi-objective weights.
 - **Evaluator Agent**: Compares simulations to actual results for continuous learning.
-- **World Context Agent**: Provides environmental context (weather, events).
-- **Restaurant Agent**: Manages restaurant-specific configuration.
+- **World Context Agent**: Analyzes environmental factors and predicts demand levels.
+- **Restaurant Agent**: Analyzes restaurant-specific infrastructure and capacity bottlenecks.
 
 ## 🛠 Tech Stack
 - **AI**: Google Gemini (via agentic prompts)
