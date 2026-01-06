@@ -1,27 +1,75 @@
-# QSR World Model: A "Noob Operator" Playground 🍔🤖
+# QSR World Model: A "Noob Operator" Playground 
+A lightweight project exploring the product development cycle from initial idea and research to system design, implementation and UX—using modern AI tools like Figma, Claude, and Antigravity.
 
-> **Status:** Prototype / Experimental  
+> **Status:** Prototype  
 > **Velocity:** Built in ~2-3 days over a holiday weekend
 
-## 🎯 Objective: Why This Matters
+##  Objective: 
+This project is a crude and simple attempt to prove and clarify my applied AI experience using AI tools, frameworks, and ecosystems in a quick and dirty way. 
 
-The core ambition of this project is to explore the concept of a **World Model**—not for robotics or video games or code (where it is typically applied) but for the messy, high-pressure environment of Quick Service Restaurant (QSR) operations.
+##  What I'm Showcasing in this rapid and half-baked attempt: 
+✅ Conceptual Thinking - Frame problems, identify novel solutions
+✅ Research Capability - Understand academic concepts, apply to practice
+✅ System Architecture - Design scalable, maintainable systems
+✅ AI Engineering - Build with modern LLMs and agentic frameworks
+✅ UX Design - Create intuitive, insight-driven interfaces
+✅ Rapid Execution - Ship concept to working system in a short time
 
-In AI research, a World Model aims to simulate the future in order to predict consequences of actions before taking them. It relies on:
-1.  **Representation Learning:** Understanding the current state.
-2.  **Planning & Reasoning:** Simulating "what if" scenarios to optimize decisions.
+##  Ambition of this project:  
+The core ambition of this project is to explore the concept of a **World Model** using LLM agents with reasoning. Though this concept is applied for robotics or video games or coding, I like to explore it for the high pressure environment of Quick Service Restaurant (QSR) operations.
 
-This project is a **crude, agentic approximation** of that concept. Instead of deep reinforcement learning, we leverage **Chain-of-Thought (CoT) reasoning** and Large Language Models (LLMs) to construct a mental model of a restaurant shift. We want to see if a system of agents can "think" through a staffing plan, simulate the chaos of a Friday dinner rush and refine its decisions just like a seasoned manager would—but in minutes, not hours.
+"Predict what staffing decision achieves not just costs but also customer satisfaction, staff well-being".
+
+## Problem Identification
+Key assumption and simplification is that QSR managers make a important staffing decision with intuition and limited information rather than simulation
+
+### Gap Addressed / Gap Assumed
+* Existing tools predict demand but does not offer way to see the consequences before decisions are made 
+* Trade-offs between customer delight, staff well-being and profit are implicit, not explicit
+
+### Key Questions Explored:
+* Can we simulate operational outcomes before execution?
+* How does the concept of a world model apply to restaurant operations?
+* How can AI agents coordinate to solve complex problems?
+* What does multi-objective optimization look like in practice?
+
+## Academic Inspiration:
+* Ha & Schmidhuber's World Models (2018)
+   → Learn compressed representations of environments
+   → Simulate future states from current state + action
+   → Plan by imagining consequences
+* Dr Fei Fei Li's World Models: https://www.worldlabs.ai/
+* Meta's Code World Models 
+   → "Predict what code does, not just what it looks like"
+* Agentic AI (LLM) Architectures
+   → Agent specialization and coordination
+   → Reasoning through chain-of-thought
+   → Learning from outcomes
+
+## Key Questions I Explored:
+* Can we simulate operational outcomes before execution?
+* How does the concept of a world model apply to restaurant operations?
+* How can AI agents coordinate to solve complex problems?
+* What does multi-objective optimization look like in practice?
+
+
+## What is a world model:
+By using features extracted from the world model as inputs to an AI agent, one can train a simple function or a policy that can solve the required task. One can even train agent entirely using LLMs as stop gap measure and transfer this decision back into the actual environment.
+
+A World Model aims to simulate the future in order to predict consequences of actions before taking them. It relies on:
+1.  **Representation Learning:** Understanding the current state of the environment in deeper ways
+2.  **Planning & Reasoning:** Simulating "what if" scenarios to help make future actions and optimize outcomes.
+
+This project is a **crude, agentic approximation** of that concept. Instead of deep reinforcement learning, I have leveraged **Chain-of-Thought (CoT) reasoning** and Large Language Models (LLMs) to construct a crude mental model of a restaurant shift. I want to see if a system of agents can "think" through a staffing plan, simulate a Friday dinner rush and refine its decisions.
 
 ## 🧪 The Experiment: Learning Loops & Flaws
+This is as much a learning tool for me as it is a software prototype. The domain of QSR operations is much more nuanced than my assumptions. There are inherent flaws in my own understanding of the problem space and the agents themselves are "noob operators"—subject to hallucinations, bad assumptions, and limited context.
 
-This is as much a learning tool for the author as it is a software prototype. The domain of QSR operations is incredibly nuanced. There are inherent flaws in my own understanding of the problem space and the agents themselves are "noob operators"—subject to hallucinations, bad assumptions, and limited context.
-
-**The central loop we are exploring is:**
-1.  **Propose:** An operator agent proposes a staffing plan based on a specific "Operator Priority" (e.g., minimizing costs).
-2.  **Simulate:** A separate "World Model" agent plays out that shift, predicting wait times, revenue and bottlenecks.
-3.  **Critique:** A "Scorer" agent evaluates the outcome against multi-objective targets (Profit vs. Satisfaction vs. Wellbeing).
-4.  **Refine:** A "Shadow Operator" (the rational planner) iterates on the plan to find a global optimum that a biased human might miss.
+### The central loop we are exploring is:**
+1.  **Propose:** An operator agent proposes a staffing plan based on a specific "Operator Priority" or "Primary Goal" (e.g., minimizing costs).
+2.  **Simulate:** A system of "World Model" agents plays out that shift, predicting wait times, revenue, bottlenecks and staff satisfaction.
+3.  **Critique:** A "Scorer" agent evaluates the outcome against multi-objective targets (Profit vs. Customer Satisfaction vs. Staff Wellbeing).
+4.  **Refine:** A "Shadow Operator" (the rational planner) iterates on the plan to find a global optimum that a biased human might miss. This rational planning is indepenet of the operator proposed plan. 
 
 ## 🧠 Approach & Architecture
 
@@ -32,16 +80,6 @@ We model the tension between three competing goals, using configurable weights t
 1.  **Profit Target Score:** Efficiency and labor cost management (Lower is better).
 2.  **Guest Satisfaction Target Score:** Speed of service and order accuracy (Lower wait time is better).
 3.  **Staff Wellbeing Target Score:** Preventing burnout and under-utilization (Target is a specific range, e.g., 70-85%).
-
-The system attempts to maximize the combined score:
-```python
-# Conceptual Formula
-overall_score = (
-    profit_score * 0.40 +
-    customer_score * 0.35 +
-    staff_score * 0.25
-)
-```
 
 ### The Agentic World Model Loop
 
@@ -79,18 +117,13 @@ graph TD
 ## 🔑 Key Features
 
 ### Functional
-*   **Multi-Agent Orchestra:** 7+ specialized agents working in concert.
+*   **Multi-Agent Orchestra:** 6+ specialized agents working in concert.
 *   **Iterative Refinement:** The system doesn't just give an answer; it "thinks" and improves its answer over multiple steps.
 *   **Bias Modeling:** Simulate shifts from different perspectives (e.g., "Customer First" vs. "Minimize Cost").
-*   **Rich Scenarios:** Handles weather, special events (post-game rush), and day-part variations.
+*   **Different Scenarios:** Handles weather, special events (post-game rush), and day-part variations.
 *   **Transparency:** Full visibility into the "Inner Monologue" of every agent via the UI.
 
-### Technical
-*   **Agentic Framework:** Built on Google Gemini with custom prompt engineering for structured reasoning.
-*   **Dynamic Discovery:** Frontend automatically scans and connects to available backends.
-*   **Evaluation Engine:** Dedicated CLI tools to "grade" the agents against known ground-truth scenarios.
 
----
 
 ## 🚧 Known Issues & Learning Gaps
 
@@ -107,23 +140,6 @@ graph TD
 -   Admittedly, I'm not a QSR expert. The model likely oversimplifies staffing complexity (breaks, training) and non-linear demand patterns.
 -   **But that's the point**—this is a learning exercise to see how far agentic reasoning can go.
 
-## ⏱️ Development Timeline
-
-**Total:** ~20-24 hours over holiday weekend (Dec 28-30, 2024)
-
--   **Day 1 (8h):** Concept, architecture, schema design.
--   **Day 2 (10h):** Backend implementation, agent orchestration, API.
--   **Day 3 (6h):** Frontend, integration, polish, documentation.
-
-**Underestimated:** Agent prompt engineering, JSON parsing reliability.
-**Worked well:** Pydantic validation, FastAPI, modular agent design.
-
-## 📖 References
-
-**Academic Inspiration:**
--   Ha & Schmidhuber (2018): "World Models"
--   Meta AI (2024): "Code World Models"
--   Hafner et al. (2019): "Dream to Control"
 
 ## 📂 Project Structure
 
@@ -133,4 +149,4 @@ This playground consists of two main components. Please refer to their respectiv
 *   **[Frontend (React/Vite)](./fe/qsr-fe/README.md):** The visual workspace. Provides a "canvas" for users to tweak scenarios, run the model, and visualize the iterative reasoning process.
 
 ---
-*Built with curiosity over a weekend. Learning in progress. 🚀*
+*Built with curiosity over a weekend. Learning in progress. 
