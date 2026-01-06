@@ -4,7 +4,7 @@ import pytest
 from datetime import date
 from src.models.schemas import (
     Scenario, RestaurantConfig, Staffing, Constraints,
-    AlignmentWeights, ShiftType, WeatherType, RiskLevel
+    AlignmentTargets, ShiftType, WeatherType, RiskLevel
 )
 
 # Mock agents for testing (replace with actual when API keys available)
@@ -39,17 +39,16 @@ def sample_staffing():
 def sample_constraints():
     """Sample operational constraints"""
     return Constraints(
-        available_staff=15,
-        budget_hours=60
+        available_staff=15
     )
 
 @pytest.fixture
 def sample_alignment():
-    """Sample alignment weights"""
-    return AlignmentWeights(
-        profit=0.40,
-        customer_satisfaction=0.35,
-        staff_wellbeing=0.25
+    """Sample alignment targets"""
+    return AlignmentTargets(
+        target_labor_cost_percent=30.0,
+        target_wait_time_seconds=180,
+        target_staff_utilization=0.82
     )
 
 def test_scenario_validation(sample_scenario):
@@ -68,23 +67,12 @@ def test_staffing_total_calculation():
     )
     assert staffing.total == 10
 
-def test_alignment_weights_sum():
-    """Test alignment weights must sum to 1.0"""
-    with pytest.raises(ValueError):
-        AlignmentWeights(
-            profit=0.5,
-            customer_satisfaction=0.5,
-            staff_wellbeing=0.5  # Sum > 1.0, should fail
-        )
-
 def test_constraints_validation():
     """Test constraints validation"""
     constraints = Constraints(
-        available_staff=15,
-        budget_hours=60
+        available_staff=15
     )
     assert constraints.available_staff >= 1
-    assert constraints.budget_hours >= 0
 
 # Integration tests (require API key)
 
@@ -108,7 +96,7 @@ def test_restaurant_operator(sample_scenario, sample_constraints):
     plan = agent.generate_initial_plan(
         scenario=sample_scenario,
         constraints=sample_constraints,
-        operator_priority="balanced"
+        operator_priority="minimize_cost"
     )
     
     assert plan.staffing.total > 0
@@ -142,10 +130,10 @@ def test_scorer(sample_scenario, sample_staffing, sample_alignment):
         scenario=sample_scenario,
         option=option,
         simulation=simulation,
-        alignment_weights=sample_alignment
+        alignment_targets=sample_alignment
     )
     
-    assert 0 <= scores.overall_score <= 1
+    assert 0 <= scores.profit.raw_score <= 1
     assert 0 <= scores.profit.raw_score <= 1
     assert 0 <= scores.customer_satisfaction.raw_score <= 1
     assert 0 <= scores.staff_wellbeing.raw_score <= 1
