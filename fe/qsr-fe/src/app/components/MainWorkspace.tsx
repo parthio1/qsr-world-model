@@ -168,7 +168,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
           <div className="text-center space-y-4">
             <Loader2 className="h-12 w-12 text-blue-600 animate-spin mx-auto" />
             <div>
-              <h3 className="font-semibold text-slate-900 mb-2">Agents Modeling Staffing Plans and Outcomes....please be patient as it may take a few minutes)</h3>
+              <h3 className="font-semibold text-slate-900 mb-2">Agents thinking…this may take a minute</h3>
             </div>
           </div>
         </div>
