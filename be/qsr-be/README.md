@@ -326,21 +326,9 @@ console.log('Predicted customers:', result.best_decision.simulation.predicted_me
 - [ ] Real-time POS integration
 - [ ] Model auto-calibration from feedback
 
-## 🤝 Contributing
-
-Contributions welcome! Areas for improvement:
-- Additional agents (inventory, competition, marketing)
-- Enhanced simulation realism
-- Integration with POS systems
-- Web dashboard UI
-- Model performance benchmarks
 
 ## 📄 License
 
 MIT License
 
-## 🙋 Support
-
-For issues or questions:
-- GitHub Issues: [repo-url]/issues
-- Documentation: [wiki-url]
+*Built with curiosity over a weekend. Learning in progress. Feedback welcome.*

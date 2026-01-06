@@ -126,78 +126,6 @@ The application features **Dynamic Backend Discovery**. Upon startup, it automat
 - **Icons**: Lucide React
 - **Build Tool**: Vite
 
-## 🧩 Key Concepts
-
-### Custom Hooks
-
-The app uses custom hooks for clean separation of concerns:
-
-```typescript
-// Form state management
-const { shift, setShift, weather, setWeather } = useWorldParameters();
-const { profitWeight, customerSatisfactionWeight } = useAlignmentWeights();
-
-// API calls with loading/error states
-const { plan, isLoading, error, generatePlan } = usePlanApi();
-const { evaluation, evaluate } = useEvaluateApi();
-```
-
-### Type Safety
-
-All data structures are strongly typed:
-
-```typescript
-import { PlanRequest, PlanResponse, Restaurant } from './types';
-```
-
-### Error Handling
-
-- **Error Boundary**: Catches React errors
-- **API Errors**: Custom `ApiError` class
-- **Validation**: Pre-flight validation before API calls
-- **User Feedback**: Clear error messages in UI
-
-## 📝 Development Guidelines
-
-### Adding a New Feature
-
-1. **Define Types** (`/types/index.ts`)
-```typescript
-export interface NewFeature {
-  id: string;
-  name: string;
-}
-```
-
-2. **Create Hook** (`/hooks/useNewFeature.ts`)
-```typescript
-export function useNewFeature() {
-  const [state, setState] = useState();
-  return { state, setState };
-}
-```
-
-3. **Add to Component**
-```typescript
-const { state, setState } = useNewFeature();
-```
-
-### Code Style
-
-- Use TypeScript strict mode
-- Functional components only
-- Custom hooks for state logic
-- Utility functions for calculations
-- Constants for magic values
-
-### Performance Best Practices
-
-- ✅ Use `useCallback` for event handlers
-- ✅ Use `useMemo` for expensive calculations
-- ✅ Proper dependency arrays in hooks
-- ✅ Avoid inline object/array creation in props
-- ✅ Component memoization where needed
-
 ## 🧪 Testing (Recommended)
 
 ```bash
@@ -227,25 +155,9 @@ The build outputs to `/dist` and can be deployed to any static hosting service.
 
 - [Architecture Guide](./ARCHITECTURE.md) - Detailed architecture documentation
 
-## 🤝 Contributing
-
-1. Follow the existing code structure
-2. Write TypeScript with strict types
-3. Use custom hooks for state management
-4. Add proper error handling
-5. Update documentation
-
 ## 📄 License
 
 MIT License - See LICENSE file for details
-
-## 🆘 Support
-
-For issues and questions:
-- Check [ARCHITECTURE.md](./ARCHITECTURE.md) for technical details
-- Review existing code patterns
-- Follow TypeScript best practices
-- Use custom hooks for reusability
 
 ## 🎯 Roadmap
 
@@ -259,6 +171,4 @@ For issues and questions:
 - [ ] Multi-language support
 - [ ] Dark mode theme
 
----
-
-Built with ❤️ for QSR operators
+*Built with curiosity over a weekend. Learning in progress. Feedback welcome.*
