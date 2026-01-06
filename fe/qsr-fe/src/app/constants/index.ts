@@ -64,10 +64,10 @@ export const OPERATOR_PRIORITY_CONFIG = {
   }
 } as const;
 
-export const DEFAULT_ALIGNMENT_WEIGHTS = {
-  profit: 40,
-  customer_satisfaction: 35,
-  staff_wellbeing: 25
+export const DEFAULT_ALIGNMENT_TARGETS = {
+  target_labor_cost_percent: 30.0,
+  target_wait_time_seconds: 180,
+  target_staff_utilization: 0.82
 } as const;
 
 export const API_ENDPOINTS = {

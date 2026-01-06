@@ -14,17 +14,16 @@ export interface Restaurant {
   seating_capacity: number;
   // Constraints (read-only)
   max_staff: number;
-  max_labor_cost: number;
 }
 
 export type ShiftType = 'breakfast' | 'lunch' | 'dinner';
 export type WeatherType = 'sunny' | 'cloudy' | 'rainy' | 'stormy';
 export type OperatorPriority = 'balanced' | 'minimize_cost' | 'customer_first' | 'staff_wellbeing' | 'maximize_revenue';
 
-export interface AlignmentWeights {
-  profit: number;
-  customer_satisfaction: number;
-  staff_wellbeing: number;
+export interface AlignmentTargets {
+  target_labor_cost_percent: number;
+  target_wait_time_seconds: number;
+  target_staff_utilization: number;
 }
 
 export interface PlanFormData {
@@ -35,7 +34,7 @@ export interface PlanFormData {
   special_events: string[];
   restaurant: Restaurant;
   operator_priority: OperatorPriority;
-  alignment_weights: AlignmentWeights;
+  alignment_targets: AlignmentTargets;
 }
 
 // API Request Model (Matches Backend PlanningRequest)
@@ -57,12 +56,11 @@ export interface PlanRequest {
   };
   constraints?: {
     available_staff: number;
-    budget_hours: number;
   };
-  alignment_weights?: {
-    profit: number;
-    customer_satisfaction: number;
-    staff_wellbeing: number;
+  alignment_targets?: {
+    target_labor_cost_percent: number;
+    target_wait_time_seconds: number;
+    target_staff_utilization: number;
   };
   operator_priority: string;
 }
@@ -105,7 +103,6 @@ export interface Scores {
   profit: ScoreItem;
   customer_satisfaction: ScoreItem;
   staff_wellbeing: ScoreItem;
-  overall_score: number;
   ranking: string;
   strengths: string[];
   weaknesses: string[];

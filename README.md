@@ -45,7 +45,7 @@ The backend employs several specialized agents:
 - **World Model Agent**: Simulates the shift and predicts metrics.
 - **Restaurant Operator Agent**: Generates initial staffing strategies with typical human operational bias.
 - **Shadow Operator Agent**: Iteratively refines the initial plan to find a more rational optimal.
-- **Scorer Agent**: Evaluates outcomes based on explicit optimization formulas and multi-objective weights.
+- **Scorer Agent**: Evaluates outcomes based on explicit optimization formulas and operational targets (Labor, Wait Time, Utilization).
 - **Evaluator Agent**: Compares simulations to actual results for continuous learning.
 - **World Context Agent**: Analyzes environmental factors and predicts demand levels.
 - **Restaurant Agent**: Analyzes restaurant-specific infrastructure and capacity bottlenecks.

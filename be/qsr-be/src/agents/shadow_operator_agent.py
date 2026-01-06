@@ -8,6 +8,7 @@ from src.models.schemas import (
 )
 from src.config.settings import settings
 from src.utils.logger import setup_logger
+from src.utils.llm_utils import retry_llm_call
 
 logger = setup_logger(__name__)
 
@@ -45,6 +46,7 @@ REASONING GUIDELINES:
 
 """
 
+    @retry_llm_call()
     def generate_refined_plan(
         self,
         scenario: Scenario,
@@ -82,7 +84,7 @@ Generate ONE refined staffing plan that addresses the feedback.
                 contents=[self.system_prompt, user_prompt],
                 config={
                     "temperature": settings.temperature,
-                    "max_output_tokens": settings.max_output_tokens,
+                    "max_output_tokens": 8192,
                     "response_mime_type": "application/json",
                     "response_json_schema": StaffingPlan.model_json_schema(),
                 }

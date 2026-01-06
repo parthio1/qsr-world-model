@@ -6,6 +6,7 @@ from typing import Dict, Optional
 from src.models.schemas import Scenario, Staffing, SimulationResult, PredictedMetrics
 from src.config.settings import settings
 from src.utils.logger import setup_logger
+from src.utils.llm_utils import retry_llm_call
 
 logger = setup_logger(__name__)
 
@@ -33,9 +34,9 @@ CAPABILITIES:
 
 SIMULATION LOGIC
 1. Capacity Calculation:
-   - Drive-thru: ~25-35 cars/hr per lane per staff
-   - Kitchen: ~20-25 orders/hr per cook
-   - Utilization sweet spot: 0.70-0.85 (below = waste, above = stress)
+   - Drive-thru: ~55-75 cars/hr per lane per staff
+   - Kitchen: ~30-40 orders/hr per cook
+   - Utilization sweet spot: 0.75-0.90 (below = waste, above = stress)
 
 2. - Customer Served Calculation:
    - Base demand by shift: breakfast (40-80/hr), lunch (80-120/hr), dinner (70-110/hr)
@@ -51,17 +52,19 @@ SIMULATION LOGIC
 
 4. Financial Metrics:
    - Average order value: $16 (drive-thru), $20 (walk-in)
-   - Food cost: ~28% of revenue
-   - Labor: $15/hour per staff member
-   - Shift duration: 4 hours standard
+   - Food cost: ~20% of revenue
+   - Labor: $25/hour per staff member
+   - Shift duration: 8 hours standard
 
 CONSTRAINTS:
 - Be realistic: QSR typically serves 50-200 customers/hour
 - Staff utilization should not exceed 1.0
 - Wait times should reflect actual capacity constraints
 
-Be precise with numbers and provide realistic predictions."""
+Be precise with numbers and provide realistic predictions.
+IMPORTANT: Output pure, valid JSON. Keep reasoning concise (max 2 sentences)."""
 
+    @retry_llm_call()
     def simulate(self, scenario: Scenario, staffing: Staffing, context: Optional[str] = None) -> SimulationResult:
         """
         Simulate a shift and predict outcomes
@@ -99,7 +102,7 @@ Provide detailed, realistic predictions in the specified JSON format.
                 contents=[self.system_prompt, user_prompt],
                 config={
                     "temperature": settings.temperature,
-                    "max_output_tokens": settings.max_output_tokens,
+                    "max_output_tokens": 8192,
                     "response_mime_type": "application/json",
                     "response_json_schema": SimulationResult.model_json_schema(),
                 }

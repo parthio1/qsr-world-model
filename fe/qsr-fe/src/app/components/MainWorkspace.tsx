@@ -427,7 +427,8 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
     const waitState = getQualitativeState('wait', metrics.avg_wait_time_seconds);
     const csatState = getQualitativeState('csat', metrics.order_accuracy);
     const utilState = getQualitativeState('utilization', metrics.staff_utilization);
-    const verdict = bestDecision.scores.overall_score > 0.85 ? 'VIABLE' : bestDecision.scores.overall_score > 0.65 ? 'STRESS_DETECTION' : 'SYSTEM_FAILURE';
+    const averageScore = (bestDecision.scores.profit.raw_score + bestDecision.scores.customer_satisfaction.raw_score + bestDecision.scores.staff_wellbeing.raw_score) / 3;
+    const verdict = averageScore > 0.85 ? 'VIABLE' : averageScore > 0.65 ? 'STRESS_DETECTION' : 'SYSTEM_FAILURE';
 
     return (
       <div className="flex-1 bg-white flex flex-col overflow-hidden">
@@ -466,9 +467,9 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[
-                    { label: 'Profit Alignment', key: 'profit', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-                    { label: 'Guest Experience', key: 'customer_satisfaction', icon: Smile, color: 'text-blue-600', bg: 'bg-blue-50' },
-                    { label: 'Staff Wellbeing', key: 'staff_wellbeing', icon: Users, color: 'text-purple-600', bg: 'bg-purple-50' }
+                    { label: 'Labor Target Score', key: 'profit', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+                    { label: 'Wait Time Score', key: 'customer_satisfaction', icon: Smile, color: 'text-blue-600', bg: 'bg-blue-50' },
+                    { label: 'Utilization Score', key: 'staff_wellbeing', icon: Users, color: 'text-purple-600', bg: 'bg-purple-50' }
                   ].map((obj) => {
                     const bestScore = bestDecision.scores[obj.key as keyof typeof bestDecision.scores] as any;
                     const proposedScore = proposedDecision.scores[obj.key as keyof typeof proposedDecision.scores] as any;

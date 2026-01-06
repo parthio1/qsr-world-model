@@ -154,9 +154,9 @@ Labor Cost: $950.00
   • Order Accuracy: 96%
 
 🎯 Score Breakdown
-  • Profit: 0.75 (weighted: 0.300)
-  • Customer Satisfaction: 0.82 (weighted: 0.287)
-  • Staff Wellbeing: 0.88 (weighted: 0.220)
+  • Profit: 1.00 (raw: 1.00)
+  • Customer Satisfaction: 1.00 (raw: 1.00)
+  • Staff Wellbeing: 0.40 (raw: 0.40)
 
 ✓ Strengths
   • Strong profit margin of 51%
@@ -209,19 +209,19 @@ TEMPERATURE=0.7
 API_PORT=8081
 ```
 
-### Alignment Weights
+### Alignment Targets
 
-Customize optimization priorities:
+Customize operational targets found in real-world scenarios:
 
 ```python
 {
-  "profit": 0.40,              # 40% weight on profit
-  "customer_satisfaction": 0.35,  # 35% on customer experience
-  "staff_wellbeing": 0.25      # 25% on staff happiness
+  "target_labor_cost_percent": 30.0,   # Maximize profit by keeping labor < 30%
+  "target_wait_time_seconds": 180,     # Max wait time of 3 minutes
+  "target_staff_utilization": 0.82     # Target 82% utilization (avoid burnout)
 }
 ```
 
-Weights must sum to 1.0.
+Scores are calculated based on deviation from these targets.
 
 ## 🧪 Testing
 

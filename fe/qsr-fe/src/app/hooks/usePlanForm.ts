@@ -1,18 +1,19 @@
+
 import { useState, useCallback } from 'react';
-import { WorldParameters, AlignmentWeights, OperatorPriority, Restaurant } from '../types';
-import { DEFAULT_ALIGNMENT_WEIGHTS, DAYS_OF_WEEK } from '../constants';
+import { ShiftType, WeatherType, AlignmentTargets, OperatorPriority, Restaurant } from '../types';
+import { DAYS_OF_WEEK } from '../constants';
 
 export function useWorldParameters() {
-  const [shift, setShift] = useState<WorldParameters['shift']>('lunch');
+  const [shift, setShift] = useState<ShiftType>('lunch');
   const [dayOfWeek, setDayOfWeek] = useState<string>(() => {
     return DAYS_OF_WEEK[new Date().getDay()];
   });
-  const [weather, setWeather] = useState<WorldParameters['weather']>('sunny');
+  const [weather, setWeather] = useState<WeatherType>('sunny');
   const [specialEvents, setSpecialEvents] = useState<string[]>([]);
 
   const toggleSpecialEvent = useCallback((event: string) => {
-    setSpecialEvents(prev => 
-      prev.includes(event) 
+    setSpecialEvents(prev =>
+      prev.includes(event)
         ? prev.filter(e => e !== event)
         : [...prev, event]
     );
@@ -35,38 +36,33 @@ export function useWorldParameters() {
   };
 }
 
-export function useAlignmentWeights() {
-  const [profitWeight, setProfitWeight] = useState(DEFAULT_ALIGNMENT_WEIGHTS.profit);
-  const [customerSatisfactionWeight, setCustomerSatisfactionWeight] = useState(DEFAULT_ALIGNMENT_WEIGHTS.customer_satisfaction);
-  const [staffWellbeingWeight, setStaffWellbeingWeight] = useState(DEFAULT_ALIGNMENT_WEIGHTS.staff_wellbeing);
+export function useAlignmentTargets() {
+  const [targetLaborCost, setTargetLaborCost] = useState(30.0);
+  const [targetWaitTime, setTargetWaitTime] = useState(180);
+  const [targetStaffUtilization, setTargetStaffUtilization] = useState(0.82);
 
-  const totalWeight = profitWeight + customerSatisfactionWeight + staffWellbeingWeight;
-  const isWeightValid = totalWeight === 100;
-
-  const handleProfitWeightChange = useCallback((value: number[]) => {
-    setProfitWeight(value[0]);
+  const handleTargetLaborCostChange = useCallback((value: number[]) => {
+    setTargetLaborCost(value[0]);
   }, []);
 
-  const handleCustomerSatisfactionWeightChange = useCallback((value: number[]) => {
-    setCustomerSatisfactionWeight(value[0]);
+  const handleTargetWaitTimeChange = useCallback((value: number[]) => {
+    setTargetWaitTime(value[0]);
   }, []);
 
-  const handleStaffWellbeingWeightChange = useCallback((value: number[]) => {
-    setStaffWellbeingWeight(value[0]);
+  const handleTargetStaffUtilizationChange = useCallback((value: number[]) => {
+    setTargetStaffUtilization(value[0]);
   }, []);
 
   return {
-    profitWeight,
-    customerSatisfactionWeight,
-    staffWellbeingWeight,
-    totalWeight,
-    isWeightValid,
-    handleProfitWeightChange,
-    handleCustomerSatisfactionWeightChange,
-    handleStaffWellbeingWeightChange,
-    setProfitWeight,
-    setCustomerSatisfactionWeight,
-    setStaffWellbeingWeight
+    targetLaborCost,
+    targetWaitTime,
+    targetStaffUtilization,
+    handleTargetLaborCostChange,
+    handleTargetWaitTimeChange,
+    handleTargetStaffUtilizationChange,
+    setTargetLaborCost,
+    setTargetWaitTime,
+    setTargetStaffUtilization
   };
 }
 
@@ -92,9 +88,9 @@ export function useRestaurantManagement(initialRestaurants: Restaurant[]) {
       drive_thru_lanes: 0,
       kitchen_capacity: 8,
       pos_count: 2,
+      dine_in: true,
       seating_capacity: 40,
       max_staff: 18,
-      max_labor_cost: 900,
     };
     setRestaurants(prev => [newRestaurant, ...prev]);
     setSelectedRestaurant(newRestaurant.id);

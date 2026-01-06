@@ -4,17 +4,18 @@ import json
 from google import genai
 from src.models.schemas import (
     Scenario, StaffingPlan, SimulationResult, 
-    AlignmentWeights, Scores, ScoreDetails
+    AlignmentTargets, Scores, ScoreDetails
 )
 from src.config.settings import settings
 from src.utils.logger import setup_logger
+from src.utils.llm_utils import retry_llm_call
 
 logger = setup_logger(__name__)
 
 class ScorerAgent:
     """
-    Agent that evaluates simulation results based on multi-objective 
-    criteria: profit, customer satisfaction, and staff wellbeing.
+    Agent that evaluates simulation results based on target alignment.
+    Scores represent proximity to operational targets (1.0 = Perfect match or Better).
     """
     
     def __init__(self):
@@ -22,57 +23,55 @@ class ScorerAgent:
         self.system_prompt = self._build_system_prompt()
         
     def _build_system_prompt(self) -> str:
-        return """You are a QSR Scoring Agent. Your goal is to evaluate a staffing option's simulation results and provide detailed scores (0.0 to 1.0).
+        return """You are a QSR Scoring Agent. Your goal is to evaluate if a staffing plan meets specific OPERATIONAL TARGETS.
 
-ROLE: Analyze metrics and provide objective scores based on multi-objective alignment weights.
+ROLE: Analyze metrics and provide objective scores based on alignment with specified targets.
 
-SCORING CRITERIA:
+SCORING LOGIC (Proximity to Target):
+- Score 1.0 = Perfect match or Performance is BETTER than target.
+- Score < 1.0 = Performance deviates from target (worse).
+- Score 0.0 = Unacceptable deviation.
 
-1. PROFIT SCORING (Benchmark based on Labor Cost %):
-   - Target: < 22% for 1.0 score.
-   - Calculation: Max(0.01, 1.0 - (Labor Cost / Revenue - 0.15) * 3)
-   - Logic: Efficiency above 22% starts degrading profit score quickly.
+1. PROFIT SCORING (Labor Cost %):
+   - LOWER is Better.
+   - If Actual <= Target: Score = 1.0
+   - If Actual > Target: Score = Max(0, 1.0 - ((Actual - Target) / 10))  (Penalize 0.1 per 1% over)
 
-2. CUSTOMER SATISFACTION SCORING (Benchmark based on Avg Wait Time):
-   - Target: < 120s for 1.0 score.
-   - Calculation: Max(0.01, 1.0 - (Wait Time - 120) / 480)
-   - Logic: Wait times above 10 mins (600s) drop to nearly 0.
+2. CUSTOMER SATISFACTION (Avg Wait Time):
+   - LOWER is Better.
+   - If Actual <= Target: Score = 1.0
+   - If Actual > Target: Score = Max(0, 1.0 - ((Actual - Target) / 60)) (Penalize 0.1 per 10s over)
 
-3. STAFF WELLBEING (Benchmark based on Utilization):
-   - Target: 0.75 is perfect (1.0).
-   - Calculation: Max(0.01, 1.0 - Abs(Utilization - 0.75) * 4)
-   - Logic: Below 0.5 (Idleness) or above 0.95 (Burnout) results in low scores.
+3. STAFF WELLBEING (Utilization):
+   - TARGET is Ideal Point. Deviation in EITHER direction is penalized.
+   - Deviation = Abs(Actual - Target)
+   - Score = Max(0, 1.0 - (Deviation / 0.15))
 
-SCORING FORMULA (Weighted Arithmetic Mean):
-Rationale: We use a weighted arithmetic mean so that improvements in one area are directly visible in the overall score, while still respecting the importance of each objective via weights.
+RANKING LOGIC:
+- Consider the balance of all three scores.
+- 0.95 - 1.00: "excellent" (All targets met or exceeded)
+- 0.85 - 0.94: "very good" (Minor deviations)
+- 0.70 - 0.84: "good" (Acceptable trade-offs)
+- 0.50 - 0.69: "fair" (Significant misses)
+- 0.00 - 0.49: "poor" (Critical failure)
 
-Formula:
-Final Combined Score = (Profit_raw * Profit_weight) + (Customer_raw * Customer_weight) + (Staff_raw * Staff_weight)
-
-Steps:
-1. Determine raw scores (0.01 to 1.0) for each objective based on the benchmarks above.
-2. Multiply each raw score by its respective alignment weight.
-3. Sum the weighted scores to get the overall score.
-
-RANKING LOGIC (Must follow strictly):
-- 0.90 - 1.00: "excellent"
-- 0.80 - 0.89: "very good"
-- 0.70 - 0.79: "good"
-- 0.60 - 0.69: "fair"
-- 0.00 - 0.59: "poor"
-
-Be analytical and data-driven. If a plan has better service metrics but higher costs, the CSAT score should rise while Profit may fall. Ensure the "recommendation" explains these trade-offs clearly.
+IMPORTANT:
+- Keep reasoning concise.
+- Calculate 'deviation' field as the raw difference (Actual - Target).
+- 'raw_score' is the calculated 0.0-1.0 score.
+- DO NOT return an 'overall_score' field.
 """
 
+    @retry_llm_call()
     def score_option(
         self,
         scenario: Scenario,
         option: StaffingPlan,
         simulation: SimulationResult,
-        alignment_weights: AlignmentWeights
+        alignment_targets: AlignmentTargets
     ) -> Scores:
         """
-        Score a single staffing option outcome
+        Score a single staffing option outcome against targets
         """
         logger.info(f"Scoring option: {option.id}")
         
@@ -88,19 +87,19 @@ STAFFING OPTION:
 SIMULATION RESULTS:
 {simulation.model_dump_json(indent=2)}
 
-ALIGNMENT WEIGHTS:
-{alignment_weights.model_dump_json(indent=2)}
+ALIGNMENT TARGETS:
+{alignment_targets.model_dump_json(indent=2)}
 
-Evaluate the simulation outcomes against the criteria and alignment weights.
-Return the scores in the specified JSON format.
+Evaluate the simulation outcomes against these targets.
+Calculate proximity scores (1.0 = Target Met or Exceeded).
 """
             
             response = self.client.models.generate_content(
                 model=settings.gemini_model,
                 contents=[self.system_prompt, user_prompt],
                 config={
-                    "temperature": settings.temperature * 0.5,  # Slightly lower for consistency
-                    "max_output_tokens": settings.max_output_tokens,
+                    "temperature": 0.4,
+                    "max_output_tokens": 8192,
                     "response_mime_type": "application/json",
                     "response_json_schema": Scores.model_json_schema(),
                 }
@@ -109,4 +108,6 @@ Return the scores in the specified JSON format.
             return Scores.model_validate_json(response.text)
         except Exception as e:
             logger.error(f"Scoring failed: {e}")
+            # Attempt to parse partial JSON if possible, or return fallback
+            # For now, just re-raise to trigger retry logic if available
             raise

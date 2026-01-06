@@ -48,7 +48,6 @@ interface Store {
   seating_capacity: number;
   // Restaurant Constraints (read-only)
   max_staff: number;
-  max_labor_cost: number;
 }
 
 interface SimulationConfig {
@@ -67,11 +66,11 @@ interface SourcePanelProps {
 
 export function SourcePanel({ isCollapsed, onToggle, onLoadingChange, onFormDataChange }: SourcePanelProps) {
   const [restaurants, setRestaurants] = useState<Store[]>([
-    { id: '1', name: 'Downtown Atlanta', location: 'Peachtree St', lastUsed: '2 min ago', has_drive_thru: true, drive_thru_lanes: 2, kitchen_capacity: 10, pos_count: 3, dine_in: true, seating_capacity: 50, max_staff: 20, max_labor_cost: 1000 },
-    { id: '2', name: 'Buckhead', location: 'Lenox Rd', lastUsed: '1 hour ago', has_drive_thru: false, drive_thru_lanes: 0, kitchen_capacity: 8, pos_count: 2, dine_in: true, seating_capacity: 40, max_staff: 18, max_labor_cost: 900 },
-    { id: '3', name: 'Midtown', location: '10th Street', lastUsed: '2 hours ago', has_drive_thru: true, drive_thru_lanes: 1, kitchen_capacity: 12, pos_count: 4, dine_in: true, seating_capacity: 60, max_staff: 22, max_labor_cost: 1100 },
-    { id: '4', name: 'Airport', location: 'Hartsfield-Jackson', lastUsed: '1 day ago', has_drive_thru: true, drive_thru_lanes: 3, kitchen_capacity: 15, pos_count: 5, dine_in: true, seating_capacity: 70, max_staff: 25, max_labor_cost: 1200 },
-    { id: '5', name: 'Sandy Springs', location: 'Roswell Rd', lastUsed: '2 days ago', has_drive_thru: false, drive_thru_lanes: 0, kitchen_capacity: 7, pos_count: 1, dine_in: true, seating_capacity: 30, max_staff: 15, max_labor_cost: 800 },
+    { id: '1', name: 'Downtown Atlanta', location: 'Peachtree St', lastUsed: '2 min ago', has_drive_thru: true, drive_thru_lanes: 2, kitchen_capacity: 10, pos_count: 3, dine_in: true, seating_capacity: 50, max_staff: 20 },
+    { id: '2', name: 'Buckhead', location: 'Lenox Rd', lastUsed: '1 hour ago', has_drive_thru: false, drive_thru_lanes: 0, kitchen_capacity: 8, pos_count: 2, dine_in: true, seating_capacity: 40, max_staff: 18 },
+    { id: '3', name: 'Midtown', location: '10th Street', lastUsed: '2 hours ago', has_drive_thru: true, drive_thru_lanes: 1, kitchen_capacity: 12, pos_count: 4, dine_in: true, seating_capacity: 60, max_staff: 22 },
+    { id: '4', name: 'Airport', location: 'Hartsfield-Jackson', lastUsed: '1 day ago', has_drive_thru: true, drive_thru_lanes: 3, kitchen_capacity: 15, pos_count: 5, dine_in: true, seating_capacity: 70, max_staff: 25 },
+    { id: '5', name: 'Sandy Springs', location: 'Roswell Rd', lastUsed: '2 days ago', has_drive_thru: false, drive_thru_lanes: 0, kitchen_capacity: 7, pos_count: 1, dine_in: true, seating_capacity: 30, max_staff: 15 },
   ]);
 
   const [selectedRestaurant, setSelectedRestaurant] = useState('1');
@@ -106,10 +105,10 @@ export function SourcePanel({ isCollapsed, onToggle, onLoadingChange, onFormData
   // Operator Decision Parameters
   const [operatorPriority, setOperatorPriority] = useState<'balanced' | 'minimize_cost' | 'customer_first' | 'staff_wellbeing' | 'maximize_revenue'>('balanced');
 
-  // Alignment Parameters (Multi-Objective Weights)
-  const [profitWeight, setProfitWeight] = useState(40);
-  const [customerSatisfactionWeight, setCustomerSatisfactionWeight] = useState(35);
-  const [staffWellbeingWeight, setStaffWellbeingWeight] = useState(25);
+  // Alignment Parameters (Operational Targets)
+  const [targetLaborCost, setTargetLaborCost] = useState(30.0);
+  const [targetWaitTime, setTargetWaitTime] = useState(180);
+  const [targetStaffUtilization, setTargetStaffUtilization] = useState(0.82);
 
   const [simulationConfig, setSimulationConfig] = useState<SimulationConfig>({
     difficulty: 'medium',
@@ -117,7 +116,6 @@ export function SourcePanel({ isCollapsed, onToggle, onLoadingChange, onFormData
     stressors: 'none',
     specialEvent: 'none',
   });
-
 
   // Toggle special event selection
   const toggleSpecialEvent = (event: string) => {
@@ -144,24 +142,17 @@ export function SourcePanel({ isCollapsed, onToggle, onLoadingChange, onFormData
     }
   };
 
-  // Calculate total weight
-  const totalWeight = profitWeight + customerSatisfactionWeight + staffWellbeingWeight;
-  const isWeightValid = totalWeight === 100;
-
-  // Handle weight changes with validation
-  const handleProfitWeightChange = (value: number[]) => {
-    const newValue = value[0];
-    setProfitWeight(newValue);
+  // Handle target changes
+  const handleTargetLaborCostChange = (value: number[]) => {
+    setTargetLaborCost(value[0]);
   };
 
-  const handleCustomerSatisfactionWeightChange = (value: number[]) => {
-    const newValue = value[0];
-    setCustomerSatisfactionWeight(newValue);
+  const handleTargetWaitTimeChange = (value: number[]) => {
+    setTargetWaitTime(value[0]);
   };
 
-  const handleStaffWellbeingWeightChange = (value: number[]) => {
-    const newValue = value[0];
-    setStaffWellbeingWeight(newValue);
+  const handleTargetStaffUtilizationChange = (value: number[]) => {
+    setTargetStaffUtilization(value[0]);
   };
 
   const handleAddRestaurant = () => {
@@ -178,7 +169,7 @@ export function SourcePanel({ isCollapsed, onToggle, onLoadingChange, onFormData
         dine_in: true,
         seating_capacity: 40,
         max_staff: 18,
-        max_labor_cost: 900,
+
       };
       setRestaurants([newRestaurant, ...restaurants]);
       setNewRestaurantName('');
@@ -212,17 +203,17 @@ export function SourcePanel({ isCollapsed, onToggle, onLoadingChange, onFormData
         special_events: specialEvents,
         restaurant: currentRestaurant,
         operator_priority: operatorPriority,
-        alignment_weights: {
-          profit: profitWeight,
-          customer_satisfaction: customerSatisfactionWeight,
-          staff_wellbeing: staffWellbeingWeight
+        alignment_targets: {
+          target_labor_cost_percent: targetLaborCost,
+          target_wait_time_seconds: targetWaitTime,
+          target_staff_utilization: targetStaffUtilization
         }
       });
     }
   }, [
     shift, dayOfWeek, weather, specialEvents,
     currentRestaurant, operatorPriority,
-    profitWeight, customerSatisfactionWeight, staffWellbeingWeight,
+    targetLaborCost, targetWaitTime, targetStaffUtilization,
     onFormDataChange
   ]);
 
@@ -947,12 +938,6 @@ export function SourcePanel({ isCollapsed, onToggle, onLoadingChange, onFormData
                             {currentRestaurant.max_staff} employees
                           </Badge>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-slate-600">Labor Budget</span>
-                          <Badge variant="secondary" className="text-[10px] bg-slate-200 text-slate-700">
-                            ${currentRestaurant.max_labor_cost.toFixed(2)}
-                          </Badge>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -967,7 +952,7 @@ export function SourcePanel({ isCollapsed, onToggle, onLoadingChange, onFormData
                 >
                   <div className="flex items-center gap-2">
                     <Target className="h-3.5 w-3.5 text-green-600" />
-                    <span className="text-xs font-semibold text-slate-900">Alignment</span>
+                    <span className="text-xs font-semibold text-slate-900">Alignment Targets</span>
                   </div>
                   {expandedGroups.alignment ? (
                     <ChevronUp className="h-3.5 w-3.5 text-slate-500" />
@@ -977,126 +962,95 @@ export function SourcePanel({ isCollapsed, onToggle, onLoadingChange, onFormData
                 </button>
                 {expandedGroups.alignment && (
                   <div className="px-2.5 pb-2.5 space-y-3">
-                    <div className="mb-1">
-                      <p className="text-[10px] text-slate-500">(Must total 100%)</p>
-                    </div>
 
-                    {/* Profit Weight */}
+                    {/* Labor Cost Target */}
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <Label className="text-xs font-medium text-slate-700 flex items-center gap-1.5">
                           <DollarSign className="h-3 w-3 text-green-600" />
-                          Profit
+                          Max Labor Cost (%)
                         </Label>
                         <Input
                           type="number"
-                          min="0"
-                          max="100"
-                          value={profitWeight}
+                          min="10"
+                          max="60"
+                          value={targetLaborCost}
                           onChange={(e) => {
-                            const value = parseInt(e.target.value) || 0;
-                            setProfitWeight(Math.max(0, Math.min(100, value)));
+                            const value = parseFloat(e.target.value) || 30;
+                            setTargetLaborCost(Math.max(10, Math.min(60, value)));
                           }}
                           className="h-6 w-14 text-xs text-right px-1.5"
                         />
                       </div>
                       <Slider
-                        value={[profitWeight]}
-                        onValueChange={handleProfitWeightChange}
-                        max={100}
-                        step={1}
+                        value={[targetLaborCost]}
+                        onValueChange={handleTargetLaborCostChange}
+                        min={10}
+                        max={60}
+                        step={0.5}
                         className="w-full"
                       />
                     </div>
 
-                    {/* Customer Satisfaction Weight */}
+                    {/* Wait Time Target */}
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <Label className="text-xs font-medium text-slate-700 flex items-center gap-1.5">
                           <Smile className="h-3 w-3 text-blue-600" />
-                          Customer Satisfaction
+                          Max Wait Time (s)
                         </Label>
                         <Input
                           type="number"
-                          min="0"
-                          max="100"
-                          value={customerSatisfactionWeight}
+                          min="60"
+                          max="600"
+                          value={targetWaitTime}
                           onChange={(e) => {
-                            const value = parseInt(e.target.value) || 0;
-                            setCustomerSatisfactionWeight(Math.max(0, Math.min(100, value)));
+                            const value = parseInt(e.target.value) || 180;
+                            setTargetWaitTime(Math.max(60, Math.min(600, value)));
                           }}
                           className="h-6 w-14 text-xs text-right px-1.5"
                         />
                       </div>
                       <Slider
-                        value={[customerSatisfactionWeight]}
-                        onValueChange={handleCustomerSatisfactionWeightChange}
-                        max={100}
-                        step={1}
+                        value={[targetWaitTime]}
+                        onValueChange={handleTargetWaitTimeChange}
+                        min={60}
+                        max={600}
+                        step={10}
                         className="w-full"
                       />
                     </div>
 
-                    {/* Staff Wellbeing Weight */}
+                    {/* Utilization Target */}
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <Label className="text-xs font-medium text-slate-700 flex items-center gap-1.5">
                           <Heart className="h-3 w-3 text-rose-600" />
-                          Staff Wellbeing
+                          Target Utilization
                         </Label>
                         <Input
                           type="number"
-                          min="0"
-                          max="100"
-                          value={staffWellbeingWeight}
+                          min="0.5"
+                          max="1.0"
+                          step="0.01"
+                          value={targetStaffUtilization}
                           onChange={(e) => {
-                            const value = parseInt(e.target.value) || 0;
-                            setStaffWellbeingWeight(Math.max(0, Math.min(100, value)));
+                            const value = parseFloat(e.target.value) || 0.82;
+                            setTargetStaffUtilization(Math.max(0.5, Math.min(1.0, value)));
                           }}
                           className="h-6 w-14 text-xs text-right px-1.5"
                         />
                       </div>
                       <Slider
-                        value={[staffWellbeingWeight]}
-                        onValueChange={handleStaffWellbeingWeightChange}
-                        max={100}
-                        step={1}
+                        value={[targetStaffUtilization]}
+                        onValueChange={handleTargetStaffUtilizationChange}
+                        min={0.5}
+                        max={1.0}
+                        step={0.01}
                         className="w-full"
                       />
                     </div>
 
-                    {/* Total Progress Bar */}
-                    <div className="pt-2 border-t border-slate-100 space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-xs font-semibold text-slate-700">Total</Label>
-                        <div className="flex items-center gap-1.5">
-                          <span className={`text-xs font-semibold ${isWeightValid ? 'text-green-600' : 'text-red-600'
-                            }`}>
-                            {totalWeight}%
-                          </span>
-                          {isWeightValid ? (
-                            <Badge className="text-[10px] px-1.5 py-0 bg-green-100 text-green-700 border-green-200">
-                              ✓ Valid
-                            </Badge>
-                          ) : (
-                            <Badge className="text-[10px] px-1.5 py-0 bg-red-100 text-red-700 border-red-200">
-                              ✗ Invalid
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full transition-all duration-300 ${isWeightValid
-                            ? 'bg-green-500'
-                            : totalWeight > 100
-                              ? 'bg-red-500'
-                              : 'bg-amber-500'
-                            }`}
-                          style={{ width: `${Math.min(totalWeight, 100)}%` }}
-                        />
-                      </div>
-                    </div>
                   </div>
                 )}
               </div>
@@ -1105,6 +1059,6 @@ export function SourcePanel({ isCollapsed, onToggle, onLoadingChange, onFormData
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

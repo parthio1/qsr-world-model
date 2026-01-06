@@ -11,7 +11,7 @@ from rich import print as rprint
 from src.coordinator.orchestrator import QSROrchestrator
 from src.models.schemas import (
     Scenario, RestaurantConfig, PlanningRequest,
-    Constraints, AlignmentWeights, ShiftType, WeatherType,
+    Constraints, AlignmentTargets, ShiftType, WeatherType,
     EvaluationRequest, PlanningResponse, ActualPerformanceData
 )
 from src.config.settings import settings
@@ -30,12 +30,12 @@ def cli():
 @click.option('--location', default='Downtown Atlanta', help='Restaurant location')
 @click.option('--events', multiple=True, help='Special events (can specify multiple)')
 @click.option('--available-staff', default=15, help='Available staff pool')
-@click.option('--profit-weight', default=0.40, help='Profit optimization weight')
-@click.option('--customer-weight', default=0.35, help='Customer satisfaction weight')
-@click.option('--staff-weight', default=0.25, help='Staff wellbeing weight')
+@click.option('--target-labor', default=30.0, help='Target labor cost %')
+@click.option('--target-wait', default=180, help='Target wait time (s)')
+@click.option('--target-utilization', default=0.82, help='Target utilization (0-1)')
 @click.option('--priority', type=click.Choice(['balanced', 'profit_focus', 'service_focus']), default='balanced')
 @click.option('--output', type=click.Path(), help='Save results to file')
-def plan(shift, weather, day, location, events, available_staff, profit_weight, customer_weight, staff_weight, priority, output):
+def plan(shift, weather, day, location, events, available_staff, target_labor, target_wait, target_utilization, priority, output):
     """Generate optimal staffing plan for a shift"""
     
     console.print("\n[bold blue]🚀 QSR World Model - Planning Session[/bold blue]\n")
@@ -61,16 +61,16 @@ def plan(shift, weather, day, location, events, available_staff, profit_weight, 
             budget_hours=available_staff * 4.5  # Rough estimate
         )
         
-        alignment_weights = AlignmentWeights(
-            profit=profit_weight,
-            customer_satisfaction=customer_weight,
-            staff_wellbeing=staff_weight
+        alignment_targets = AlignmentTargets(
+            target_labor_cost_percent=target_labor,
+            target_wait_time_seconds=target_wait,
+            target_staff_utilization=target_utilization
         )
         
         request = PlanningRequest(
             scenario=scenario,
             constraints=constraints,
-            alignment_weights=alignment_weights,
+            alignment_targets=alignment_targets,
             operator_priority=priority
         )
         
@@ -103,6 +103,7 @@ def plan(shift, weather, day, location, events, available_staff, profit_weight, 
         best = response.shadow_operator_best_plan or response.restaurant_operator_plan
 
         table = Table(title="📊 Staffing Options Evaluated")
+        table.add_column("Source", style="magenta")
         table.add_column("Option", style="cyan")
         table.add_column("Drive-Thru", justify="center")
         table.add_column("Kitchen", justify="center")
@@ -111,18 +112,21 @@ def plan(shift, weather, day, location, events, available_staff, profit_weight, 
         table.add_column("Score", justify="right")
         table.add_column("Ranking", justify="center")
         
-        for eval in all_evals:
+        for i, eval in enumerate(all_evals):
             is_best = eval.option.id == best.option.id
             style = "bold green" if is_best else ""
             marker = "⭐ " if is_best else ""
             
+            source = f"Operator\n({priority})" if i == 0 else "Shadow Agent"
+            
             table.add_row(
+                source,
                 f"{marker}{eval.option.id}",
                 str(eval.option.staffing.drive_thru),
                 str(eval.option.staffing.kitchen),
                 str(eval.option.staffing.front_counter),
                 str(eval.option.staffing.total),
-                f"{eval.scores.overall_score:.3f}",
+                f"{(eval.scores.profit.raw_score + eval.scores.customer_satisfaction.raw_score + eval.scores.staff_wellbeing.raw_score) / 3:.3f}",
                 eval.scores.ranking,
                 style=style
             )
@@ -137,7 +141,7 @@ def plan(shift, weather, day, location, events, available_staff, profit_weight, 
             f"[cyan]Kitchen:[/cyan] {best.option.staffing.kitchen} staff\n"
             f"[cyan]Front Counter:[/cyan] {best.option.staffing.front_counter} staff\n"
             f"[cyan]Total:[/cyan] {best.option.staffing.total} staff\n\n"
-            f"[cyan]Overall Score:[/cyan] {best.scores.overall_score:.3f}/1.00 ({best.scores.ranking})\n"
+            f"[cyan]Overall Score:[/cyan] {(best.scores.profit.raw_score + best.scores.customer_satisfaction.raw_score + best.scores.staff_wellbeing.raw_score) / 3:.3f}/1.00 ({best.scores.ranking})\n"
             f"[cyan]Labor Cost:[/cyan] ${best.option.estimated_labor_cost:.2f}",
             title="✨ Best Option",
             border_style="green"
@@ -319,7 +323,11 @@ def list_results(limit):
             
             timestamp = datetime.fromisoformat(data["timestamp"]).strftime("%Y-%m-%d %H:%M")
             best_eval = data.get("shadow_operator_best_plan") or data.get("restaurant_operator_plan")
-            score = best_eval["scores"]["overall_score"] if best_eval else 0.0
+            if best_eval:
+                s = best_eval["scores"]
+                score = (s["profit"]["raw_score"] + s["customer_satisfaction"]["raw_score"] + s["staff_wellbeing"]["raw_score"]) / 3
+            else:
+                score = 0.0
             
             table.add_row(
                 timestamp,

@@ -14,7 +14,7 @@ from src.agents.restaurant_agent import RestaurantModelAgent
 from src.models.schemas import (
     PlanningRequest, PlanningResponse, OptionEvaluation,
     EvaluationRequest, EvaluationResponse, Constraints,
-    AlignmentWeights, IterationTrace, DemandPrediction, CapacityAnalysis
+    AlignmentTargets, IterationTrace, DemandPrediction, CapacityAnalysis, Scores
 )
 import json
 from src.utils.logger import setup_logger
@@ -41,6 +41,15 @@ class QSROrchestrator:
         self.restaurant_agent = RestaurantModelAgent()
         logger.info("All agents initialized successfully")
     
+    def _calculate_overall_score(self, scores: Scores) -> float:
+        """Calculate overall score locally based on the average of raw component scores"""
+        components = [
+            scores.profit.raw_score,
+            scores.customer_satisfaction.raw_score,
+            scores.staff_wellbeing.raw_score
+        ]
+        return sum(components) / len(components) if components else 0.0
+
     def plan_shift(self, request: PlanningRequest) -> PlanningResponse:
         """
         Complete planning workflow with separation of human tendency and rational optimizer.
@@ -52,10 +61,9 @@ class QSROrchestrator:
         
         # Set defaults
         constraints = request.constraints or Constraints(
-            available_staff=15,
-            budget_hours=60
+            available_staff=15
         )
-        alignment_weights = request.alignment_weights or AlignmentWeights()
+        alignment_targets = request.alignment_targets or AlignmentTargets()
         
         # ===== STEP 0 & 1: Context & Model Analysis (ONCE ONLY) =====
         logger.info("Phase 1: Analyzing World Context & Restaurant Model...")
@@ -89,7 +97,7 @@ class QSROrchestrator:
             scenario=request.scenario,
             option=operator_plan,
             simulation=operator_sim,
-            alignment_weights=alignment_weights
+            alignment_targets=alignment_targets
         )
         
         operator_evaluation = OptionEvaluation(
@@ -102,7 +110,8 @@ class QSROrchestrator:
         logger.info("Phase 3: Entering Shadow Operator optimization loop...")
         iterations: List[IterationTrace] = []
         current_best_evaluation = operator_evaluation
-        feedback = self._prepare_feedback(operator_evaluation)
+        current_best_score = self._calculate_overall_score(operator_scores)
+        feedback = self._prepare_feedback(operator_evaluation, current_best_score)
         
         attempts = 0
         MAX_ATTEMPTS = 2
@@ -133,7 +142,7 @@ class QSROrchestrator:
                 scenario=request.scenario,
                 option=shadow_plan,
                 simulation=shadow_sim,
-                alignment_weights=alignment_weights
+                alignment_targets=alignment_targets
             )
             
             shadow_evaluation = OptionEvaluation(
@@ -150,18 +159,22 @@ class QSROrchestrator:
             )
             iterations.append(iteration_trace)
             
+            # Use local calculation for comparison
+            shadow_overall = self._calculate_overall_score(shadow_scores)
+            
             # Update best
-            if shadow_scores.overall_score > current_best_evaluation.scores.overall_score:
+            if shadow_overall > current_best_score:
                 current_best_evaluation = shadow_evaluation
-                logger.info(f"New best score found: {shadow_scores.overall_score:.3f}")
+                current_best_score = shadow_overall
+                logger.info(f"New best score found: {shadow_overall:.3f}")
             
             # Check exit condition
-            if current_best_evaluation.scores.overall_score >= TARGET_SCORE:
-                logger.info(f"Target score reached ({current_best_evaluation.scores.overall_score:.3f}).")
+            if current_best_score >= TARGET_SCORE:
+                logger.info(f"Target score reached ({current_best_score:.3f}).")
                 break
             
             # Prepare feedback for next turn
-            feedback = self._prepare_feedback(shadow_evaluation)
+            feedback = self._prepare_feedback(shadow_evaluation, shadow_overall)
 
         # Final Response
         execution_time = time.time() - start_time
@@ -179,9 +192,9 @@ class QSROrchestrator:
         logger.info(f"Planning session complete in {execution_time:.2f}s")
         return response
 
-    def _prepare_feedback(self, evaluation: OptionEvaluation) -> str:
+    def _prepare_feedback(self, evaluation: OptionEvaluation, score: float) -> str:
         """Helper to create feedback string for shadow operator"""
-        feedback = f"Current Plan Score: {evaluation.scores.overall_score:.3f}. "
+        feedback = f"Current Plan Score: {score:.3f}. "
         if evaluation.simulation.bottlenecks:
             feedback += f"Bottlenecks found: {', '.join(evaluation.simulation.bottlenecks)}. "
         if evaluation.scores.weaknesses:

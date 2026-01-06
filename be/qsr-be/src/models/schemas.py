@@ -55,25 +55,17 @@ class Scenario(BaseModel):
 class Constraints(BaseModel):
     """Operational constraints"""
     available_staff: int = Field(ge=1)
-    budget_hours: float = Field(ge=0)
     min_staff_per_station: Dict[str, int] = {
         "drive_thru": 2,
         "kitchen": 3,
         "front_counter": 1
     }
 
-class AlignmentWeights(BaseModel):
-    """Multi-objective optimization weights"""
-    profit: float = Field(default=0.40, ge=0, le=1)
-    customer_satisfaction: float = Field(default=0.35, ge=0, le=1)
-    staff_wellbeing: float = Field(default=0.25, ge=0, le=1)
-    
-    @validator('staff_wellbeing')
-    def validate_sum(cls, v, values):
-        total = values.get('profit', 0) + values.get('customer_satisfaction', 0) + v
-        if not (0.99 <= total <= 1.01):  # Allow small floating point errors
-            raise ValueError('Alignment weights must sum to 1.0')
-        return v
+class AlignmentTargets(BaseModel):
+    """Operational targets for the shift"""
+    target_labor_cost_percent: float = Field(default=30.0, description="Ideal labor cost percentage (e.g., 30.0)")
+    target_wait_time_seconds: int = Field(default=180, description="Ideal average wait time in seconds (e.g., 180)")
+    target_staff_utilization: float = Field(default=0.82, description="Ideal staff utilization rate (0.0-1.0)")
 
 # ===== OUTPUT MODELS =====
 
@@ -122,16 +114,16 @@ class SimulationResult(BaseModel):
 
 class ScoreDetails(BaseModel):
     """Detailed score breakdown"""
-    raw_score: float = Field(ge=0, le=1)
-    weighted: float
+    raw_score: float = Field(ge=0, le=1, description="Proximity to target (1.0 = exact hit, 0.0 = far off)")
+    deviation: float = Field(description="Absolute deviation from target")
+    weighted: float = Field(description="Visual score (redundant but kept for FE compatibility)")
     details: Dict
 
 class Scores(BaseModel):
     """Multi-objective evaluation scores for a staffing option"""
-    profit: ScoreDetails = Field(description="Financial alignment score and details")
-    customer_satisfaction: ScoreDetails = Field(description="Guest experience alignment score and details")
-    staff_wellbeing: ScoreDetails = Field(description="Operational load/burnout alignment score and details")
-    overall_score: float = Field(ge=0, le=1, description="Weighted average of all objectives (0.0 to 1.0)")
+    profit: ScoreDetails = Field(description="Financial target alignment")
+    customer_satisfaction: ScoreDetails = Field(description="Guest experience target alignment")
+    staff_wellbeing: ScoreDetails = Field(description="Operational load target alignment")
     ranking: str = Field(description="Qualitative rank: excellent, very good, good, fair, poor")
     strengths: List[str] = Field(default_factory=list, description="Successes identified in the plan")
     weaknesses: List[str] = Field(default_factory=list, description="Pain points or imbalances identified")
@@ -170,7 +162,7 @@ class PlanningRequest(BaseModel):
     """Complete planning request"""
     scenario: Scenario
     constraints: Optional[Constraints] = None
-    alignment_weights: Optional[AlignmentWeights] = None
+    alignment_targets: Optional[AlignmentTargets] = None
     operator_priority: Literal["balanced", "profit_focus", "service_focus"] = "balanced"
 
 class OptionEvaluation(BaseModel):

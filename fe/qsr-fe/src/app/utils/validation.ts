@@ -29,31 +29,10 @@ export function mapFormDataToPlanRequest(formData: PlanFormData): PlanRequest {
       available_staff: formData.restaurant.max_staff,
       budget_hours: formData.restaurant.max_staff * 4, // Assuming 4hr shift
     },
-    alignment_weights: {
-      profit: formData.alignment_weights.profit / 100,
-      customer_satisfaction: formData.alignment_weights.customer_satisfaction / 100,
-      staff_wellbeing: formData.alignment_weights.staff_wellbeing / 100,
-    },
+    alignment_targets: formData.alignment_targets,
     operator_priority: formData.operator_priority === 'maximize_revenue' ? 'service_focus' :
       formData.operator_priority === 'minimize_cost' ? 'profit_focus' : 'balanced'
   };
-}
-
-export function validateAlignmentWeights(
-  profit: number,
-  customerSatisfaction: number,
-  staffWellbeing: number
-): { isValid: boolean; error?: string } {
-  const total = profit + customerSatisfaction + staffWellbeing;
-
-  if (Math.abs(total - 100) > 0.01) {
-    return {
-      isValid: false,
-      error: `Weights must total 100%. Current total: ${total}%`
-    };
-  }
-
-  return { isValid: true };
 }
 
 export function validatePlanRequest(request: PlanRequest): { isValid: boolean; errors: string[] } {
@@ -63,18 +42,6 @@ export function validatePlanRequest(request: PlanRequest): { isValid: boolean; e
   if (!request.scenario.day_of_week) errors.push('Day of week is required');
   if (!request.scenario.weather) errors.push('Weather is required');
   if (!request.scenario.restaurant.location) errors.push('Restaurant location is required');
-
-  if (request.alignment_weights) {
-    const alignmentValidation = validateAlignmentWeights(
-      request.alignment_weights.profit * 100,
-      request.alignment_weights.customer_satisfaction * 100,
-      request.alignment_weights.staff_wellbeing * 100
-    );
-
-    if (!alignmentValidation.isValid) {
-      errors.push(alignmentValidation.error!);
-    }
-  }
 
   return {
     isValid: errors.length === 0,
