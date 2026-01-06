@@ -35,6 +35,28 @@ Scenario → Encode (World Context) → Simulate World Model (Demand) → Operat
 #### Shadow Operator Loop (LLM based scoring & optimization):
 Same Scenario → Encode (World Context) → Simulate World Model (Demand) → Optimization Loop (scoring) → Shadow Operator Staffing Decision (best fit) 
 
+### The Agentic World Model Loop 
+
+```mermaid
+graph TD
+    User[User Input / Scenario] --> Context[World Context Agent]
+    User --> Rest[Restaurant Agent]
+    
+    Context --> |Demand Prediction| Orchestrator
+    Rest --> |Capacity Analysis| Orchestrator
+    
+    Orchestrator --> |Constraints| Operator[Restaurant Operator Agent]
+    Operator --> |Initial Biased Plan| WM[World Model Agent]
+    
+    subgraph "Reasoning Loop"
+        WM --> |Predicted Metrics| Scorer[Scorer Agent]
+        Scorer --> |Feedback & Score| Shadow[Shadow Operator Agent]
+        Shadow --> |Refined Plan| WM
+    end
+    
+    Shadow --> |Optimal Plan| Final[Final Output]
+```
+
 ### Inspiration:
 * Ha & Schmidhuber's World Models (2018)
    → Learn compressed representations of environments
@@ -73,8 +95,10 @@ Same Scenario → Encode (World Context) → Simulate World Model (Demand) → O
 
 🎯 Click "Trace and Reason" mode after successful completion of "Run World Model" 
 
-#### Example trace and reason screenshots
+#### Example trace  screenshots
 ![Trace screenshot](img/qsr_trace.png)
+
+#### Example reasoning screenshots
 ![Reason screenshot](img/qsr_reasoning.png)
 
 ## Implementation Introduction
@@ -89,27 +113,6 @@ Key assumption and simplification is that QSR managers make a important staffing
 ### The Experiment: Flaws & Caveats
 This project as much a learning exercise for me. The domain of QSR operations is much more nuanced and complex than my assumptions. There are inherent flaws in my own understanding of the problem space and the agents themselves are "noob operators" subject to hallucinations and limited capacity of the out of the box model.
 
-### The Agentic World Model Loop 
-
-```mermaid
-graph TD
-    User[User Input / Scenario] --> Context[World Context Agent]
-    User --> Rest[Restaurant Agent]
-    
-    Context --> |Demand Prediction| Orchestrator
-    Rest --> |Capacity Analysis| Orchestrator
-    
-    Orchestrator --> |Constraints| Operator[Restaurant Operator Agent]
-    Operator --> |Initial Biased Plan| WM[World Model Agent]
-    
-    subgraph "Reasoning Loop"
-        WM --> |Predicted Metrics| Scorer[Scorer Agent]
-        Scorer --> |Feedback & Score| Shadow[Shadow Operator Agent]
-        Shadow --> |Refined Plan| WM
-    end
-    
-    Shadow --> |Optimal Plan| Final[Final Output]
-```
 
 ### Core Agents
 1.  **Restaurant Operator Agent (The Manager):** "What are my staffing options?" Generates strategic plans based on priorities.
@@ -151,6 +154,7 @@ Claude & OpenAI for documentation and concept refinement
 FastAPI + React + TypeScript (production-quality stack)
 Prep: Google ADK + FunctionGemma (not included here)
 
+### Evals are critial. Sample eval for operator agent provided
 
 **Running Evals:**
 ```bash
@@ -158,7 +162,6 @@ cd be/qsr-be
 ./qsr_eval.sh agent=operator
 ```
 *Outputs a detailed JSON report with Pass/Fail rates and alignment scores.*
-
 
 ## 🚧 Known Issues & Learning Gaps
 
