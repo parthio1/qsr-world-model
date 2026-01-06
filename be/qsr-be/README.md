@@ -1,6 +1,6 @@
 # QSR World Model
-
-AI-powered QSR operations planning system using Google Gemini and agentic reasoning.
+### Learning to Simulate Restaurant Operations Before They Happen
+A weekend exploration of world models and agentic AI applied to staffing decisions. This is built crudely but meaningfully enough to learn as I don't have prior experience with QSR domain.
 
 ## 🎯 Overview
 

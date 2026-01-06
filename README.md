@@ -1,24 +1,107 @@
 # QSR World Model: A "Noob Operator" Playground 
-A lightweight project exploring the product development cycle from initial idea and research to system design, implementation and UX—using modern AI tools like Figma, Claude, and Antigravity.
-
-> **Status:** Prototype  
-> **Velocity:** Built in ~2-3 days over a holiday weekend
+### Learning to Simulate Restaurant Operations Before They Happen
+A weekend exploration of world models and agentic AI applied to staffing decisions. This is built crudely but meaningfully enough to learn as I don't have prior experience with QSR domain. 
 
 ##  Objective: 
-This project is a crude and simple attempt to prove and clarify my applied AI experience using AI tools, frameworks, and ecosystems in a quick and dirty way. 
+Demonstrate AI product development skills. i.e Take academic AI concepts → Design working system → Ship functional prototype → Document learnings.
 
-##  What I'm Showcasing in this rapid and half-baked attempt: 
-✅ Conceptual Thinking - Frame problems, identify novel solutions
-✅ Research Capability - Understand academic concepts, apply to practice
-✅ System Architecture - Design scalable, maintainable systems
-✅ AI Engineering - Build with modern LLMs and agentic frameworks
-✅ UX Design - Create intuitive, insight-driven interfaces
-✅ Rapid Execution - Ship concept to working system in a short time
+## What This Is
+Built to understand how world models (Ha & Schmidhuber 2018) apply to business operations using modern AI tools to accelerate development.
 
-##  Ambition of this project:  
-The core ambition of this project is to explore the concept of a **World Model** using LLM agents with reasoning. Though this concept is applied for robotics or video games or coding, I like to explore it for the high pressure environment of Quick Service Restaurant (QSR) operations.
+### Ambition of this project:  
+The core ambition of this project is to explore the concept of a **World Model** using LLM agents with reasoning instead of deep reinforcement learning or vision intelligence models. Though this concept is applied for robotics or video games or coding, I like to explore it for the high pressure environment of Quick Service Restaurant (QSR) operations.
 
-"Predict what staffing decision achieves not just costs but also customer satisfaction, staff well-being".
+### Outcomes: 
+ "Predict what staffing decision achieves not just costs but also customer satisfaction, staff well-being".
+
+### Classic World Model Loop
+Real-time execution loop:
+Observe → Encode (V) → Predict (M) → Act (C) → Observe...
+         ↑                                          ↓
+         └────────── Continuous Feedback ───────────┘
+
+### QSR World Model Loop
+
+Operator Flow:
+Scenario → Encode (World Context) → Simulate (World Model) → Real World Operator Priority → Operator Staffing Decision 
+
+Simulation Flow:
+Scenario → Encode (World Context) → Simulate (World Model) → Shadow Operator Simulation Loops
+
+  Simulation Loop:
+  Shadow Operator Staffing Decision → Score each staffing decision (against multi-objective for alignment) → Select Best Fit 
+  
+Operator Feedback Loop:
+Compare Against Operator Decision for short term learning
+
+System Learning Loop:
+Compare Against Real World Results for long term learning
+
+### Classic World Model Loop
+graph TB
+    subgraph Theory["🎓 CLASSIC WORLD MODEL (Ha & Schmidhuber 2018)"]
+        V[V - Vision/VAE<br/>Compress pixels → z<br/>Visual feature extraction]
+        M[M - Memory/RNN<br/>Predict p(z_t+1 | z_t, a_t, h_t)<br/>Learned dynamics model]
+        C[C - Controller<br/>Policy π(a_t | z_t, h_t)<br/>Trained action selection]
+        R[Loss/Reward<br/>Prediction error<br/>Training signal]
+        
+        V -->|Latent state z_t| M
+        M -->|Predicted z_t+1| C
+        C -->|Action a_t| ENV[Environment]
+        ENV -->|Observation| V
+        ENV -->|Reward| R
+        R -.->|Gradients| V
+        R -.->|Gradients| M
+        R -.->|Gradients| C
+    end
+    
+    subgraph Implementation["💻 MY QSR IMPLEMENTATION"]
+        V2[World Context Agent<br/>+ Restaurant Model<br/>━━━━━━━━━━━━━━<br/>Scenario → JSON context<br/>Natural language encoding]
+        M2[World Model Simulator<br/>━━━━━━━━━━━━━━<br/>Simulates shift outcomes<br/>Reasoning-based forward model]
+        C2[Decision Maker<br/>+ Scorer Agents<br/>━━━━━━━━━━━━━━<br/>Propose → Evaluate → Select<br/>Multi-agent deliberation]
+        R2[Evaluator Agent<br/>━━━━━━━━━━━━━━<br/>Compare predicted vs actual<br/>Error analysis + parameter updates]
+        
+        V2 -->|Structured state| M2
+        M2 -->|Predicted metrics| C2
+        C2 -->|Staffing decision| REAL[Real Operations]
+        REAL -->|Actual results| R2
+        R2 -.->|Model improvements| V2
+        R2 -.->|Model improvements| M2
+    end
+    
+    %% Mapping arrows
+    V -.->|Maps to| V2
+    M -.->|Maps to| M2
+    C -.->|Maps to| C2
+    R -.->|Maps to| R2
+    
+    %% Styling
+    style V fill:#e1f5ff,stroke:#0066cc,stroke-width:2px
+    style M fill:#ffe1f5,stroke:#cc0066,stroke-width:2px
+    style C fill:#e1ffe1,stroke:#009900,stroke-width:2px
+    style R fill:#fff4e1,stroke:#ff9900,stroke-width:2px
+    
+    style V2 fill:#e1f5ff,stroke:#0066cc,stroke-width:3px
+    style M2 fill:#ffe1f5,stroke:#cc0066,stroke-width:3px
+    style C2 fill:#e1ffe1,stroke:#009900,stroke-width:3px
+    style R2 fill:#fff4e1,stroke:#ff9900,stroke-width:3px
+    
+    style ENV fill:#ffcccc,stroke:#cc0000,stroke-width:2px
+    style REAL fill:#ffcccc,stroke:#cc0000,stroke-width:2px
+
+### Development cycle:
+Step 1: Research world models + agentic AI → Architecture design
+Step 2: Implement few agents + orchestration + evals → Backend  
+Step 3: Build UX + integration + Test Harness → Working prototype  
+Step 4: Iterate on feedback → Polishing + Documentation
+
+### Built with:
+Google Gemini 3.0 Flash (reasoning)
+AntiGravity (IDE)
+Figma (rapid UI prototyping)
+FastAPI + React + TypeScript (production-quality stack)
+Prep: Google ADK + FunctionGemma (not included here)
+
 
 ## Problem Identification
 Key assumption and simplification is that QSR managers make a important staffing decision with intuition and limited information rather than simulation
