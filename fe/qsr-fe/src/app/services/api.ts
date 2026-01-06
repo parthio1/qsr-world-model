@@ -38,7 +38,9 @@ async function fetchApi<T>(
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new ApiError(
-        errorData.message || `API error: ${response.status} ${response.statusText}`,
+        typeof errorData.detail === 'string'
+          ? errorData.detail
+          : JSON.stringify(errorData.detail) || errorData.message || `API error: ${response.status} ${response.statusText}`,
         response.status,
         errorData
       );

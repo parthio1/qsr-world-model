@@ -115,6 +115,6 @@ export function useRestaurantManagement(initialRestaurants: Restaurant[]) {
 }
 
 export function useOperatorPriority() {
-  const [operatorPriority, setOperatorPriority] = useState<OperatorPriority>('balanced');
+  const [operatorPriority, setOperatorPriority] = useState<OperatorPriority>('minimize_cost');
   return { operatorPriority, setOperatorPriority };
 }

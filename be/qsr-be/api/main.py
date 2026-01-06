@@ -13,6 +13,8 @@ from src.models.schemas import (
 )
 from src.config.settings import settings
 from src.utils.logger import setup_logger
+from src.utils.llm_utils import LLMQuotaError, LLMServiceError
+from pydantic import ValidationError
 
 logger = setup_logger(__name__)
 
@@ -31,6 +33,28 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.exception_handler(LLMQuotaError)
+async def llm_quota_exception_handler(request, exc: LLMQuotaError):
+    return JSONResponse(
+        status_code=429,
+        content={"detail": "The AI model is currently overloaded. Please wait a moment and try again.", "error_type": "quota_exceeded"},
+    )
+
+@app.exception_handler(LLMServiceError)
+async def llm_service_exception_handler(request, exc: LLMServiceError):
+    return JSONResponse(
+        status_code=503,
+        content={"detail": "AI Service is temporarily unavailable. Please try again later.", "error_type": "service_unavailable"},
+    )
+
+@app.exception_handler(ValidationError)
+async def validation_exception_handler(request, exc: ValidationError):
+    logger.error(f"Validation Error: {exc}")
+    return JSONResponse(
+        status_code=422,
+        content={"detail": "The AI generated an invalid response format. Please retry.", "error_type": "parsing_error"},
+    )
 
 # Initialize orchestrator
 orchestrator = QSROrchestrator()

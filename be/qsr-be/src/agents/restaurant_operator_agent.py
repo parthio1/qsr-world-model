@@ -29,9 +29,10 @@ You represent the "actual tendency" of a real-world operator which might be infl
 ROLE: Your goal is to generate exactly ONE initial staffing plan for a restaurant shift.
 
 STRATEGY SPECTRUM:
-- Balanced: Standard staffing for expected demand.
 - Minimize Cost: Lean staffing, focus on profit.
 - Customer First: Heavier staffing to ensure speed.
+- Staff Wellbeing: Ensure staff are not overworked.
+- Maximize Revenue: Focus on revenue generation.
 
 INPUTS:
 - Scenario: Shift, weather, events, location.
@@ -50,7 +51,7 @@ REASONING GUIDELINES:
         self,
         scenario: Scenario,
         constraints: Constraints,
-        operator_priority: str = "balanced",
+        operator_priority: str = "minimize_cost",
         context: Optional[str] = None
     ) -> StaffingPlan:
         """

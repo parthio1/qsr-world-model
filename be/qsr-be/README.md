@@ -87,7 +87,7 @@ curl -X POST http://localhost:8081/api/v1/plan \
         "kitchen_capacity": "medium"
       }
     },
-    "operator_priority": "balanced"
+    "operator_priority": "minimize_cost"
   }'
 ```
 
@@ -154,9 +154,9 @@ Labor Cost: $950.00
   • Order Accuracy: 96%
 
 🎯 Score Breakdown
-  • Profit: 1.00 (raw: 1.00)
-  • Customer Satisfaction: 1.00 (raw: 1.00)
-  • Staff Wellbeing: 0.40 (raw: 0.40)
+  • Profit Target Score: 1.00 (raw: 1.00)
+  • Guest Satisfaction Target Score: 1.00 (raw: 1.00)
+  • Staff Wellbeing Target Score: 0.40 (raw: 0.40)
 
 ✓ Strengths
   • Strong profit margin of 51%

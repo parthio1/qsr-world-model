@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, Plus, Search, Building2, MapPin, Settings2, Sliders, ChevronDown, ChevronUp, AlertTriangle, Zap, Cloud, Users, TrendingUp, Calendar, Wrench, Globe, Gauge, Store, Target, Sun, CloudRain, CloudDrizzle, CloudLightning, X, Lock, Scale, DollarSign, Smile, Heart, BarChart3, PlayCircle, Loader2 } from 'lucide-react';
-import { PlanFormData, PlanResponse } from '../types';
+import { PlanFormData, PlanResponse, OperatorPriority } from '../types';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
@@ -103,7 +103,7 @@ export function SourcePanel({ isCollapsed, onToggle, onLoadingChange, onFormData
   const [specialEvents, setSpecialEvents] = useState<string[]>([]);
 
   // Operator Decision Parameters
-  const [operatorPriority, setOperatorPriority] = useState<'balanced' | 'minimize_cost' | 'customer_first' | 'staff_wellbeing' | 'maximize_revenue'>('balanced');
+  const [operatorPriority, setOperatorPriority] = useState<OperatorPriority>('minimize_cost');
 
   // Alignment Parameters (Operational Targets)
   const [targetLaborCost, setTargetLaborCost] = useState(30.0);
@@ -619,7 +619,7 @@ export function SourcePanel({ isCollapsed, onToggle, onLoadingChange, onFormData
                 >
                   <div className="flex items-center gap-2">
                     <Gauge className="h-3.5 w-3.5 text-purple-600" />
-                    <span className="text-xs font-semibold text-slate-900">Operator Decision</span>
+                    <span className="text-xs font-semibold text-slate-900">Operator Priority</span>
                   </div>
                   {expandedGroups.decision ? (
                     <ChevronUp className="h-3.5 w-3.5 text-slate-500" />
@@ -632,37 +632,6 @@ export function SourcePanel({ isCollapsed, onToggle, onLoadingChange, onFormData
 
                     {/* Radio Button Options */}
                     <div className="space-y-1.5">
-                      {/* Balanced */}
-                      <button
-                        onClick={() => setOperatorPriority('balanced')}
-                        className={`w-full p-2 rounded-md border transition-all text-left ${operatorPriority === 'balanced'
-                          ? 'bg-purple-50 border-purple-500'
-                          : 'bg-white border-slate-200 hover:bg-slate-50'
-                          }`}
-                      >
-                        <div className="flex items-start gap-2">
-                          <div className={`mt-0.5 h-3 w-3 rounded-full border-2 flex items-center justify-center ${operatorPriority === 'balanced'
-                            ? 'border-purple-600 bg-purple-600'
-                            : 'border-slate-300 bg-white'
-                            }`}>
-                            {operatorPriority === 'balanced' && (
-                              <div className="h-1.5 w-1.5 rounded-full bg-white"></div>
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-1.5">
-                              <Scale className="h-3.5 w-3.5 text-purple-600" />
-                              <span className={`text-xs font-medium ${operatorPriority === 'balanced' ? 'text-purple-900' : 'text-slate-700'
-                                }`}>
-                                Balanced
-                              </span>
-                            </div>
-                            <p className="text-[10px] text-slate-500 mt-0.5">
-                              Balance cost, service, and staff
-                            </p>
-                          </div>
-                        </div>
-                      </button>
 
                       {/* Minimize Cost */}
                       <button

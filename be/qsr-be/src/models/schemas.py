@@ -163,7 +163,7 @@ class PlanningRequest(BaseModel):
     scenario: Scenario
     constraints: Optional[Constraints] = None
     alignment_targets: Optional[AlignmentTargets] = None
-    operator_priority: Literal["balanced", "profit_focus", "service_focus"] = "balanced"
+    operator_priority: Literal["minimize_cost", "customer_first", "staff_wellbeing", "maximize_revenue"] = "minimize_cost"
 
 class OptionEvaluation(BaseModel):
     """Evaluation of a single staffing option"""

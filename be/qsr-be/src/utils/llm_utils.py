@@ -4,7 +4,20 @@ import functools
 from google.api_core.exceptions import ResourceExhausted, ServiceUnavailable, InternalServerError
 from src.utils.logger import setup_logger
 
+
 logger = setup_logger(__name__)
+
+class LLMGenerationError(Exception):
+    """Base exception for LLM generation failures"""
+    pass
+
+class LLMQuotaError(LLMGenerationError):
+    """Raised when quota/rate limits are exceeded"""
+    pass
+
+class LLMServiceError(LLMGenerationError):
+    """Raised when the LLM service is unavailable"""
+    pass
 
 def retry_llm_call(max_retries=2, initial_delay=2.0, backoff_factor=2.0):
     """
@@ -34,6 +47,9 @@ def retry_llm_call(max_retries=2, initial_delay=2.0, backoff_factor=2.0):
                         raise e
             
             logger.error(f"Failed after {max_retries} retries.")
-            raise Exception(f"Failed after {max_retries} retries due to rate limits or service errors.")
+            if "429" in error_str or "resource exhausted" in error_str:
+                raise LLMQuotaError(f"High traffic volume (Quota Exceeded). Please try again in a few moments.")
+            raise LLMServiceError(f"Service temporarily unavailable after {max_retries} retries.")
+
         return wrapper
     return decorator

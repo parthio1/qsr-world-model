@@ -27,11 +27,9 @@ export function mapFormDataToPlanRequest(formData: PlanFormData): PlanRequest {
     },
     constraints: {
       available_staff: formData.restaurant.max_staff,
-      budget_hours: formData.restaurant.max_staff * 4, // Assuming 4hr shift
     },
     alignment_targets: formData.alignment_targets,
-    operator_priority: formData.operator_priority === 'maximize_revenue' ? 'service_focus' :
-      formData.operator_priority === 'minimize_cost' ? 'profit_focus' : 'balanced'
+    operator_priority: formData.operator_priority,
   };
 }
 

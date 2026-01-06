@@ -31,7 +31,7 @@ function OptionCard({ evalItem, isBest, isProposed }: { evalItem: OptionEvaluati
         </span>
         <div className="flex gap-1.5 focus:outline-none">
           <div className="flex gap-1">
-            <div className={`w-8 h-4 rounded-full flex items-center justify-center text-[9px] font-black ${evalItem.scores.profit.raw_score > 0.8 ? 'bg-emerald-100 text-emerald-700' : evalItem.scores.profit.raw_score > 0.5 ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`} title={`Profit: ${formatPercentage(evalItem.scores.profit.raw_score)}`}>
+            <div className={`w-8 h-4 rounded-full flex items-center justify-center text-[9px] font-black ${evalItem.scores.profit.raw_score > 0.8 ? 'bg-emerald-100 text-emerald-700' : evalItem.scores.profit.raw_score > 0.5 ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`} title={`Profit Target Score: ${formatPercentage(evalItem.scores.profit.raw_score)}`}>
               P
             </div>
             <div className={`w-8 h-4 rounded-full flex items-center justify-center text-[9px] font-black ${evalItem.scores.customer_satisfaction.raw_score > 0.8 ? 'bg-emerald-100 text-emerald-700' : evalItem.scores.customer_satisfaction.raw_score > 0.5 ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`} title={`Guest: ${formatPercentage(evalItem.scores.customer_satisfaction.raw_score)}`}>
@@ -121,23 +121,42 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
   };
 
   if (error) {
+    let advice = "Please reach out for support or try after some time.";
+    let title = "Run Halted";
+
+    if (error.toLowerCase().includes("overloaded") || error.toLowerCase().includes("quota")) {
+      title = "High Traffic";
+      advice = "The AI models are currently very busy. Please wait a minute before retrying.";
+    } else if (error.toLowerCase().includes("unavailable")) {
+      title = "Service Interruption";
+      advice = "The AI service encountered a temporary glitch. A retry should fix it.";
+    } else if (error.toLowerCase().includes("invalid") || error.toLowerCase().includes("format")) {
+      title = "Planning Glitch";
+      advice = "The AI generated a plan structure we couldn't parse. Retrying usually solves this.";
+    }
+
     return (
-      <div className="flex-1 bg-white flex flex-col overflow-hidden">
-        <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0 flex justify-center">
+      <div className="flex-1 bg-slate-50 flex flex-col overflow-hidden">
+        <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0 bg-white shadow-sm flex justify-center">
           <h1 className="text-2xl font-semibold text-slate-900">Canvas</h1>
         </div>
         <div className="flex-1 flex items-center justify-center p-8">
-          <div className="max-w-md text-center">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="max-w-md text-center bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+            <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <AlertCircle className="h-8 w-8 text-red-600" />
             </div>
-            <h3 className="font-semibold text-slate-900 mb-2">Error Occurred</h3>
-            <p className="text-sm text-slate-600">{error}</p>
+            <h3 className="font-bold text-lg text-slate-900 mb-2">{title}</h3>
+            <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+              {error}
+              <br /><br />
+              <span className="font-semibold text-slate-700">{advice}</span>
+            </p>
           </div>
         </div>
       </div>
     );
   }
+
 
   if (isLoadingPlan) {
     return (
@@ -149,12 +168,11 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
           <div className="text-center space-y-4">
             <Loader2 className="h-12 w-12 text-blue-600 animate-spin mx-auto" />
             <div>
-              <h3 className="font-semibold text-slate-900 mb-2">Generating Optimal Plan...</h3>
-              <p className="text-sm text-slate-500">AI agents are simulating staffing scenarios</p>
+              <h3 className="font-semibold text-slate-900 mb-2">Agents Modeling Staffing Plans and Outcomes....please be patient as it may take a few minutes)</h3>
             </div>
           </div>
         </div>
-      </div>
+      </div >
     );
   }
 
@@ -431,28 +449,19 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
     const verdict = averageScore > 0.85 ? 'VIABLE' : averageScore > 0.65 ? 'STRESS_DETECTION' : 'SYSTEM_FAILURE';
 
     return (
-      <div className="flex-1 bg-white flex flex-col overflow-hidden">
-        <div className="border-b border-slate-100 px-8 py-6 flex-shrink-0 bg-white/80 backdrop-blur-md sticky top-0 z-10">
-          <div className="flex items-center justify-between relative">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-slate-900 rounded-2xl shadow-lg shadow-slate-200">
-                <FlaskConical className="h-6 w-6 text-blue-400" />
+      <div className="flex-1 bg-slate-50 flex flex-col overflow-hidden">
+        <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0 bg-white shadow-sm">
+          <div className="flex items-center justify-center relative">
+            <div className="flex flex-col items-center">
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-semibold text-slate-900">Canvas</h1>
+                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                  Simulation Complete
+                </Badge>
               </div>
-            </div>
-
-            <div className="absolute left-1/2 -translate-x-1/2 text-center">
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">Canvas</h1>
-              <div className="flex items-center justify-center gap-2 mt-1">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
-                  {formatDate(plan.scenario.date)}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Button variant="outline" size="sm" className="rounded-full text-[10px] font-bold uppercase tracking-widest border-slate-200">
-                <Copy className="h-3 w-3 mr-2 text-slate-400" /> Export
-              </Button>
+              <p className="text-sm text-slate-500 mt-1">
+                {formatDate(plan.scenario.date)} • Final Optimization Results
+              </p>
             </div>
           </div>
         </div>
@@ -467,9 +476,9 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[
-                    { label: 'Labor Target Score', key: 'profit', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-                    { label: 'Wait Time Score', key: 'customer_satisfaction', icon: Smile, color: 'text-blue-600', bg: 'bg-blue-50' },
-                    { label: 'Utilization Score', key: 'staff_wellbeing', icon: Users, color: 'text-purple-600', bg: 'bg-purple-50' }
+                    { label: 'Guest Satisfaction Target Score', key: 'customer_satisfaction', icon: Smile, color: 'text-blue-600', bg: 'bg-blue-50' },
+                    { label: 'Staff Wellbeing Target Score', key: 'staff_wellbeing', icon: Users, color: 'text-purple-600', bg: 'bg-purple-50' },
+                    { label: 'Profit Target Score', key: 'profit', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' }
                   ].map((obj) => {
                     const bestScore = bestDecision.scores[obj.key as keyof typeof bestDecision.scores] as any;
                     const proposedScore = proposedDecision.scores[obj.key as keyof typeof proposedDecision.scores] as any;
@@ -501,7 +510,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
-                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
+                  <div className="p-6 bg-white rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
                     <div className="flex gap-4 items-center">
                       <div className="p-3 bg-white rounded-xl shadow-sm"><TrendingUp className="h-5 w-5 text-emerald-500" /></div>
                       <div>
@@ -513,7 +522,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
                       +{formatCurrency(metrics.revenue - proposedMetrics.revenue)}
                     </Badge>
                   </div>
-                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
+                  <div className="p-6 bg-white rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
                     <div className="flex gap-4 items-center">
                       <div className="p-3 bg-white rounded-xl shadow-sm"><Clock className="h-5 w-5 text-blue-500" /></div>
                       <div>
@@ -586,10 +595,10 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
       <div className="flex-1 overflow-y-auto px-6 py-8">
         <div className="max-w-4xl mx-auto text-center mt-20">
           <div className="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl">🧠</div>
-          <h2 className="text-3xl font-bold text-slate-900 mb-4">Ready to Optimize?</h2>
-          <p className="text-slate-600 max-w-lg mx-auto mb-8 text-lg">
-            Configure your shift parameters in the <span className="font-semibold">Setting</span> panel on the left,
-            then click <span className="font-semibold">Run Model</span> in the Studio to generate an AI-powered staffing plan.
+          <h2 className="text-3xl font-bold text-slate-900 mb-4 tracking-tight">Ready to Model Your Restaurant?</h2>
+          <p className="text-slate-500 max-w-lg mx-auto mb-8 text-lg leading-relaxed">
+            Set up key parameters on the left side <span className="font-medium text-slate-900">Setting</span> panel,
+            then click the <span className="font-medium text-slate-900">Run</span> button on the right side <span className="font-medium text-slate-900">Studio</span> panel.
           </p>
         </div>
       </div>

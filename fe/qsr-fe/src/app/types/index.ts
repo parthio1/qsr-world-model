@@ -18,7 +18,7 @@ export interface Restaurant {
 
 export type ShiftType = 'breakfast' | 'lunch' | 'dinner';
 export type WeatherType = 'sunny' | 'cloudy' | 'rainy' | 'stormy';
-export type OperatorPriority = 'balanced' | 'minimize_cost' | 'customer_first' | 'staff_wellbeing' | 'maximize_revenue';
+export type OperatorPriority = 'minimize_cost' | 'customer_first' | 'staff_wellbeing' | 'maximize_revenue';
 
 export interface AlignmentTargets {
   target_labor_cost_percent: number;

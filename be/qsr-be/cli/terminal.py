@@ -33,7 +33,7 @@ def cli():
 @click.option('--target-labor', default=30.0, help='Target labor cost %')
 @click.option('--target-wait', default=180, help='Target wait time (s)')
 @click.option('--target-utilization', default=0.82, help='Target utilization (0-1)')
-@click.option('--priority', type=click.Choice(['balanced', 'profit_focus', 'service_focus']), default='balanced')
+@click.option('--priority', type=click.Choice(['minimize_cost', 'customer_first', 'staff_wellbeing', 'maximize_revenue']), default='minimize_cost')
 @click.option('--output', type=click.Path(), help='Save results to file')
 def plan(shift, weather, day, location, events, available_staff, target_labor, target_wait, target_utilization, priority, output):
     """Generate optimal staffing plan for a shift"""
@@ -158,9 +158,9 @@ def plan(shift, weather, day, location, events, available_staff, target_labor, t
         
         # Show score breakdown
         console.print("\n[bold]🎯 Score Breakdown[/bold]")
-        console.print(f"  • Profit: {best.scores.profit.raw_score:.2f} (weighted: {best.scores.profit.weighted:.3f})")
-        console.print(f"  • Customer Satisfaction: {best.scores.customer_satisfaction.raw_score:.2f} (weighted: {best.scores.customer_satisfaction.weighted:.3f})")
-        console.print(f"  • Staff Wellbeing: {best.scores.staff_wellbeing.raw_score:.2f} (weighted: {best.scores.staff_wellbeing.weighted:.3f})")
+        console.print(f"  • Profit Target Score: {best.scores.profit.raw_score:.2f} (weighted: {best.scores.profit.weighted:.3f})")
+        console.print(f"  • Guest Satisfaction Target Score: {best.scores.customer_satisfaction.raw_score:.2f} (weighted: {best.scores.customer_satisfaction.weighted:.3f})")
+        console.print(f"  • Staff Wellbeing Target Score: {best.scores.staff_wellbeing.raw_score:.2f} (weighted: {best.scores.staff_wellbeing.weighted:.3f})")
         
         if best.scores.strengths:
             console.print("\n[bold green]✓ Strengths[/bold green]")
