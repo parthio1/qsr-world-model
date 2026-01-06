@@ -105,7 +105,7 @@ class QSROrchestrator:
         feedback = self._prepare_feedback(operator_evaluation)
         
         attempts = 0
-        MAX_ATTEMPTS = 1
+        MAX_ATTEMPTS = 2
         TARGET_SCORE = 0.95
         
         while attempts < MAX_ATTEMPTS:

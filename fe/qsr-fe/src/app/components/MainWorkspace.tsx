@@ -29,13 +29,19 @@ function OptionCard({ evalItem, isBest, isProposed }: { evalItem: OptionEvaluati
         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
           {isProposed ? 'PROPOSED' : 'REFINED OPTION'}
         </span>
-        <Badge className={
-          evalItem.scores.overall_score > 0.8 ? 'bg-green-100 text-green-700' :
-            evalItem.scores.overall_score > 0.6 ? 'bg-amber-100 text-amber-700' :
-              'bg-red-100 text-red-700'
-        }>
-          {formatPercentage(evalItem.scores.overall_score)}
-        </Badge>
+        <div className="flex gap-1.5 focus:outline-none">
+          <div className="flex gap-1">
+            <div className={`w-8 h-4 rounded-full flex items-center justify-center text-[9px] font-black ${evalItem.scores.profit.raw_score > 0.8 ? 'bg-emerald-100 text-emerald-700' : evalItem.scores.profit.raw_score > 0.5 ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`} title={`Profit: ${formatPercentage(evalItem.scores.profit.raw_score)}`}>
+              P
+            </div>
+            <div className={`w-8 h-4 rounded-full flex items-center justify-center text-[9px] font-black ${evalItem.scores.customer_satisfaction.raw_score > 0.8 ? 'bg-emerald-100 text-emerald-700' : evalItem.scores.customer_satisfaction.raw_score > 0.5 ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`} title={`Guest: ${formatPercentage(evalItem.scores.customer_satisfaction.raw_score)}`}>
+              G
+            </div>
+            <div className={`w-8 h-4 rounded-full flex items-center justify-center text-[9px] font-black ${evalItem.scores.staff_wellbeing.raw_score > 0.8 ? 'bg-emerald-100 text-emerald-700' : evalItem.scores.staff_wellbeing.raw_score > 0.5 ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`} title={`Staff: ${formatPercentage(evalItem.scores.staff_wellbeing.raw_score)}`}>
+              S
+            </div>
+          </div>
+        </div>
       </div>
       <div className="p-4 space-y-3">
         <div className="font-semibold text-slate-900 text-sm h-10 overflow-hidden line-clamp-2">
@@ -190,7 +196,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
                       setActiveIteration(-1);
                       setActiveOptionId(plan.restaurant_operator_plan.option.id);
                     }}
-                    className={`w-full flex items-center gap-3 p-2 rounded-lg transition-all ${activeIteration === -1 ? 'bg-slate-900 text-white shadow-md' : 'hover:bg-slate-50 text-slate-600'}`}
+                    className={`w-full flex items-center gap-3 p-2 rounded-lg transition-all ${activeIteration === -1 ? 'bg-slate-600 text-white shadow-md' : 'hover:bg-slate-50 text-slate-600'}`}
                   >
                     <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${activeIteration === -1 ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-500'}`}>
                       0
@@ -210,7 +216,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
                   <div key={iIdx} className="space-y-2">
                     <button
                       onClick={() => handleIterationChange(iIdx)}
-                      className={`w-full flex items-center gap-3 p-2 rounded-lg transition-all ${activeIteration === iIdx ? 'bg-slate-900 text-white shadow-md' : 'hover:bg-slate-50 text-slate-600'}`}
+                      className={`w-full flex items-center gap-3 p-2 rounded-lg transition-all ${activeIteration === iIdx ? 'bg-slate-600 text-white shadow-md' : 'hover:bg-slate-50 text-slate-600'}`}
                     >
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${activeIteration === iIdx ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-500'}`}>
                         {iteration.iteration_number}
@@ -350,7 +356,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
             <div className="max-w-5xl mx-auto space-y-12">
               <div className="relative">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold shadow-lg">
+                  <div className="w-10 h-10 rounded-full bg-slate-600 text-white flex items-center justify-center font-bold shadow-lg">
                     0
                   </div>
                   <div>
@@ -369,7 +375,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
               {plan.iterations.map((iteration, iIdx) => (
                 <div key={iIdx} className="relative">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold shadow-lg">
+                    <div className="w-10 h-10 rounded-full bg-slate-600 text-white flex items-center justify-center font-bold shadow-lg">
                       {iteration.iteration_number}
                     </div>
                     <div>
@@ -453,121 +459,117 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
               <div className="lg:col-span-12 space-y-8">
                 <div className="space-y-6">
-                  <div>
-                    <h2 className="text-4xl font-black text-slate-900 leading-[1.1] tracking-tight max-w-4xl italic">
-                      {bestDecision.option.strategy.replace(/_/g, ' ')}
-                    </h2>
-                    <div className="flex items-start gap-3 mt-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl relative">
-                      <MessageSquare className="h-4 w-4 text-slate-300 mt-1 flex-shrink-0" />
-                      <p className="text-base text-slate-500 leading-relaxed font-medium max-w-3xl italic">
-                        {bestDecision.option.rationale}
-                      </p>
-                    </div>
-                  </div>
+
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-8 bg-white border border-slate-200 rounded-[32px] space-y-6 shadow-sm relative overflow-hidden group flex flex-col justify-center">
-                    <div className="flex items-center justify-between relative z-10">
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400 mb-1">Multiple Objective Alignment Gain</span>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-5xl font-black tracking-tighter text-slate-900">+{Math.round((bestDecision.scores.overall_score - proposedDecision.scores.overall_score) * 100)}%</span>
-                          <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 text-[9px] py-0 font-bold uppercase tracking-wider">
-                            via {iterationRef}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[
+                    { label: 'Profit Alignment', key: 'profit', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+                    { label: 'Guest Experience', key: 'customer_satisfaction', icon: Smile, color: 'text-blue-600', bg: 'bg-blue-50' },
+                    { label: 'Staff Wellbeing', key: 'staff_wellbeing', icon: Users, color: 'text-purple-600', bg: 'bg-purple-50' }
+                  ].map((obj) => {
+                    const bestScore = bestDecision.scores[obj.key as keyof typeof bestDecision.scores] as any;
+                    const proposedScore = proposedDecision.scores[obj.key as keyof typeof proposedDecision.scores] as any;
+                    const delta = Math.round((bestScore.raw_score - proposedScore.raw_score) * 100);
+
+                    return (
+                      <div key={obj.key} className="p-6 bg-white border border-slate-200 rounded-[24px] space-y-4 shadow-sm relative overflow-hidden group">
+                        <div className="flex items-center justify-between relative z-10">
+                          <div className={`p-2 rounded-xl ${obj.bg} ${obj.color}`}>
+                            <obj.icon className="h-4 w-4" />
+                          </div>
+                          <Badge variant="outline" className={`${delta >= 0 ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'} text-[10px] font-black`}>
+                            {delta >= 0 ? '+' : ''}{delta}%
                           </Badge>
                         </div>
+                        <div>
+                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 block mb-1">{obj.label}</span>
+                          <div className="text-3xl font-black text-slate-900 tracking-tighter">
+                            {formatPercentage(bestScore.raw_score)}
+                          </div>
+                        </div>
+                        <div className="pt-2 border-t border-slate-50 flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Baseline</span>
+                          <span className="text-xs font-bold text-slate-400 line-through decoration-rose-500/20">{formatPercentage(proposedScore.raw_score)}</span>
+                        </div>
                       </div>
-                      <div className="p-4 bg-emerald-50 rounded-2xl">
-                        <Target className="h-8 w-8 text-emerald-600" />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-10 pt-6 border-t border-slate-100 relative z-10">
-                      <div>
-                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 opacity-50">Proposed Performance</div>
-                        <div className="text-2xl font-black text-slate-300 line-through decoration-rose-500/10 decoration-2">{formatPercentage(proposedDecision.scores.overall_score)}</div>
-                      </div>
-                      <div>
-                        <div className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1.5">Optimized Target</div>
-                        <div className="text-2xl font-black text-blue-600 font-mono italic">{formatPercentage(bestDecision.scores.overall_score)}</div>
-                      </div>
-                    </div>
-                  </div>
+                    );
+                  })}
+                </div>
 
-                  <div className="grid grid-cols-1 gap-4">
-                    <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
-                      <div className="flex gap-4 items-center">
-                        <div className="p-3 bg-white rounded-xl shadow-sm"><TrendingUp className="h-5 w-5 text-emerald-500" /></div>
-                        <div>
-                          <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Revenue Impact</div>
-                          <div className="text-xl font-bold text-slate-900">{formatCurrency(metrics.revenue)}</div>
-                        </div>
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
+                    <div className="flex gap-4 items-center">
+                      <div className="p-3 bg-white rounded-xl shadow-sm"><TrendingUp className="h-5 w-5 text-emerald-500" /></div>
+                      <div>
+                        <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Revenue Impact</div>
+                        <div className="text-xl font-bold text-slate-900">{formatCurrency(metrics.revenue)}</div>
                       </div>
-                      <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-none">
-                        +{formatCurrency(metrics.revenue - proposedMetrics.revenue)}
-                      </Badge>
                     </div>
-                    <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
-                      <div className="flex gap-4 items-center">
-                        <div className="p-3 bg-white rounded-xl shadow-sm"><Clock className="h-5 w-5 text-blue-500" /></div>
-                        <div>
-                          <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Wait Time Reduction</div>
-                          <div className="text-xl font-bold text-slate-900">{metrics.avg_wait_time_seconds}s</div>
-                        </div>
+                    <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-none">
+                      +{formatCurrency(metrics.revenue - proposedMetrics.revenue)}
+                    </Badge>
+                  </div>
+                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
+                    <div className="flex gap-4 items-center">
+                      <div className="p-3 bg-white rounded-xl shadow-sm"><Clock className="h-5 w-5 text-blue-500" /></div>
+                      <div>
+                        <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Wait Time Reduction</div>
+                        <div className="text-xl font-bold text-slate-900">{metrics.avg_wait_time_seconds}s</div>
                       </div>
-                      <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none">
-                        -{proposedMetrics.avg_wait_time_seconds - metrics.avg_wait_time_seconds}s
-                      </Badge>
                     </div>
+                    <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none">
+                      -{proposedMetrics.avg_wait_time_seconds - metrics.avg_wait_time_seconds}s
+                    </Badge>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="pt-8">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-8 h-1 bg-slate-900 rounded-full" />
-                <h3 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em]">Optimization Delta</h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[
-                  { label: 'System Clog', proposed: `${proposedMetrics.avg_wait_time_seconds}s`, optimized: `${metrics.avg_wait_time_seconds}s`, improved: metrics.avg_wait_time_seconds < proposedMetrics.avg_wait_time_seconds, state: waitState, sub: 'Avg Service Time' },
-                  { label: 'Guest Delight', proposed: formatPercentage(proposedMetrics.order_accuracy), optimized: formatPercentage(metrics.order_accuracy), improved: metrics.order_accuracy > proposedMetrics.order_accuracy, state: csatState, sub: 'Guest Accuracy' },
-                  { label: 'Staff Load', proposed: formatPercentage(proposedMetrics.staff_utilization), optimized: formatPercentage(metrics.staff_utilization), improved: Math.abs(0.75 - metrics.staff_utilization) < Math.abs(0.75 - proposedMetrics.staff_utilization), state: utilState, sub: 'Operational Load' }
-                ].map((item, idx) => (
-                  <div key={idx} className={`p-8 rounded-[32px] border transition-all hover:shadow-xl hover:translate-y--1 group ${item.state.bg} ${item.state.color.replace('text-', 'border-').replace('600', '100')}`}>
-                    <div className="flex items-center justify-between mb-8">
-                      <div className={`p-3 rounded-2xl bg-white shadow-md ${item.state.color}`}><item.state.icon className="h-6 w-6" /></div>
-                      <Badge variant="outline" className={`font-black tracking-widest uppercase text-[8px] border-none opacity-60`}>{item.label}</Badge>
-                    </div>
-                    <div className="space-y-6">
-                      <div className="flex justify-between items-end">
-                        <div className="space-y-1">
-                          <div className="text-[10px] font-black opacity-30 uppercase tracking-widest">Proposed</div>
-                          <div className="text-3xl font-black opacity-20 tracking-tighter decoration-rose-500/50 decoration-2 line-through">{item.proposed}</div>
-                        </div>
-                        <div className="text-right space-y-1">
-                          <div className="text-[10px] font-black opacity-30 uppercase tracking-widest">Optimized</div>
-                          <div className="text-5xl font-black tracking-tighter group-hover:scale-110 transition-transform origin-right">{item.optimized}</div>
-                        </div>
+          <div className="pt-8">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-8 h-1 bg-slate-900 rounded-full" />
+              <h3 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em]">Optimization Delta</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { label: 'System Clog', proposed: `${proposedMetrics.avg_wait_time_seconds}s`, optimized: `${metrics.avg_wait_time_seconds}s`, improved: metrics.avg_wait_time_seconds < proposedMetrics.avg_wait_time_seconds, state: waitState, sub: 'Avg Service Time' },
+                { label: 'Guest Delight', proposed: formatPercentage(proposedMetrics.order_accuracy), optimized: formatPercentage(metrics.order_accuracy), improved: metrics.order_accuracy > proposedMetrics.order_accuracy, state: csatState, sub: 'Guest Accuracy' },
+                { label: 'Staff Load', proposed: formatPercentage(proposedMetrics.staff_utilization), optimized: formatPercentage(metrics.staff_utilization), improved: Math.abs(0.75 - metrics.staff_utilization) < Math.abs(0.75 - proposedMetrics.staff_utilization), state: utilState, sub: 'Operational Load' }
+              ].map((item, idx) => (
+                <div key={idx} className={`p-8 rounded-[32px] border transition-all hover:shadow-xl hover:translate-y--1 group ${item.state.bg} ${item.state.color.replace('text-', 'border-').replace('600', '100')}`}>
+                  <div className="flex items-center justify-between mb-8">
+                    <div className={`p-3 rounded-2xl bg-white shadow-md ${item.state.color}`}><item.state.icon className="h-6 w-6" /></div>
+                    <Badge variant="outline" className={`font-black tracking-widest uppercase text-[8px] border-none opacity-60`}>{item.label}</Badge>
+                  </div>
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-end">
+                      <div className="space-y-1">
+                        <div className="text-[10px] font-black opacity-30 uppercase tracking-widest">Proposed</div>
+                        <div className="text-3xl font-black opacity-20 tracking-tighter decoration-rose-500/50 decoration-2 line-through">{item.proposed}</div>
                       </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest opacity-40">
-                          <span>{item.sub}</span>
-                          <span className={item.improved ? 'text-emerald-600' : 'text-rose-600'}>{item.improved ? 'Improvement' : 'Observation'}</span>
-                        </div>
-                        <div className="h-1.5 bg-white/50 rounded-full overflow-hidden">
-                          <div className={`h-full transition-all duration-1000 ease-out ${item.improved ? 'bg-emerald-500/60' : 'bg-rose-500/60'}`} style={{ width: '100%' }} />
-                        </div>
+                      <div className="text-right space-y-1">
+                        <div className="text-[10px] font-black opacity-30 uppercase tracking-widest">Optimized</div>
+                        <div className="text-5xl font-black tracking-tighter group-hover:scale-110 transition-transform origin-right">{item.optimized}</div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest opacity-40">
+                        <span>{item.sub}</span>
+                        <span className={item.improved ? 'text-emerald-600' : 'text-rose-600'}>{item.improved ? 'Improvement' : 'Observation'}</span>
+                      </div>
+                      <div className="h-1.5 bg-white/50 rounded-full overflow-hidden">
+                        <div className={`h-full transition-all duration-1000 ease-out ${item.improved ? 'bg-emerald-500/60' : 'bg-rose-500/60'}`} style={{ width: '100%' }} />
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-
-            <div className="pt-2"> </div>
           </div>
+
+          <div className="pt-2"> </div>
         </div>
       </div>
     );

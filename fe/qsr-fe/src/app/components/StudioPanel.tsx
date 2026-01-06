@@ -48,8 +48,8 @@ const focusTools: Tool[] = [
 ];
 
 const systemModeTools: Tool[] = [
-  { id: 'trace', name: 'Trace Mode', icon: Zap, color: 'bg-blue-50 text-blue-600', group: 'performance' },
-  { id: 'reasoning', name: 'Reasoning Mode', icon: Brain, color: 'bg-purple-50 text-purple-600', group: 'performance' },
+  { id: 'trace', name: 'Trace Mode', icon: Zap, color: 'bg-slate-50 text-slate-600', group: 'performance' },
+  { id: 'reasoning', name: 'Reasoning Mode', icon: Brain, color: 'bg-slate-50 text-slate-600', group: 'performance' },
 ];
 
 const performanceTools: Tool[] = [
@@ -164,7 +164,7 @@ export function StudioPanel({ isCollapsed, onToggle, onRunModel, onCancelRun, is
               <div className="grid grid-cols-2 gap-2">
                 {systemModeTools.map(tool => {
                   const isActive = (tool.id === 'trace' && traceMode) || (tool.id === 'reasoning' && reasoningMode);
-                  const activeColor = tool.id === 'trace' ? 'bg-blue-600 border-blue-700 shadow-blue-500/20' : 'bg-purple-600 border-purple-700 shadow-purple-500/20';
+                  const activeColor = 'bg-slate-100 border-slate-200 shadow-sm';
 
                   return (
                     <div
@@ -180,12 +180,12 @@ export function StudioPanel({ isCollapsed, onToggle, onRunModel, onCancelRun, is
                           if (!reasoningMode) onTraceModeChange(false);
                         }
                       }}
-                      className={`p-3 rounded-xl border transition-all flex flex-col items-center gap-1 ${isActive
-                        ? `${activeColor} shadow-lg text-white`
-                        : 'border-transparent bg-white hover:bg-white/50 text-slate-700 shadow-sm'
-                        } ${isRunning ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer text-center'}`}
+                      className={`p-3 rounded-xl border transition-all duration-200 flex flex-col items-center gap-1 group/mode ${isActive
+                        ? `${activeColor} text-slate-900 shadow-sm border-slate-200`
+                        : 'border-transparent bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 shadow-sm'
+                        } ${isRunning ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.05] hover:shadow-lg active:scale-95'}`}
                     >
-                      <div className={`p-2 rounded-lg ${isActive ? 'bg-white/20 text-white' : tool.color} mb-1`}>
+                      <div className={`p-2 rounded-lg transition-transform duration-200 group-hover/mode:scale-110 ${isActive ? 'bg-slate-900 text-white' : tool.color} mb-1`}>
                         <tool.icon className="h-4 w-4" />
                       </div>
                       <span className="text-[11px] font-bold">

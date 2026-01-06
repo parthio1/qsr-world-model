@@ -46,18 +46,20 @@ export default function App() {
                 <Box className="h-4 w-4 text-blue-400" />
               </div>
               {!leftPanelCollapsed && (
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 whitespace-nowrap">
                   <h1 className="font-bold text-slate-900 tracking-tight">QSR World Model</h1>
-                  <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-wider rounded-full border border-blue-100">
-                    Noob Playground
-                  </span>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="flex-1 h-full border-x border-slate-100/50 flex items-center px-8">
-            <div className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Experimental Operations Control</div>
+          <div className="flex-1 h-full border-x border-slate-100/50 flex items-center justify-center px-8">
+            <div className="flex items-center gap-2.5">
+              <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Noob Operator Playground</div>
+              <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-[9px] font-bold uppercase tracking-wider rounded-full border border-blue-100 shadow-sm">
+                Beta v1.0
+              </span>
+            </div>
           </div>
 
           <div className={`flex items-center px-4 transition-all duration-300 border-l border-slate-100/50 ${rightPanelCollapsed ? 'w-14 justify-center' : 'w-80 justify-end gap-3'}`}>

@@ -29,38 +29,30 @@ ROLE: Analyze metrics and provide objective scores based on multi-objective alig
 SCORING CRITERIA:
 
 1. PROFIT SCORING (Benchmark based on Labor Cost %):
-   - Formula: Labor Cost / Revenue
-   - < 20%: Raw Score 0.9 - 1.0 (Excellent Efficiency)
-   - 20% - 25%: Raw Score 0.7 - 0.8 (Healthy)
-   - 25% - 30%: Raw Score 0.5 - 0.6 (Acceptable)
-   - > 30%: Raw Score 0.0 - 0.4 (Unprofitable/High Risk)
+   - Target: < 22% for 1.0 score.
+   - Calculation: Max(0.01, 1.0 - (Labor Cost / Revenue - 0.15) * 3)
+   - Logic: Efficiency above 22% starts degrading profit score quickly.
 
 2. CUSTOMER SATISFACTION SCORING (Benchmark based on Avg Wait Time):
-   - < 180s (3 min): Raw Score 0.9 - 1.0 (Excellent)
-   - 180s - 300s (5 min): Raw Score 0.6 - 0.8 (Tolerable)
-   - 300s - 400s: Raw Score 0.3 - 0.5 (Frustrating)
-   - > 400s: Raw Score 0.0 - 0.2 (Unacceptable churn risk)
+   - Target: < 120s for 1.0 score.
+   - Calculation: Max(0.01, 1.0 - (Wait Time - 120) / 480)
+   - Logic: Wait times above 10 mins (600s) drop to nearly 0.
 
 3. STAFF WELLBEING (Benchmark based on Utilization):
-   - 0.70 - 0.85: Raw Score 0.9 - 1.0 (Optimal "Flow" State)
-   - 0.60 - 0.69 or 0.86 - 0.90: Raw Score 0.6 - 0.8 (Sub-optimal)
-   - < 0.60 (Idle) or > 0.90 (Burnout): Raw Score 0.0 - 0.4 (High Risk)
+   - Target: 0.75 is perfect (1.0).
+   - Calculation: Max(0.01, 1.0 - Abs(Utilization - 0.75) * 4)
+   - Logic: Below 0.5 (Idleness) or above 0.95 (Burnout) results in low scores.
 
-SCORING FORMULA (Weighted Geometric Mean):
-Rationale: We use a geometric mean to penalize imbalance. A low score in any single dimension will drastically reduce the overall score, ensuring a "balanced" plan is selected over one that maximizes only one variable at the cost of others.
+SCORING FORMULA (Weighted Arithmetic Mean):
+Rationale: We use a weighted arithmetic mean so that improvements in one area are directly visible in the overall score, while still respecting the importance of each objective via weights.
 
 Formula:
-Final Combined Score = (Profit_raw ^ Profit_weight) * (Customer_raw ^ Customer_weight) * (Staff_raw ^ Staff_weight)
+Final Combined Score = (Profit_raw * Profit_weight) + (Customer_raw * Customer_weight) + (Staff_raw * Staff_weight)
 
 Steps:
-1. Determine raw scores (0.01 to 1.0) for each objective. (Use 0.01 as floor to avoid math errors).
-2. Raise each raw score to the power of its respective weight (e.g., 0.8 ^ 0.4).
-3. Multiply the results together.
-
-Example: 
-P=0.9 (w=0.4), C=0.4 (w=0.4), S=0.9 (w=0.2)
-- Linear Average: 0.70 (Seems "Good")
-- Geometric Mean: ~0.63 (Reflects the "Failure" in Customer Satisfaction)
+1. Determine raw scores (0.01 to 1.0) for each objective based on the benchmarks above.
+2. Multiply each raw score by its respective alignment weight.
+3. Sum the weighted scores to get the overall score.
 
 RANKING LOGIC (Must follow strictly):
 - 0.90 - 1.00: "excellent"
@@ -69,7 +61,8 @@ RANKING LOGIC (Must follow strictly):
 - 0.60 - 0.69: "fair"
 - 0.00 - 0.59: "poor"
 
-Be analytical and data-driven in your evaluation."""
+Be analytical and data-driven. If a plan has better service metrics but higher costs, the CSAT score should rise while Profit may fall. Ensure the "recommendation" explains these trade-offs clearly.
+"""
 
     def score_option(
         self,
