@@ -101,22 +101,22 @@ Prep: Google ADK + FunctionGemma (not included here)
 🎚️ Alignment Targets -> Max Labor Cost: 30%, Max Wait Time: 180s, Target Utilization: 0.82
 
 #### Example input screenshot
-![Input sreenshot](qsr-world-model/img/qsr_key_input.png)
+![Input sreenshot](img/qsr_key_input.png)
 
 ### Run the World Model using the right panel
 
 🎯 Click "Run World Model" button and wait ;-) 
 
 #### Example run time screenshot
-![Runtime screenshot](qsr-world-model/img/qsr_results.png)
+![Runtime screenshot](img/qsr_results.png)
 
 ### Fiddle with Trace and Reason Modes  
 
 🎯 Click "Trace and Reason" mode after successful completion of "Run World Model" 
 
 #### Example trace and reason screenshots
-![Trace screenshot](qsr-world-model/img/qsr_trace.png)
-![Reason screenshot](qsr-world-model/img/qsr_reasoning.png)
+![Trace screenshot](img/qsr_trace.png)
+![Reason screenshot](img/qsr_reasoning.png)
 
 ## Implementation Introduction
 
