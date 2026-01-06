@@ -88,23 +88,6 @@ Prep: Google ADK + FunctionGemma (not included here)
 
 ## Quick Start
 
-### User Interface layout - Three Panels Interaction Model
-
-┌─────────────────────────────────────────────────────────┐
-│  Settings          Canvas (Results)          Studio     │
-│  (Configure)       (View Results)            (Controls) │
-├──────────────┬─────────────────────────────┬────────────┤
-│              │                             │            │
-│  📍 Location │  📊 Optimization Results    │ ▶️ Run     │
-│  🌍 World    │  - Target Scores            │            │
-│  🎯 Priority │  - Key Metrics              │ ⚡ Trace   │
-│  🍔 Config   │  - Optimization Delta       │ 🧠 Reason  │
-│  🎚️ Targets  │  - Agent Feedback           │            │
-│              │                             │ 🚗 Focus   │
-│              │                             │ 📊 Compare │
-│              │                             │            │
-└──────────────┴─────────────────────────────┴────────────┘
-
 ### Configure Your Restaurant & Key Parameters using the left panel
 
 📍 Current Restaurant -> Downtown Atlanta, Peachtree St

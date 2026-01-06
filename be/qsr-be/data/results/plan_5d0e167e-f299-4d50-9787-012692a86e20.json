@@ -1,0 +1,413 @@
+{
+  "request_id": "5d0e167e-f299-4d50-9787-012692a86e20",
+  "timestamp": "2026-01-06T03:07:31.143707",
+  "scenario": {
+    "shift": "lunch",
+    "date": "2026-01-06",
+    "day_of_week": "tuesday",
+    "weather": "sunny",
+    "special_events": [],
+    "restaurant": {
+      "location": "Peachtree St",
+      "has_drive_thru": true,
+      "drive_thru_lanes": 2,
+      "kitchen_staff_capacity": "medium",
+      "dine_in": true,
+      "dine_in_seat_capacity": 50
+    }
+  },
+  "demand_prediction": {
+    "estimated_total_demand": 450,
+    "peak_demand_per_hour": 120,
+    "demand_multiplier": 1.2,
+    "channel_preference": {
+      "drive_thru": 0.45,
+      "dine_in": 0.45,
+      "delivery": 0.1
+    },
+    "context_factors": [
+      "urban_lunch_peak",
+      "sunny_weather",
+      "standard_weekday"
+    ],
+    "reasoning": "Tuesday lunch in an urban location like Peachtree St typically sees a high volume of office workers. Sunny weather encourages walk-ins and dine-in traffic. The urban location multiplier of 1.2 is applied to the base lunch demand of 100 guests per hour."
+  },
+  "capacity_analysis": {
+    "max_throughput_per_hour": 80,
+    "station_capacities": {
+      "kitchen": 80,
+      "drive_thru": 60,
+      "front_counter": 50
+    },
+    "bottleneck_risk_areas": [
+      "kitchen",
+      "drive_thru"
+    ],
+    "reasoning": "The kitchen's medium capacity of 80 orders per hour serves as the primary constraint. While the drive-thru (60 orders/hr) and dine-in (50 orders/hr) have a combined potential demand of 110 orders per hour, the physical kitchen infrastructure cannot exceed 80, creating a significant bottleneck during peak hours."
+  },
+  "restaurant_operator_plan": {
+    "option": {
+      "id": "lean_cost_v1",
+      "strategy": "Lean Cost-Efficiency",
+      "estimated_total_guest": 450,
+      "estimated_peak_guest": 120,
+      "staffing": {
+        "drive_thru": 2,
+        "kitchen": 4,
+        "front_counter": 2,
+        "total": 8
+      },
+      "estimated_labor_cost": 480.0,
+      "risk_level": "high",
+      "rationale": "Focusing on minimizing labor costs by staffing at the lower end of operational requirements. Given the kitchen bottleneck of 80 guests per hour, staffing for the full peak demand of 120 is inefficient. We accept longer wait times to protect margins.",
+      "reasoning": "The primary objective is cost reduction. Peak demand (120/hr) significantly exceeds the kitchen's physical capacity (80/hr). Therefore, staffing to meet 120/hr would result in idle labor at the front counter and drive-thru while the kitchen struggles. I have allocated 4 staff to the kitchen to reach near its 80/hr limit, and kept drive-thru and front counter at minimum or near-minimum levels (2 each). This results in a total of 8 staff, which is well within the 20 available but prioritizes a low labor-to-sales ratio. The risk is high because service speed will suffer during the 120/hr peak, but from a cost-minimization perspective, this avoids over-staffing a system constrained by physical infrastructure."
+    },
+    "simulation": {
+      "predicted_metrics": {
+        "customers_served": 382,
+        "revenue": 6876.0,
+        "avg_wait_time_seconds": 510,
+        "peak_wait_time_seconds": 1380,
+        "max_queue_length": 31,
+        "labor_cost": 1600.0,
+        "food_cost": 1375.2,
+        "staff_utilization": 0.91,
+        "order_accuracy": 0.89
+      },
+      "key_events": [
+        "11:45 AM: Drive-thru queue reaches 10 cars",
+        "12:15 PM: Kitchen hits maximum throughput capacity of 80 orders/hour",
+        "12:30 PM: Estimated 15% customer abandonment due to wait times exceeding 15 minutes",
+        "1:15 PM: Peak queue begins to dissipate as demand drops below 80/hr",
+        "2:00 PM: Shift stabilizes with normal service flow"
+      ],
+      "bottlenecks": [
+        "Kitchen infrastructure capacity (80/hr) is insufficient for peak demand (120/hr)",
+        "Drive-thru lane physical capacity causing spillover into street",
+        "Front counter staff idle while waiting for kitchen output"
+      ],
+      "confidence": 0.85,
+      "reasoning": "The kitchen's physical capacity of 80 orders/hour creates a hard ceiling that cannot meet the 120/hour peak demand, resulting in significant queue growth and customer abandonment. While staffing is adequate, the infrastructure bottleneck limits total revenue and increases peak wait times to over 20 minutes."
+    },
+    "scores": {
+      "profit": {
+        "raw_score": 1.0,
+        "deviation": -6.73,
+        "weighted": 1.0,
+        "details": {
+          "actual_labor_cost_percent": 23.27,
+          "target_labor_cost_percent": 30.0,
+          "revenue": 6876.0,
+          "labor_cost": 1600.0
+        }
+      },
+      "customer_satisfaction": {
+        "raw_score": 0.0,
+        "deviation": 330.0,
+        "weighted": 0.0,
+        "details": {
+          "actual_avg_wait_time": 510.0,
+          "target_wait_time": 180.0,
+          "peak_wait_time": 1380.0
+        }
+      },
+      "staff_wellbeing": {
+        "raw_score": 0.4,
+        "deviation": 0.09,
+        "weighted": 0.4,
+        "details": {
+          "actual_utilization": 0.91,
+          "target_utilization": 0.82
+        }
+      },
+      "ranking": "poor",
+      "strengths": [
+        "Labor cost is significantly below the 30% target at 23.27%",
+        "High revenue efficiency per labor dollar spent"
+      ],
+      "weaknesses": [
+        "Average wait times are 330 seconds over target",
+        "Staff utilization of 91% indicates high risk of burnout",
+        "Estimated 15% customer abandonment due to extreme peak wait times"
+      ],
+      "recommendation": "Increase staffing levels in the kitchen and drive-thru to reduce wait times and lower staff utilization toward the 0.82 target, utilizing the available 6.73% labor cost margin.",
+      "reasoning": "The plan prioritizes profit (1.0 score) but fails critically on service speed (0.0 score) and staff wellbeing (0.4 score). The kitchen bottleneck at 80/hr against a 120/hr peak demand causes unacceptable wait times of 510s, leading to significant customer loss despite the low labor cost."
+    }
+  },
+  "shadow_operator_best_plan": {
+    "option": {
+      "id": "lean_cost_v1",
+      "strategy": "Lean Cost-Efficiency",
+      "estimated_total_guest": 450,
+      "estimated_peak_guest": 120,
+      "staffing": {
+        "drive_thru": 2,
+        "kitchen": 4,
+        "front_counter": 2,
+        "total": 8
+      },
+      "estimated_labor_cost": 480.0,
+      "risk_level": "high",
+      "rationale": "Focusing on minimizing labor costs by staffing at the lower end of operational requirements. Given the kitchen bottleneck of 80 guests per hour, staffing for the full peak demand of 120 is inefficient. We accept longer wait times to protect margins.",
+      "reasoning": "The primary objective is cost reduction. Peak demand (120/hr) significantly exceeds the kitchen's physical capacity (80/hr). Therefore, staffing to meet 120/hr would result in idle labor at the front counter and drive-thru while the kitchen struggles. I have allocated 4 staff to the kitchen to reach near its 80/hr limit, and kept drive-thru and front counter at minimum or near-minimum levels (2 each). This results in a total of 8 staff, which is well within the 20 available but prioritizes a low labor-to-sales ratio. The risk is high because service speed will suffer during the 120/hr peak, but from a cost-minimization perspective, this avoids over-staffing a system constrained by physical infrastructure."
+    },
+    "simulation": {
+      "predicted_metrics": {
+        "customers_served": 382,
+        "revenue": 6876.0,
+        "avg_wait_time_seconds": 510,
+        "peak_wait_time_seconds": 1380,
+        "max_queue_length": 31,
+        "labor_cost": 1600.0,
+        "food_cost": 1375.2,
+        "staff_utilization": 0.91,
+        "order_accuracy": 0.89
+      },
+      "key_events": [
+        "11:45 AM: Drive-thru queue reaches 10 cars",
+        "12:15 PM: Kitchen hits maximum throughput capacity of 80 orders/hour",
+        "12:30 PM: Estimated 15% customer abandonment due to wait times exceeding 15 minutes",
+        "1:15 PM: Peak queue begins to dissipate as demand drops below 80/hr",
+        "2:00 PM: Shift stabilizes with normal service flow"
+      ],
+      "bottlenecks": [
+        "Kitchen infrastructure capacity (80/hr) is insufficient for peak demand (120/hr)",
+        "Drive-thru lane physical capacity causing spillover into street",
+        "Front counter staff idle while waiting for kitchen output"
+      ],
+      "confidence": 0.85,
+      "reasoning": "The kitchen's physical capacity of 80 orders/hour creates a hard ceiling that cannot meet the 120/hour peak demand, resulting in significant queue growth and customer abandonment. While staffing is adequate, the infrastructure bottleneck limits total revenue and increases peak wait times to over 20 minutes."
+    },
+    "scores": {
+      "profit": {
+        "raw_score": 1.0,
+        "deviation": -6.73,
+        "weighted": 1.0,
+        "details": {
+          "actual_labor_cost_percent": 23.27,
+          "target_labor_cost_percent": 30.0,
+          "revenue": 6876.0,
+          "labor_cost": 1600.0
+        }
+      },
+      "customer_satisfaction": {
+        "raw_score": 0.0,
+        "deviation": 330.0,
+        "weighted": 0.0,
+        "details": {
+          "actual_avg_wait_time": 510.0,
+          "target_wait_time": 180.0,
+          "peak_wait_time": 1380.0
+        }
+      },
+      "staff_wellbeing": {
+        "raw_score": 0.4,
+        "deviation": 0.09,
+        "weighted": 0.4,
+        "details": {
+          "actual_utilization": 0.91,
+          "target_utilization": 0.82
+        }
+      },
+      "ranking": "poor",
+      "strengths": [
+        "Labor cost is significantly below the 30% target at 23.27%",
+        "High revenue efficiency per labor dollar spent"
+      ],
+      "weaknesses": [
+        "Average wait times are 330 seconds over target",
+        "Staff utilization of 91% indicates high risk of burnout",
+        "Estimated 15% customer abandonment due to extreme peak wait times"
+      ],
+      "recommendation": "Increase staffing levels in the kitchen and drive-thru to reduce wait times and lower staff utilization toward the 0.82 target, utilizing the available 6.73% labor cost margin.",
+      "reasoning": "The plan prioritizes profit (1.0 score) but fails critically on service speed (0.0 score) and staff wellbeing (0.4 score). The kitchen bottleneck at 80/hr against a 120/hr peak demand causes unacceptable wait times of 510s, leading to significant customer loss despite the low labor cost."
+    }
+  },
+  "iterations": [
+    {
+      "iteration_number": 1,
+      "evaluations": [
+        {
+          "option": {
+            "id": "optimized_v2_balanced",
+            "strategy": "Balanced Throughput & Wellbeing",
+            "estimated_total_guest": 450,
+            "estimated_peak_guest": 120,
+            "staffing": {
+              "drive_thru": 4,
+              "kitchen": 8,
+              "front_counter": 4,
+              "total": 16
+            },
+            "estimated_labor_cost": 960.0,
+            "risk_level": "medium",
+            "rationale": "Increased staffing to 16 to maximize throughput up to the physical kitchen limit (80/hr) and reduce staff burnout. By doubling the kitchen and service staff, we mitigate the 15% abandonment rate and address the 330s wait time delay identified in the previous iteration.",
+            "reasoning": "The previous 'Lean' plan failed because it under-utilized available labor (8/20) while staff were over-worked (91% utilization). Although the kitchen has a physical cap of 80/hr, 4 staff members were insufficient to reach that cap efficiently under a 120/hr demand pressure. I have allocated 8 staff to the kitchen to ensure maximum speed of service and 4 each to Drive-Thru and Front Counter to manage the 54/hr and 66/hr channel demands respectively. This reduces the risk of DT spillover and improves the dine-in experience. Total labor cost increases, but is offset by reduced customer abandonment and improved staff retention/wellbeing."
+          },
+          "simulation": {
+            "predicted_metrics": {
+              "customers_served": 348,
+              "revenue": 6264.0,
+              "avg_wait_time_seconds": 315,
+              "peak_wait_time_seconds": 750,
+              "max_queue_length": 45,
+              "labor_cost": 3200.0,
+              "food_cost": 1252.8,
+              "staff_utilization": 0.84,
+              "order_accuracy": 0.93
+            },
+            "key_events": [
+              "12:15 PM: Kitchen reaches maximum throughput capacity of 80 orders per hour.",
+              "12:45 PM: Drive-thru queue exceeds 15 cars, triggering customer abandonment due to wait times exceeding 10 minutes.",
+              "1:30 PM: Peak demand subsides, allowing kitchen to clear order backlog.",
+              "2:00 PM: Shift ends with high labor cost relative to served volume due to infrastructure bottlenecks."
+            ],
+            "bottlenecks": [
+              "Kitchen grill and prep station physical capacity (capped at 80 orders/hr)",
+              "Drive-thru lane merging efficiency during peak 120/hr demand"
+            ],
+            "confidence": 0.92,
+            "reasoning": "The kitchen's physical capacity of 80 orders/hour is the primary constraint, failing to meet the peak demand of 120/hour despite optimal staffing. This results in significant customer abandonment and limits total revenue regardless of the high staff count."
+          },
+          "scores": {
+            "profit": {
+              "raw_score": 0.0,
+              "deviation": 21.09,
+              "weighted": 0.0,
+              "details": {
+                "actual_labor_cost_percent": 51.09,
+                "target_labor_cost_percent": 30.0,
+                "total_revenue": 6264.0,
+                "total_labor_cost": 3200.0
+              }
+            },
+            "customer_satisfaction": {
+              "raw_score": 0.0,
+              "deviation": 135.0,
+              "weighted": 0.0,
+              "details": {
+                "actual_wait_time_seconds": 315,
+                "target_wait_time_seconds": 180
+              }
+            },
+            "staff_wellbeing": {
+              "raw_score": 0.8667,
+              "deviation": 0.02,
+              "weighted": 0.8667,
+              "details": {
+                "actual_utilization": 0.84,
+                "target_utilization": 0.82
+              }
+            },
+            "ranking": "poor",
+            "strengths": [
+              "Staff utilization (0.84) is very close to the ideal target of 0.82, ensuring sustainable workload",
+              "High staffing levels successfully mitigated the extreme burnout risks identified in leaner plans"
+            ],
+            "weaknesses": [
+              "Labor cost percentage (51.1%) is critically high, exceeding the 30% target by over 21 points",
+              "Average wait time (315s) is nearly double the target due to kitchen throughput bottlenecks",
+              "Diminishing returns on labor: adding staff did not solve wait times because the kitchen is physically capped at 80 orders/hr"
+            ],
+            "recommendation": "Reduce staff count to align with the kitchen's physical capacity of 80 orders per hour. Current staffing for 120 orders per hour creates excessive labor costs without improving service speed, as the grill and prep stations cannot process the volume.",
+            "reasoning": "The plan results in a critical failure for Profit and Customer Satisfaction. While staff wellbeing is excellent, the financial cost of 51.1% labor is unsustainable. The simulation proves that staffing for peak demand (120/hr) is futile when the physical infrastructure (kitchen) is capped at 80/hr, leading to both high costs and high wait times."
+          }
+        }
+      ],
+      "feedback": "Current Plan Score: 0.467. Bottlenecks found: Kitchen infrastructure capacity (80/hr) is insufficient for peak demand (120/hr), Drive-thru lane physical capacity causing spillover into street, Front counter staff idle while waiting for kitchen output. Issues: Average wait times are 330 seconds over target, Staff utilization of 91% indicates high risk of burnout, Estimated 15% customer abandonment due to extreme peak wait times. Address these issues to improve alignment with objectives."
+    },
+    {
+      "iteration_number": 2,
+      "evaluations": [
+        {
+          "option": {
+            "id": "optimized_v2_peachtree",
+            "strategy": "Bottleneck-Synchronized Lean",
+            "estimated_total_guest": 450,
+            "estimated_peak_guest": 120,
+            "staffing": {
+              "drive_thru": 2,
+              "kitchen": 4,
+              "front_counter": 1,
+              "total": 7
+            },
+            "estimated_labor_cost": 420.0,
+            "risk_level": "medium",
+            "rationale": "The kitchen's physical cap of 80 orders/hr is the absolute constraint. Staffing to meet the peak demand of 120/hr is mathematically impossible and creates idle labor. This plan reduces headcount to 7 by cutting the front counter to the minimum, aligning labor with the actual physical throughput capacity.",
+            "reasoning": "The previous plan's 51.1% labor cost was driven by over-staffing relative to the restaurant's physical limitations. Since the kitchen is capped at 80 orders/hr, the maximum achievable revenue is fixed regardless of additional staff. I have allocated 4 staff to the kitchen to maintain that 80/hr ceiling; reducing kitchen staff further would lower throughput and likely worsen the labor cost ratio. I reduced the front counter to 1 staff member because, although demand is 54/hr, the kitchen can only supply approximately 36 orders/hr to that channel (45% of 80), which is manageable for a single station. Drive-thru is kept at the minimum of 2. This configuration minimizes labor spend while maximizing the revenue allowed by the physical bottleneck."
+          },
+          "simulation": {
+            "predicted_metrics": {
+              "customers_served": 370,
+              "revenue": 6734.0,
+              "avg_wait_time_seconds": 240,
+              "peak_wait_time_seconds": 600,
+              "max_queue_length": 14,
+              "labor_cost": 1400.0,
+              "food_cost": 1346.8,
+              "staff_utilization": 0.62,
+              "order_accuracy": 0.92
+            },
+            "key_events": [
+              "11:30 AM: Shift begins with steady urban foot traffic",
+              "12:15 PM: Kitchen reaches maximum throughput of 80 orders per hour",
+              "12:45 PM: Peak wait times hit 10-minute threshold, triggering customer abandonment",
+              "2:00 PM: Lunch rush subsides; queue length returns to normal levels",
+              "4:00 PM: Shift concludes with high revenue but lost potential due to kitchen constraints"
+            ],
+            "bottlenecks": [
+              "Kitchen infrastructure limited to 80 orders/hr despite higher staff potential",
+              "Front counter capacity (50/hr) exceeded during peak dine-in demand",
+              "Drive-thru lane physical stacking limits"
+            ],
+            "confidence": 0.88,
+            "reasoning": "The kitchen's 80 orders/hour capacity acts as a hard ceiling against the 120 orders/hour peak demand, resulting in approximately 80 lost customers due to wait-time abandonment. While staffing is sufficient for the infrastructure, the physical kitchen throughput is the primary constraint on Peachtree St."
+          },
+          "scores": {
+            "profit": {
+              "raw_score": 1.0,
+              "deviation": -9.21,
+              "weighted": 1.0,
+              "details": {
+                "actual_labor_cost_percent": 20.79,
+                "target_labor_cost_percent": 30
+              }
+            },
+            "customer_satisfaction": {
+              "raw_score": 0.0,
+              "deviation": 60.0,
+              "weighted": 0.0,
+              "details": {
+                "actual_wait_time_seconds": 240,
+                "target_wait_time_seconds": 180
+              }
+            },
+            "staff_wellbeing": {
+              "raw_score": 0.0,
+              "deviation": -0.2,
+              "weighted": 0.0,
+              "details": {
+                "actual_utilization": 0.62,
+                "target_utilization": 0.82
+              }
+            },
+            "ranking": "poor",
+            "strengths": [
+              "Labor cost percentage of 20.79% is significantly better than the 30% target",
+              "High revenue generation despite physical constraints"
+            ],
+            "weaknesses": [
+              "Average wait time of 240s exceeds the 180s target by a full minute",
+              "Staff utilization is 20% below the ideal target, indicating idle capacity due to bottlenecks",
+              "Peak wait times of 600s led to significant customer abandonment"
+            ],
+            "recommendation": "The kitchen's 80 orders/hr capacity is a hard bottleneck that staffing cannot solve. To improve scores, the restaurant must increase physical kitchen throughput or implement mobile-order throttling to manage expectations.",
+            "reasoning": "The plan achieves a perfect profit score by keeping labor lean, but it fails critically on service and utilization. Because the kitchen cannot process the volume, wait times spiked to 240s (0.0 score). Simultaneously, staff utilization fell to 0.62 (0.0 score) because the team is capped by the equipment's speed rather than their own labor capacity, resulting in a 'poor' overall balance."
+          }
+        }
+      ],
+      "feedback": "Current Plan Score: 0.289. Bottlenecks found: Kitchen grill and prep station physical capacity (capped at 80 orders/hr), Drive-thru lane merging efficiency during peak 120/hr demand. Issues: Labor cost percentage (51.1%) is critically high, exceeding the 30% target by over 21 points, Average wait time (315s) is nearly double the target due to kitchen throughput bottlenecks, Diminishing returns on labor: adding staff did not solve wait times because the kitchen is physically capped at 80 orders/hr. Address these issues to improve alignment with objectives."
+    }
+  ],
+  "execution_time_seconds": 130.14
+}

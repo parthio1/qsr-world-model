@@ -1,0 +1,86 @@
+{
+  "timestamp": "2026-01-06T03:22:45.079748",
+  "model_name": "gemini-2.0-flash-lite-preview",
+  "total_cases": 3,
+  "passed_cases": 3,
+  "pass_rate": 1.0,
+  "avg_priority_score": 4.666666666666667,
+  "avg_reasoning_score": 4.666666666666667,
+  "results": [
+    {
+      "case_id": "scenario_stormy_rush",
+      "passed": true,
+      "plan_generated": {
+        "id": "customer_priority_friday_concert",
+        "strategy": "Customer-First Concert Surge",
+        "estimated_total_guest": 450,
+        "estimated_peak_guest": 120,
+        "staffing": {
+          "drive_thru": 5,
+          "kitchen": 6,
+          "front_counter": 3,
+          "total": 14
+        },
+        "estimated_labor_cost": 840.0,
+        "risk_level": "low",
+        "rationale": "Prioritizing speed of service for the pre-concert rush and high drive-thru demand due to stormy weather.",
+        "reasoning": "Given the 'customer_first' priority and the combination of a Friday night, a local rock concert, and stormy weather, I am allocating a robust team of 14. The storm will likely push more customers to the double drive-thru lanes, requiring 5 staff to maintain speed. The kitchen needs 6 to handle the high volume of orders from both channels. Despite the weather, the downtown concert will drive front counter traffic, so 3 staff are assigned there to ensure quick turnaround. This minimizes wait times and maximizes customer satisfaction during a high-pressure shift."
+      },
+      "constraint_violations": [],
+      "priority_score": 5,
+      "reasoning_quality_score": 5,
+      "judge_feedback": "The plan demonstrates excellent alignment with the 'customer-first' priority. The staffing allocation is well-reasoned, considering the anticipated surge in drive-thru traffic due to the storm and the concert. The reasoning is clear, logical, and thoroughly considers the context, leading to a proactive and customer-centric strategy.",
+      "error": null
+    },
+    {
+      "case_id": "scenario_budget_squeeze",
+      "passed": true,
+      "plan_generated": {
+        "id": "lean_saturday_lunch_v1",
+        "strategy": "Lean Saturday Lunch",
+        "estimated_total_guest": 250,
+        "estimated_peak_guest": 80,
+        "staffing": {
+          "drive_thru": 3,
+          "kitchen": 4,
+          "front_counter": 1,
+          "total": 8
+        },
+        "estimated_labor_cost": 480.0,
+        "risk_level": "high",
+        "rationale": "Prioritizing profit margins by staffing near the minimum required levels for a Saturday shift despite the downtown location.",
+        "reasoning": "Given the priority to minimize cost, I am operating with a skeleton crew. Saturday lunch in a downtown location typically sees high volume, but by limiting the front counter to one person and the kitchen to four, we reduce the hourly burn rate significantly. The drive-thru is staffed with three people to manage the two lanes, which is the primary bottleneck, but still lean. The risk of high wait times is acknowledged as a trade-off for lower labor expenses. I am banking on the kitchen's medium capacity to handle the load without extra hands."
+      },
+      "constraint_violations": [],
+      "priority_score": 4,
+      "reasoning_quality_score": 4,
+      "judge_feedback": "The plan demonstrates a strong understanding of the 'minimize_cost' priority by opting for a lean staffing strategy. The rationale is sound, acknowledging the trade-off between cost and potential wait times. The reasoning is logical, considering the context of a Saturday lunch in a downtown location. However, the plan could be slightly improved by mentioning contingency plans if wait times become excessive.",
+      "error": null
+    },
+    {
+      "case_id": "scenario_ghost_town",
+      "passed": true,
+      "plan_generated": {
+        "id": "balanced_breakfast_v1",
+        "strategy": "Balanced Commuter Flow",
+        "estimated_total_guest": 160,
+        "estimated_peak_guest": 50,
+        "staffing": {
+          "drive_thru": 3,
+          "kitchen": 4,
+          "front_counter": 2,
+          "total": 9
+        },
+        "estimated_labor_cost": 810.0,
+        "risk_level": "low",
+        "rationale": "A balanced approach for a Tuesday breakfast in Downtown Atlanta, prioritizing both the high-volume drive-thru lanes and the expected walk-in commuter traffic while maintaining kitchen efficiency.",
+        "reasoning": "Given the Downtown Atlanta location and sunny weather, I expect a steady flow of commuters. With 2 drive-thru lanes, 3 staff members are necessary to manage order taking and window service efficiently. The kitchen requires 4 people to handle the complexity of breakfast assembly and prep. I've allocated 2 staff to the front counter to ensure walk-in customers are served quickly without creating a bottleneck, as downtown foot traffic can be significant during the morning rush. This uses 9 out of 10 available staff, providing a safety margin while keeping labor costs under control."
+      },
+      "constraint_violations": [],
+      "priority_score": 5,
+      "reasoning_quality_score": 5,
+      "judge_feedback": "The plan demonstrates a strong understanding of the scenario. The staffing allocation is well-reasoned, considering the drive-thru lanes, kitchen capacity, and expected commuter traffic in a downtown location. The agent correctly prioritizes efficiency and aims for a balanced approach given the context. The rationale clearly explains the decisions, and the use of CoT is evident.",
+      "error": null
+    }
+  ]
+}
