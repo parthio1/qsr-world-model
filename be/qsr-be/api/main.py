@@ -160,7 +160,7 @@ async def list_results(limit: int = 10):
                     "request_id": data["request_id"],
                     "timestamp": data["timestamp"],
                     "shift": data["scenario"]["shift"],
-                    "best_score": data["best_decision"]["scores"]["overall_score"],
+                    "best_score": data["shadow_operator_best_plan"]["scores"]["overall_score"],
                     "file": plan_file.name
                 })
         

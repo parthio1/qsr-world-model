@@ -87,53 +87,49 @@ def test_constraints_validation():
     assert constraints.budget_hours >= 0
 
 # Integration tests (require API key)
-@pytest.mark.skip(reason="Requires Google API key")
+
 def test_world_model_simulation(sample_scenario, sample_staffing):
     """Test world model simulation"""
     from src.agents.world_model_agent import WorldModelAgent
     
     agent = WorldModelAgent()
-    result = agent.simulate(sample_scenario, sample_staffing)
+    result = agent.simulate(sample_scenario, sample_staffing, context="Test context")
     
     assert result.predicted_metrics.customers_served > 0
     assert result.predicted_metrics.revenue > 0
     assert 0 <= result.predicted_metrics.staff_utilization <= 1
     assert 0 <= result.confidence <= 1
 
-@pytest.mark.skip(reason="Requires Google API key")
-def test_decision_maker(sample_scenario, sample_constraints):
-    """Test decision maker agent"""
-    from src.agents.decision_maker_agent import DecisionMakerAgent
+def test_restaurant_operator(sample_scenario, sample_constraints):
+    """Test restaurant operator agent"""
+    from src.agents.restaurant_operator_agent import RestaurantOperatorAgent
     
-    agent = DecisionMakerAgent()
-    options = agent.generate_options(
+    agent = RestaurantOperatorAgent()
+    plan = agent.generate_initial_plan(
         scenario=sample_scenario,
         constraints=sample_constraints,
         operator_priority="balanced"
     )
     
-    assert len(options) >= 3
-    assert len(options) <= 5
-    
-    # Check options are ordered by aggressiveness
-    totals = [opt.staffing.total for opt in options]
-    assert totals == sorted(totals)  # Should be ascending
+    assert plan.staffing.total > 0
+    assert plan.strategy != ""
 
-@pytest.mark.skip(reason="Requires Google API key")
 def test_scorer(sample_scenario, sample_staffing, sample_alignment):
     """Test scorer agent"""
     from src.agents.scorer_agent import ScorerAgent
     from src.agents.world_model_agent import WorldModelAgent
-    from src.models.schemas import StaffingOption
+    from src.models.schemas import StaffingPlan
     
     # Create simulation
     world_model = WorldModelAgent()
-    simulation = world_model.simulate(sample_scenario, sample_staffing)
+    simulation = world_model.simulate(sample_scenario, sample_staffing, context="Test context")
     
     # Create option
-    option = StaffingOption(
+    option = StaffingPlan(
         id="test_option",
         strategy="Test strategy",
+        estimated_total_guest=100,
+        estimated_peak_guest=30,
         staffing=sample_staffing,
         estimated_labor_cost=950.0,
         risk_level=RiskLevel.LOW,
@@ -153,6 +149,33 @@ def test_scorer(sample_scenario, sample_staffing, sample_alignment):
     assert 0 <= scores.profit.raw_score <= 1
     assert 0 <= scores.customer_satisfaction.raw_score <= 1
     assert 0 <= scores.staff_wellbeing.raw_score <= 1
+
+def test_shadow_operator(sample_scenario, sample_constraints, sample_staffing):
+    """Test shadow operator agent"""
+    from src.agents.shadow_operator_agent import ShadowOperatorAgent
+    from src.models.schemas import StaffingPlan
+    
+    agent = ShadowOperatorAgent()
+    prev_plan = StaffingPlan(
+        id="initial",
+        strategy="Initial",
+        estimated_total_guest=100,
+        estimated_peak_guest=30,
+        staffing=sample_staffing,
+        estimated_labor_cost=900,
+        risk_level=RiskLevel.MEDIUM,
+        rationale="Initial"
+    )
+    
+    plan = agent.generate_refined_plan(
+        scenario=sample_scenario,
+        constraints=sample_constraints,
+        feedback="Wait times are too high in drive-thru",
+        previous_plan=prev_plan
+    )
+    
+    assert plan.staffing.total > 0
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

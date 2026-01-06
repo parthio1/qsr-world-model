@@ -2,7 +2,7 @@
 
 import json
 from google import genai
-from typing import Dict
+from typing import Dict, Optional
 from src.models.schemas import Scenario, Staffing, SimulationResult, PredictedMetrics
 from src.config.settings import settings
 from src.utils.logger import setup_logger
@@ -25,24 +25,24 @@ class WorldModelAgent:
 ROLE: Predict what will happen during a restaurant shift based on scenario factors and staffing levels.
 
 CAPABILITIES:
-- Estimate customer demand based on time, weather, events, location
 - Calculate service capacity based on staffing and infrastructure
+- Estimate customer served versus estimated demand and available capacity 
 - Model queue dynamics, wait times, and throughput
 - Compute financial metrics (revenue, costs, profit)
 - Identify operational bottlenecks and critical events
 
-SIMULATION LOGIC:
-1. Demand Estimation:
+SIMULATION LOGIC
+1. Capacity Calculation:
+   - Drive-thru: ~25-35 cars/hr per lane per staff
+   - Kitchen: ~20-25 orders/hr per cook
+   - Utilization sweet spot: 0.70-0.85 (below = waste, above = stress)
+
+2. - Customer Served Calculation:
    - Base demand by shift: breakfast (40-80/hr), lunch (80-120/hr), dinner (70-110/hr)
    - Weather impact: rainy +25% drive-thru preference, -10% walk-in
    - Day multipliers: Friday/Saturday +20-30%, Sunday lunch +40%
    - Special events: festivals +30-50%, sports games +20-40%
    - Location: urban/downtown +20% lunch, suburban +15% dinner
-
-2. Capacity Calculation:
-   - Drive-thru: ~25-35 cars/hr per lane per staff
-   - Kitchen: ~20-25 orders/hr per cook
-   - Utilization sweet spot: 0.70-0.85 (below = waste, above = stress)
 
 3. Queue Dynamics:
    - If demand > capacity: queues form, wait times increase
@@ -60,33 +60,9 @@ CONSTRAINTS:
 - Staff utilization should not exceed 1.0
 - Wait times should reflect actual capacity constraints
 
-OUTPUT FORMAT (JSON):
-{
-  "predicted_metrics": {
-    "customers_served": <int>,
-    "revenue": <float>,
-    "avg_wait_time_seconds": <int>,
-    "peak_wait_time_seconds": <int>,
-    "max_queue_length": <int>,
-    "labor_cost": <float>,
-    "food_cost": <float>,
-    "staff_utilization": <float 0-1>,
-    "order_accuracy": <float 0-1>
-  },
-  "key_events": [
-    "5:30 PM: Rush begins...",
-    "6:45 PM: Peak subsides..."
-  ],
-  "bottlenecks": [
-    "Kitchen slightly overwhelmed 5:30-6:15 PM"
-  ],
-  "confidence": <float 0-1>,
-  "reasoning": "Detailed agentic reasoning explaining the simulation logic, demand assumptions, and queue dynamics using a Chain of Thought framework."
-}
-
 Be precise with numbers and provide realistic predictions."""
 
-    def simulate(self, scenario: Scenario, staffing: Staffing) -> SimulationResult:
+    def simulate(self, scenario: Scenario, staffing: Staffing, context: Optional[str] = None) -> SimulationResult:
         """
         Simulate a shift and predict outcomes
         
@@ -108,7 +84,13 @@ SCENARIO:
 STAFFING:
 {staffing.model_dump_json(indent=2)}
 
-Simulate this {scenario.shift.value} shift and predict outcomes. Provide detailed, realistic predictions in the specified JSON format.
+CONTEXT:
+{context if context else "No additional context provided."}
+
+Simulate this {scenario.shift.value} shift and predict outcomes. 
+Consider the Demand Prediction and Capacity Analysis provided in the context.
+Calculate ACTUAL customers served based on demand vs available capacity, accounting for abandonment if wait times are high.
+Provide detailed, realistic predictions in the specified JSON format.
 """
             
             # Generate response
@@ -118,36 +100,12 @@ Simulate this {scenario.shift.value} shift and predict outcomes. Provide detaile
                 config={
                     "temperature": settings.temperature,
                     "max_output_tokens": settings.max_output_tokens,
+                    "response_mime_type": "application/json",
+                    "response_json_schema": SimulationResult.model_json_schema(),
                 }
             )
             
-            # Parse response
-            result_text = response.text.strip()
-            
-            # Extract JSON from markdown code blocks if present
-            if "```json" in result_text:
-                result_text = result_text.split("```json")[1].split("```")[0].strip()
-            elif "```" in result_text:
-                result_text = result_text.split("```")[1].split("```")[0].strip()
-            
-            result_dict = json.loads(result_text)
-            
-            # Convert to Pydantic model
-            simulation_result = SimulationResult(
-                predicted_metrics=PredictedMetrics(**result_dict["predicted_metrics"]),
-                key_events=result_dict.get("key_events", []),
-                bottlenecks=result_dict.get("bottlenecks", []),
-                confidence=result_dict.get("confidence", 0.8),
-                reasoning=result_dict.get("reasoning")
-            )
-            
-            logger.info(f"Simulation complete: {simulation_result.predicted_metrics.customers_served} customers predicted")
-            return simulation_result
-            
-        except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse simulation result: {e}")
-            logger.error(f"Raw response: {response.text}")
-            raise ValueError(f"Invalid JSON response from model: {e}")
+            return SimulationResult.model_validate_json(response.text)
         except Exception as e:
             logger.error(f"Simulation failed: {e}")
             raise

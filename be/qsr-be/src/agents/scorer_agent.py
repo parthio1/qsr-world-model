@@ -69,31 +69,6 @@ RANKING LOGIC (Must follow strictly):
 - 0.60 - 0.69: "fair"
 - 0.00 - 0.59: "poor"
 
-OUTPUT FORMAT (JSON):
-{
-  "profit": {
-    "raw_score": <float 0-1>,
-    "weighted": <float>,
-    "details": { "margin": <float>, "labor_ratio": <float> }
-  },
-  "customer_satisfaction": {
-    "raw_score": <float 0-1>,
-    "weighted": <float>,
-    "details": { "avg_wait_s": <int>, "service_rate": <float> }
-  },
-  "staff_wellbeing": {
-    "raw_score": <float 0-1>,
-    "weighted": <float>,
-    "details": { "avg_utilization": <float>, "burnout_risk": <str> }
-  },
-  "combined_score": <float 0-1>,
-  "ranking": "excellent" | "very good" | "good" | "fair" | "poor",
-  "strengths": [<str>, ...],
-  "weaknesses": [<str>, ...],
-  "recommendation": <str>,
-  "reasoning": "Detailed agentic reasoning explaining the mathematical breakdown, trade-off analysis, and alignment justification using a Chain of Thought framework."
-}
-
 Be analytical and data-driven in your evaluation."""
 
     def score_option(
@@ -127,46 +102,18 @@ Evaluate the simulation outcomes against the criteria and alignment weights.
 Return the scores in the specified JSON format.
 """
             
-            # Generate response
             response = self.client.models.generate_content(
                 model=settings.gemini_model,
                 contents=[self.system_prompt, user_prompt],
                 config={
                     "temperature": settings.temperature * 0.5,  # Slightly lower for consistency
                     "max_output_tokens": settings.max_output_tokens,
+                    "response_mime_type": "application/json",
+                    "response_json_schema": Scores.model_json_schema(),
                 }
             )
             
-            # Parse response
-            result_text = response.text.strip()
-            if "```json" in result_text:
-                result_text = result_text.split("```json")[1].split("```")[0].strip()
-            elif "```" in result_text:
-                result_text = result_text.split("```")[1].split("```")[0].strip()
-            
-            result_dict = json.loads(result_text)
-            
-            # Convert to Pydantic model
-            scores = Scores(
-                profit=ScoreDetails(**result_dict["profit"]),
-                customer_satisfaction=ScoreDetails(**result_dict["customer_satisfaction"]),
-                staff_wellbeing=ScoreDetails(**result_dict["staff_wellbeing"]),
-                overall_score=result_dict.get("combined_score", 0.0),
-                ranking=result_dict["ranking"],
-                strengths=result_dict.get("strengths", []),
-                weaknesses=result_dict.get("weaknesses", []),
-                recommendation=result_dict.get("recommendation", ""),
-                reasoning=result_dict.get("reasoning")
-            )
-            
-            logger.info(f"Scoring complete for {option.id}: {scores.overall_score:.3f}")
-            logger.info(f"Scores: {scores}")
-            return scores
-            
-        except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse scorer result: {e}")
-            logger.error(f"Raw response: {response.text}")
-            raise ValueError(f"Invalid JSON response from model: {e}")
+            return Scores.model_validate_json(response.text)
         except Exception as e:
             logger.error(f"Scoring failed: {e}")
             raise

@@ -96,6 +96,12 @@ def plan(shift, weather, day, location, events, available_staff, profit_weight, 
         console.print("[green]✓ Planning complete![/green]\n")
         
         # Display all options
+        all_evals = [response.restaurant_operator_plan]
+        for it in response.iterations:
+            all_evals.extend(it.evaluations)
+            
+        best = response.shadow_operator_best_plan or response.restaurant_operator_plan
+
         table = Table(title="📊 Staffing Options Evaluated")
         table.add_column("Option", style="cyan")
         table.add_column("Drive-Thru", justify="center")
@@ -105,8 +111,8 @@ def plan(shift, weather, day, location, events, available_staff, profit_weight, 
         table.add_column("Score", justify="right")
         table.add_column("Ranking", justify="center")
         
-        for eval in response.options_evaluated:
-            is_best = eval == response.best_decision
+        for eval in all_evals:
+            is_best = eval.option.id == best.option.id
             style = "bold green" if is_best else ""
             marker = "⭐ " if is_best else ""
             
@@ -124,7 +130,6 @@ def plan(shift, weather, day, location, events, available_staff, profit_weight, 
         console.print(table)
         
         # Display best decision details
-        best = response.best_decision
         console.print(f"\n[bold green]🏆 RECOMMENDED STAFFING[/bold green]\n")
         
         console.print(Panel.fit(
@@ -213,7 +218,8 @@ def evaluate(plan_file, customers, revenue, wait_time, labor_cost, issues):
         )
         
         # Show comparison
-        pred = planning_response.best_decision.simulation.predicted_metrics
+        best_eval = planning_response.shadow_operator_best_plan or planning_response.restaurant_operator_plan
+        pred = best_eval.simulation.predicted_metrics
         console.print(Panel.fit(
             f"[yellow]Predicted[/yellow]  →  [green]Actual[/green]\n\n"
             f"Customers:  {pred.customers_served}  →  {customers}\n"
@@ -312,11 +318,14 @@ def list_results(limit):
                 data = json.load(f)
             
             timestamp = datetime.fromisoformat(data["timestamp"]).strftime("%Y-%m-%d %H:%M")
+            best_eval = data.get("shadow_operator_best_plan") or data.get("restaurant_operator_plan")
+            score = best_eval["scores"]["overall_score"] if best_eval else 0.0
+            
             table.add_row(
                 timestamp,
                 data["scenario"]["shift"],
                 data["scenario"]["weather"],
-                f"{data['best_decision']['scores']['overall_score']:.3f}",
+                f"{score:.3f}",
                 data["request_id"][:8]
             )
         

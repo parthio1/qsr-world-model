@@ -89,16 +89,16 @@ class Staffing(BaseModel):
         return values.get('drive_thru', 0) + values.get('kitchen', 0) + values.get('front_counter', 0)
 
 class StaffingPlan(BaseModel):
-    """A staffing plan option"""
-    id: str
-    strategy: str
-    estimated_total_guest: int
-    estimated_peak_guest: int
-    staffing: Staffing
-    estimated_labor_cost: float
-    risk_level: RiskLevel
-    rationale: str
-    reasoning: Optional[str] = None
+    """A staffing plan option produced by an operator agent"""
+    id: str = Field(description="Unique identifier for the plan, e.g. 'initial_plan' or 'optimized_v1'")
+    strategy: str = Field(description="Short title describing the operational strategy, e.g. 'Lean Lunch'")
+    estimated_total_guest: int = Field(description="Total number of guests expected to be served")
+    estimated_peak_guest: int = Field(description="Maximum guests per hour during peak")
+    staffing: Staffing = Field(description="Allocation of staff to different stations")
+    estimated_labor_cost: float = Field(description="Total labor cost for the shift duration")
+    risk_level: RiskLevel = Field(description="Operational risk level of this staffing arrangement")
+    rationale: str = Field(description="A concise summary of why this plan was chosen")
+    reasoning: Optional[str] = Field(None, description="Detailed Chain-of-Thought (CoT) reasoning for the decision")
 
 class PredictedMetrics(BaseModel):
     """Predicted operational metrics"""
@@ -113,12 +113,12 @@ class PredictedMetrics(BaseModel):
     order_accuracy: float = Field(ge=0, le=1)
 
 class SimulationResult(BaseModel):
-    """World model simulation output"""
-    predicted_metrics: PredictedMetrics
-    key_events: List[str] = []
-    bottlenecks: List[str] = []
-    confidence: float = Field(ge=0, le=1)
-    reasoning: Optional[str] = None
+    """Output from the World Model simulator predicting shift outcome"""
+    predicted_metrics: PredictedMetrics = Field(description="Key-value metrics predicted for the shift")
+    key_events: List[str] = Field(default_factory=list, description="Timeline of significant simulated events")
+    bottlenecks: List[str] = Field(default_factory=list, description="Specific operational bottlenecks found during simulation")
+    confidence: float = Field(ge=0, le=1, description="Confidence score in the simulation accuracy (0.0 to 1.0)")
+    reasoning: Optional[str] = Field(None, description="Detailed explanation of the simulation logic and assumptions")
 
 class ScoreDetails(BaseModel):
     """Detailed score breakdown"""
@@ -127,25 +127,42 @@ class ScoreDetails(BaseModel):
     details: Dict
 
 class Scores(BaseModel):
-    """Multi-objective scores"""
-    profit: ScoreDetails
-    customer_satisfaction: ScoreDetails
-    staff_wellbeing: ScoreDetails
-    overall_score: float = Field(ge=0, le=1)
-    ranking: str
-    strengths: List[str] = []
-    weaknesses: List[str] = []
-    recommendation: str
-    reasoning: Optional[str] = None
+    """Multi-objective evaluation scores for a staffing option"""
+    profit: ScoreDetails = Field(description="Financial alignment score and details")
+    customer_satisfaction: ScoreDetails = Field(description="Guest experience alignment score and details")
+    staff_wellbeing: ScoreDetails = Field(description="Operational load/burnout alignment score and details")
+    overall_score: float = Field(ge=0, le=1, description="Weighted average of all objectives (0.0 to 1.0)")
+    ranking: str = Field(description="Qualitative rank: excellent, very good, good, fair, poor")
+    strengths: List[str] = Field(default_factory=list, description="Successes identified in the plan")
+    weaknesses: List[str] = Field(default_factory=list, description="Pain points or imbalances identified")
+    recommendation: str = Field(description="Actionable advice for refining the plan")
+    reasoning: Optional[str] = Field(None, description="Explanation of the scoring mathematics and trade-offs")
 
 class EvaluationResult(BaseModel):
     """Post-execution evaluation"""
+    model_config = {'protected_namespaces': ()}
     accuracy_analysis: Dict[str, str]
     error_analysis: List[Dict]
     root_causes: List[str]
     model_improvements: List[Dict]
     decision_quality: Dict
     learning_summary: str
+
+class DemandPrediction(BaseModel):
+    """Estimated customer demand from World Context Agent"""
+    estimated_total_demand: int = Field(description="Sum of all guests expected over the entire shift")
+    peak_demand_per_hour: int = Field(description="Maximum guests per hour during the busiest window")
+    demand_multiplier: float = Field(description="Contextual multiplier (e.g. 1.2 for +20% demand)")
+    channel_preference: Dict[str, float] = Field(description="Modifier for channel preference (drive_thru, dine_in, delivery)")
+    context_factors: List[str] = Field(description="List of environmental factors impacting demand")
+    reasoning: Optional[str] = Field(None, description="Detailed explanation for why this demand profile was chosen")
+
+class CapacityAnalysis(BaseModel):
+    """Restaurant infrastructure capacity breakdown from Restaurant Agent"""
+    max_throughput_per_hour: int = Field(description="Maximum theoretically possible orders per hour")
+    station_capacities: Dict[str, int] = Field(description="Max throughput per hour per station (kitchen, drive_thru, front_counter)")
+    bottleneck_risk_areas: List[str] = Field(description="Physical areas most likely to fail under high demand")
+    reasoning: Optional[str] = Field(None, description="Detailed explanation of capacity calculation logic")
 
 # ===== COMPLETE WORKFLOW MODELS =====
 
@@ -173,8 +190,10 @@ class PlanningResponse(BaseModel):
     request_id: str
     timestamp: datetime
     scenario: Scenario
-    options_evaluated: Optional[List[OptionEvaluation]] = None
-    best_decision: Optional[OptionEvaluation] = None
+    demand_prediction: Optional[DemandPrediction] = None
+    capacity_analysis: Optional[CapacityAnalysis] = None
+    restaurant_operator_plan: Optional[OptionEvaluation] = None
+    shadow_operator_best_plan: Optional[OptionEvaluation] = None
     iterations: List[IterationTrace] = []
     execution_time_seconds: float
 

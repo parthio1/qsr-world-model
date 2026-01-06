@@ -4,10 +4,10 @@ import os
 from datetime import datetime
 from google import genai
 from typing import List, Dict
-from src.agents.operator_agent import OperatorAgent
+from src.agents.restaurant_operator_agent import RestaurantOperatorAgent
 from src.models.schemas import Scenario, Constraints
 from src.models.eval_schemas import (
-    OperatorEvalCase, OperatorEvalResult, OperatorEvalSummary, StaffingPlan
+    OperatorEvalCase, OperatorEvalResult, OperatorEvalSummary, StaffingPlan, JudgeScoring
 )
 from src.config.settings import settings
 from src.utils.logger import setup_logger
@@ -16,7 +16,7 @@ logger = setup_logger("OperatorRunner")
 
 class OperatorRunner:
     def __init__(self, model_name: str = "gemini-2.0-flash-lite-preview"):
-        self.agent = OperatorAgent()
+        self.agent = RestaurantOperatorAgent()
         self.client = genai.Client(api_key=settings.google_api_key)
         self.eval_model = model_name
         self.scenarios_path = "data/evals/operator_scenarios.json"
@@ -32,13 +32,13 @@ class OperatorRunner:
         logger.info(f"Evaluating case: {case.id}")
         try:
             # 1. Generate plan
-            plans = self.agent.generate_staffing_plan(
+            plan = self.agent.generate_initial_plan(
                 scenario=case.scenario,
                 constraints=case.constraints,
                 operator_priority=case.operator_priority
             )
             
-            if not plans:
+            if not plan:
                 return OperatorEvalResult(
                     case_id=case.id,
                     passed=False,
@@ -47,7 +47,6 @@ class OperatorRunner:
                     reasoning_quality_score=0
                 )
             
-            plan = plans[0]  # Take the first/best plan
             
             # 2. Hard Constraint Validation
             violations = []
@@ -62,16 +61,16 @@ class OperatorRunner:
             # 3. Judge LLM Scoring
             judge_score = await self.get_judge_scoring(case, plan)
             
-            passed = len(violations) == 0 and judge_score["priority_score"] >= 4 and judge_score["reasoning_score"] >= 3
+            passed = len(violations) == 0 and judge_score.priority_score >= 4 and judge_score.reasoning_score >= 3
 
             return OperatorEvalResult(
                 case_id=case.id,
                 passed=passed,
                 plan_generated=plan,
                 constraint_violations=violations,
-                priority_score=judge_score["priority_score"],
-                reasoning_quality_score=judge_score["reasoning_score"],
-                judge_feedback=judge_score["feedback"]
+                priority_score=judge_score.priority_score,
+                reasoning_quality_score=judge_score.reasoning_score,
+                judge_feedback=judge_score.feedback
             )
             
         except Exception as e:
@@ -85,7 +84,7 @@ class OperatorRunner:
                 reasoning_quality_score=0
             )
 
-    async def get_judge_scoring(self, case: OperatorEvalCase, plan: StaffingPlan) -> Dict:
+    async def get_judge_scoring(self, case: OperatorEvalCase, plan: StaffingPlan) -> JudgeScoring:
         prompt = f"""
         You are an expert QSR operations judge. Evaluate the following Operator Agent decision.
         
@@ -103,24 +102,18 @@ class OperatorRunner:
         1. Score Priority Alignment (0-5): How well does the plan meet the operator's priority ({case.operator_priority})?
         2. Score Reasoning Quality (0-5): Is the reasoning logical, CoT-based, and considers the context (weather, events)?
         3. Provide critical feedback.
-        
-        Return ONLY a JSON object:
-        {{
-            "priority_score": int,
-            "reasoning_score": int,
-            "feedback": "string"
-        }}
         """
         
         response = self.client.models.generate_content(
             model=self.eval_model,
             contents=prompt,
             config={
-                "response_mime_type": "application/json"
+                "response_mime_type": "application/json",
+                "response_json_schema": JudgeScoring.model_json_schema()
             }
         )
         
-        return json.loads(response.text)
+        return JudgeScoring.model_validate_json(response.text)
 
     async def run(self):
         cases = self.load_cases()

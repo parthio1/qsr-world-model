@@ -3,7 +3,7 @@
 import json
 from google import genai
 from typing import Dict, Any
-from src.models.schemas import RestaurantConfig
+from src.models.schemas import RestaurantConfig, CapacityAnalysis
 from src.config.settings import settings
 from src.utils.logger import setup_logger
 
@@ -31,22 +31,9 @@ LOGIC:
 - Drive-Thru: 30 cars/hr per lane (optimal conditions).
 - Dine-In: Seating capacity * turnover rate (approx 1 hr).
 
-Output Format (JSON):
-{
-  "max_throughput_per_hour": <int>,
-  "station_capacities": {
-    "kitchen": <int orders/hr>,
-    "drive_thru": <int cars/hr>,
-    "dine_in": <int guests/hr>
-  },
-  "infrastructure_constraints": [
-    "Limited by small kitchen size",
-    "High drive-thru capacity available"
-  ]
-}
 """
 
-    def analyze_capacity(self, config: RestaurantConfig) -> Dict[str, Any]:
+    def analyze_capacity(self, config: RestaurantConfig) -> CapacityAnalysis:
         """
         Analyze the restaurant's physical capacity limits.
         """
@@ -65,21 +52,18 @@ Calculate the operational capacity limits.
                 config={
                     "temperature": 0.2,
                     "max_output_tokens": 1024,
+                    "response_mime_type": "application/json",
+                    "response_json_schema": CapacityAnalysis.model_json_schema(),
                 }
             )
             
-            result_text = response.text.strip()
-            if "```json" in result_text:
-                result_text = result_text.split("```json")[1].split("```")[0].strip()
-            elif "```" in result_text:
-                result_text = result_text.split("```")[1].split("```")[0].strip()
-                
-            return json.loads(result_text)
+            return CapacityAnalysis.model_validate_json(response.text)
             
         except Exception as e:
             logger.error(f"Capacity analysis failed: {e}")
-            return {
-                "max_throughput_per_hour": 100,
-                "station_capacities": {"kitchen": 80, "drive_thru": 60, "dine_in": 50},
-                "infrastructure_constraints": ["Default fallback capacities used"]
-            }
+            return CapacityAnalysis(
+                max_throughput_per_hour=100,
+                station_capacities={"kitchen": 80, "drive_thru": 60, "front_counter": 50},
+                bottleneck_risk_areas=["Default fallback capacities used"],
+                reasoning="Fallback due to error"
+            )

@@ -3,7 +3,7 @@
 import json
 from google import genai
 from typing import Dict, Any
-from src.models.schemas import Scenario
+from src.models.schemas import Scenario, DemandPrediction
 from src.config.settings import settings
 from src.utils.logger import setup_logger
 
@@ -22,29 +22,23 @@ class WorldContextAgent:
     def _build_system_prompt(self) -> str:
         return """You are a World Context Analyzer. Your job is to interpret environmental variables (Shift, Weather, Events, Location) and determine their impact on QSR demand and operations.
 
-OUTPUT: A structured analysis of demand modifiers and operational alerts.
+CAPABILITIES:
+- Estimate customer demand based on time, weather, events, location
 
 LOGIC:
 - Shift: Lunch (speed is critical), Dinner (larger family orders).
 - Weather: Rain increases drive-thru (+25%) but decreases walk-in (-10%). Storms reduce total traffic significantly.
 - Events: "friday_rush" (+30%), "game_day" (+40% wings/snacks), "holiday" (depends on type).
+- Demand Estimation:
+   - Base demand by shift: breakfast (40-80/hr), lunch (80-120/hr), dinner (70-110/hr)
+   - Weather impact: rainy +25% drive-thru preference, -10% walk-in
+   - Day multipliers: Friday/Saturday +20-30%, Sunday lunch +40%
+   - Special events: festivals +30-50%, sports games +20-40%
+   - Location: urban/downtown +20% lunch, suburban +15% dinner
 
-Output Format (JSON):
-{
-  "demand_multiplier": <float, e.g. 1.2 for +20%>,
-  "channel_preference": {
-    "drive_thru": <float modifier>,
-    "dine_in": <float modifier>,
-    "delivery": <float modifier>
-  },
-  "context_factors": [
-    "Heavy rain suggests shifted demand to drive-thru",
-    "Friday rush implies high peak load at 6PM"
-  ]
-}
 """
 
-    def analyze_context(self, scenario: Scenario) -> Dict[str, Any]:
+    def analyze_context(self, scenario: Scenario) -> DemandPrediction:
         """
         Analyze the scenario to produce context modifiers.
         """
@@ -63,22 +57,21 @@ Analyze the environmental impact on demand and operations.
                 config={
                     "temperature": 0.2, # Low temp for analytical consistency
                     "max_output_tokens": 1024,
+                    "response_mime_type": "application/json",
+                    "response_json_schema": DemandPrediction.model_json_schema(),
                 }
             )
             
-            result_text = response.text.strip()
-            if "```json" in result_text:
-                result_text = result_text.split("```json")[1].split("```")[0].strip()
-            elif "```" in result_text:
-                result_text = result_text.split("```")[1].split("```")[0].strip()
-                
-            return json.loads(result_text)
+            return DemandPrediction.model_validate_json(response.text)
             
         except Exception as e:
             logger.error(f"Context analysis failed: {e}")
             # Fallback default
-            return {
-                "demand_multiplier": 1.0,
-                "channel_preference": {"drive_thru": 1.0, "dine_in": 1.0},
-                "context_factors": ["Analysis failed, using defaults"]
-            }
+            return DemandPrediction(
+                estimated_total_demand=400,
+                peak_demand_per_hour=100,
+                demand_multiplier=1.0,
+                channel_preference={"drive_thru": 1.0, "dine_in": 1.0, "delivery": 1.0},
+                context_factors=["Analysis failed, using defaults"],
+                reasoning="Fallback due to error"
+            )

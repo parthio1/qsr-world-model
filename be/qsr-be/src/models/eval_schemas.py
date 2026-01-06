@@ -25,6 +25,7 @@ class OperatorEvalResult(BaseModel):
 
 class OperatorEvalSummary(BaseModel):
     """Summary of an evaluation run"""
+    model_config = {'protected_namespaces': ()}
     timestamp: str
     model_name: str
     total_cases: int
@@ -33,3 +34,9 @@ class OperatorEvalSummary(BaseModel):
     avg_priority_score: float
     avg_reasoning_score: float
     results: List[OperatorEvalResult]
+
+class JudgeScoring(BaseModel):
+    """Internal model for judge scoring output"""
+    priority_score: int = Field(ge=0, le=5)
+    reasoning_score: int = Field(ge=0, le=5)
+    feedback: str
