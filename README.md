@@ -37,7 +37,13 @@ Compare Against Operator Decision for short term learning
 System Learning Loop:
 Compare Against Real World Results for long term learning
 
-### Classic World Model Loop
+### Approach Comparison
+Observing + Understanding world context →  LLM based processing replaces VAE in the world model
+Simulating outcomes         →  Agentic reasoning i.e Chain-of-thought replaces large RNN in the world model
+Optimizing decisions        →  Multi LLM based agent work together and optimize against multi-objective for alignment replaces large RL in the world model
+Incorporating Real World Results → → Explicit reasoning replaces gradients in the world model
+
+```mermaid
 graph TB
     subgraph Theory["🎓 CLASSIC WORLD MODEL (Ha & Schmidhuber 2018)"]
         V[V - Vision/VAE<br/>Compress pixels → z<br/>Visual feature extraction]
@@ -88,6 +94,7 @@ graph TB
     
     style ENV fill:#ffcccc,stroke:#cc0000,stroke-width:2px
     style REAL fill:#ffcccc,stroke:#cc0000,stroke-width:2px
+```
 
 ### Development cycle:
 Step 1: Research world models + agentic AI → Architecture design
