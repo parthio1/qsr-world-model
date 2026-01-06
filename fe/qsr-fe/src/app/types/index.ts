@@ -135,6 +135,22 @@ export interface IterationTrace {
   feedback?: string;
 }
 
+export interface DemandPrediction {
+  estimated_total_demand: number;
+  peak_demand_per_hour: number;
+  demand_multiplier: number;
+  channel_preference: Record<string, number>;
+  context_factors: string[];
+  reasoning?: string;
+}
+
+export interface CapacityAnalysis {
+  max_throughput_per_hour: number;
+  station_capacities: Record<string, number>;
+  bottleneck_risk_areas: string[];
+  reasoning?: string;
+}
+
 export interface PlanResponse {
   request_id: string;
   timestamp: string;
@@ -153,8 +169,10 @@ export interface PlanResponse {
       dine_in_seat_capacity?: number;
     };
   };
-  options_evaluated: OptionEvaluation[];
-  best_decision: OptionEvaluation;
+  demand_prediction: DemandPrediction;
+  capacity_analysis: CapacityAnalysis;
+  restaurant_operator_plan: OptionEvaluation;
+  shadow_operator_best_plan: OptionEvaluation;
   iterations: IterationTrace[];
   execution_time_seconds: number;
 }

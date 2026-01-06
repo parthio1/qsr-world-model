@@ -1,9 +1,11 @@
 import { Button } from './ui/button';
-import { ThumbsUp, ThumbsDown, Copy, BookmarkPlus, Loader2, Users, DollarSign, Clock, Smile, TrendingUp, AlertCircle, BarChart3, Info } from 'lucide-react';
-import { Zap, Brain, MessageSquare, ShieldCheck, Activity, Target } from 'lucide-react';
-import { PlanResponse, EvaluateResponse } from '../types';
+import { ThumbsUp, ThumbsDown, Copy, BookmarkPlus, Loader2, Users, DollarSign, Clock, Smile, TrendingUp, AlertCircle, BarChart3, Info, Globe, ShieldAlert, CheckCircle2, FlaskConical, LayoutDashboard, History } from 'lucide-react';
+import { Zap, Brain, MessageSquare, ShieldCheck, Activity, Target, ArrowRight } from 'lucide-react';
+import { PlanResponse, EvaluateResponse, OptionEvaluation } from '../types';
 import { Badge } from './ui/badge';
 import { formatCurrency, formatPercentage, formatDate } from '../utils/formatters';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Radar as RadarArea } from 'recharts';
+import { useState } from 'react';
 
 interface MainWorkspaceProps {
   plan: PlanResponse | null;
@@ -15,12 +17,74 @@ interface MainWorkspaceProps {
   reasoningMode: boolean;
 }
 
-import { useState } from 'react';
+function OptionCard({ evalItem, isBest, isProposed }: { evalItem: OptionEvaluation, isBest: boolean, isProposed?: boolean }) {
+  return (
+    <div
+      className={`bg-white border rounded-xl overflow-hidden shadow-sm transition-all hover:shadow-md ${isBest
+        ? 'ring-2 ring-blue-500 border-blue-200'
+        : 'border-slate-200'
+        }`}
+    >
+      <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+          {isProposed ? 'PROPOSED' : 'REFINED OPTION'}
+        </span>
+        <Badge className={
+          evalItem.scores.overall_score > 0.8 ? 'bg-green-100 text-green-700' :
+            evalItem.scores.overall_score > 0.6 ? 'bg-amber-100 text-amber-700' :
+              'bg-red-100 text-red-700'
+        }>
+          {formatPercentage(evalItem.scores.overall_score)}
+        </Badge>
+      </div>
+      <div className="p-4 space-y-3">
+        <div className="font-semibold text-slate-900 text-sm h-10 overflow-hidden line-clamp-2">
+          {evalItem.option.strategy.replace(/_/g, ' ')}
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 py-2 border-y border-slate-50">
+          <div className="text-center">
+            <div className="text-[10px] text-slate-400 uppercase">DT</div>
+            <div className="text-xs font-bold">{evalItem.option.staffing.drive_thru}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-[10px] text-slate-400 uppercase">KT</div>
+            <div className="text-xs font-bold">{evalItem.option.staffing.kitchen}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-[10px] text-slate-400 uppercase">FC</div>
+            <div className="text-xs font-bold">{evalItem.option.staffing.front_counter}</div>
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="flex justify-between text-[11px]">
+            <span className="text-slate-500">Wait Time</span>
+            <span className="font-medium">{evalItem.simulation.predicted_metrics.avg_wait_time_seconds}s</span>
+          </div>
+          <div className="flex justify-between text-[11px]">
+            <span className="text-slate-500">Revenue</span>
+            <span className="font-medium">{formatCurrency(evalItem.simulation.predicted_metrics.revenue)}</span>
+          </div>
+        </div>
+
+        {isBest && (
+          <div className="pt-2">
+            <div className="flex items-center gap-1.5 text-[10px] font-bold text-blue-600 uppercase">
+              <Zap className="h-3 w-3 fill-blue-600" />
+              Optimal Selection
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvaluation, error, traceMode, reasoningMode }: MainWorkspaceProps) {
   const [activeIteration, setActiveIteration] = useState(0);
   const [activeOptionId, setActiveOptionId] = useState<string | null>(null);
-  const [activeAgentId, setActiveAgentId] = useState<'operator' | 'world' | 'scorer' | null>('operator');
+  const [activeAgentId, setActiveAgentId] = useState<'context' | 'capacity' | 'operator' | 'world' | 'scorer' | null>('operator');
 
   // Set default option when iteration changes
   const handleIterationChange = (index: number) => {
@@ -29,7 +93,27 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
       setActiveOptionId(plan.iterations[index].evaluations[0]?.option.id || null);
     }
   };
-  // Error State
+
+  // Helper for Qualitative States
+  const getQualitativeState = (metric: string, value: number) => {
+    switch (metric) {
+      case 'wait':
+        if (value < 120) return { label: 'PEAK VELOCITY', color: 'text-emerald-600', bg: 'bg-emerald-50', icon: Zap };
+        if (value < 300) return { label: 'MODERATE DELAY', color: 'text-amber-600', bg: 'bg-amber-50', icon: Clock };
+        return { label: 'SYSTEM CLOG', color: 'text-rose-600', bg: 'bg-rose-50', icon: ShieldAlert };
+      case 'csat':
+        if (value > 0.90) return { label: 'GUEST DELIGHT', color: 'text-emerald-600', bg: 'bg-emerald-50', icon: Smile };
+        if (value > 0.75) return { label: 'SATISFIED', color: 'text-blue-600', bg: 'bg-blue-50', icon: Smile };
+        return { label: 'DISSATISFIED', color: 'text-rose-600', bg: 'bg-rose-50', icon: AlertCircle };
+      case 'utilization':
+        if (value > 0.90) return { label: 'BURNOUT RISK', color: 'text-rose-600', bg: 'bg-rose-50', icon: ShieldAlert };
+        if (value > 0.70) return { label: 'OPTIMAL LOAD', color: 'text-emerald-600', bg: 'bg-emerald-50', icon: Activity };
+        return { label: 'UNDER-UTILIZED', color: 'text-slate-500', bg: 'bg-slate-50', icon: Users };
+      default:
+        return { label: 'NORMAL', color: 'text-slate-600', bg: 'bg-slate-50', icon: Info };
+    }
+  };
+
   if (error) {
     return (
       <div className="flex-1 bg-white flex flex-col overflow-hidden">
@@ -70,12 +154,14 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
 
   if (plan) {
     if (reasoningMode) {
-      const currentIteration = plan.iterations[activeIteration] || plan.iterations[0];
-      const selectedOption = currentIteration?.evaluations.find(e => e.option.id === (activeOptionId || currentIteration.evaluations[0]?.option.id));
+      const isInitial = activeIteration === -1;
+      const currentIteration = isInitial ? null : (plan.iterations[activeIteration] || plan.iterations[0]);
+      const selectedOption = isInitial
+        ? plan.restaurant_operator_plan
+        : (currentIteration?.evaluations.find(e => e.option.id === (activeOptionId || currentIteration.evaluations[0]?.option.id)) || currentIteration?.evaluations[0]);
 
       return (
         <div className="flex-1 bg-slate-50 flex flex-col overflow-hidden">
-          {/* Header */}
           <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0 bg-white shadow-sm">
             <div className="flex items-center justify-between">
               <div>
@@ -93,12 +179,33 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
           </div>
 
           <div className="flex-1 flex overflow-hidden">
-            {/* Left Sidebar - Iterations & Options */}
             <div className="w-72 border-r border-slate-200 bg-white flex flex-col flex-shrink-0">
               <div className="p-4 border-b border-slate-100 bg-slate-50/50">
                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Process Timeline</h3>
               </div>
               <div className="flex-1 overflow-y-auto p-3 space-y-6">
+                <div className="space-y-2">
+                  <button
+                    onClick={() => {
+                      setActiveIteration(-1);
+                      setActiveOptionId(plan.restaurant_operator_plan.option.id);
+                    }}
+                    className={`w-full flex items-center gap-3 p-2 rounded-lg transition-all ${activeIteration === -1 ? 'bg-slate-900 text-white shadow-md' : 'hover:bg-slate-50 text-slate-600'}`}
+                  >
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${activeIteration === -1 ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-500'}`}>
+                      0
+                    </div>
+                    <span className="text-sm font-bold">Restaurant Operator</span>
+                  </button>
+                  {activeIteration === -1 && (
+                    <div className="ml-4 space-y-1 pl-3 border-l-2 border-slate-100">
+                      <div className="w-full text-left p-2 rounded-md text-xs bg-blue-50 text-blue-700 font-bold">
+                        {plan.restaurant_operator_plan.option.strategy.replace(/_/g, ' ')}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {plan.iterations.map((iteration, iIdx) => (
                   <div key={iIdx} className="space-y-2">
                     <button
@@ -108,9 +215,8 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${activeIteration === iIdx ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-500'}`}>
                         {iteration.iteration_number}
                       </div>
-                      <span className="text-sm font-bold">Iteration {iteration.iteration_number}</span>
+                      <span className="text-sm font-bold">Shadow Iteration {iteration.iteration_number}</span>
                     </button>
-
                     {activeIteration === iIdx && (
                       <div className="ml-4 space-y-1 pl-3 border-l-2 border-slate-100">
                         {iteration.evaluations.map((evalItem) => (
@@ -129,19 +235,18 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
               </div>
             </div>
 
-            {/* Main Reasoning Content */}
             <div className="flex-1 overflow-y-auto p-8 bg-slate-50/50">
-              {selectedOption ? (
+              {selectedOption || activeAgentId === 'context' || activeAgentId === 'capacity' ? (
                 <div className="max-w-4xl mx-auto space-y-8">
-                  {/* Agent Sequence Flow */}
                   <div className="flex items-center justify-between relative px-4">
                     <div className="absolute left-10 right-10 top-1/2 h-0.5 bg-slate-200 -z-0" />
-
                     {[
+                      { id: 'context', name: 'World Context', icon: Globe, color: 'text-purple-600', bg: 'bg-purple-100' },
+                      { id: 'capacity', name: 'Capacity Model', icon: BarChart3, color: 'text-indigo-600', bg: 'bg-indigo-100' },
                       { id: 'operator', name: 'Operator Agent', icon: Target, color: 'text-blue-600', bg: 'bg-blue-100' },
                       { id: 'world', name: 'World Model', icon: Activity, color: 'text-orange-600', bg: 'bg-orange-100' },
                       { id: 'scorer', name: 'Scorer Agent', icon: ShieldCheck, color: 'text-green-600', bg: 'bg-green-100' }
-                    ].map((agent, idx) => (
+                    ].map((agent) => (
                       <button
                         key={agent.id}
                         onClick={() => setActiveAgentId(agent.id as any)}
@@ -160,24 +265,29 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
                     ))}
                   </div>
 
-                  {/* Monologue Box */}
-                  <div className={`bg-white rounded-3xl p-8 shadow-xl border-t-8 transition-all ${activeAgentId === 'operator' ? 'border-blue-500' :
-                    activeAgentId === 'world' ? 'border-orange-500' :
-                      'border-green-500'
+                  <div className={`bg-white rounded-3xl p-8 shadow-xl border-t-8 transition-all ${activeAgentId === 'context' ? 'border-purple-500' :
+                    activeAgentId === 'capacity' ? 'border-indigo-500' :
+                      activeAgentId === 'operator' ? 'border-blue-500' :
+                        activeAgentId === 'world' ? 'border-orange-500' :
+                          'border-green-500'
                     }`}>
                     <div className="flex items-center justify-between mb-6">
                       <div className="flex items-center gap-3">
-                        <div className={`p-3 rounded-2xl ${activeAgentId === 'operator' ? 'bg-blue-50 text-blue-600' :
-                          activeAgentId === 'world' ? 'bg-orange-50 text-orange-600' :
-                            'bg-green-50 text-green-600'
+                        <div className={`p-3 rounded-2xl ${activeAgentId === 'context' ? 'bg-purple-50 text-purple-600' :
+                          activeAgentId === 'capacity' ? 'bg-indigo-50 text-indigo-600' :
+                            activeAgentId === 'operator' ? 'bg-blue-50 text-blue-600' :
+                              activeAgentId === 'world' ? 'bg-orange-50 text-orange-600' :
+                                'bg-green-50 text-green-600'
                           }`}>
                           <MessageSquare className="h-5 w-5" />
                         </div>
                         <div>
                           <h2 className="text-xl font-bold text-slate-900">
-                            {activeAgentId === 'operator' ? 'Operator Inner Monologue' :
-                              activeAgentId === 'world' ? 'World Model Logic' :
-                                'Scorer Decision Matrix'}
+                            {activeAgentId === 'context' ? 'World Context Logic' :
+                              activeAgentId === 'capacity' ? 'Capacity Analysis Logic' :
+                                activeAgentId === 'operator' ? (activeIteration === -1 ? 'Restaurant Operator Monologue' : 'Shadow Operator Monologue') :
+                                  activeAgentId === 'world' ? 'World Model Logic' :
+                                    'Scorer Decision Matrix'}
                           </h2>
                           <p className="text-xs text-slate-500 uppercase tracking-widest font-semibold mt-0.5">
                             Chain of Thought Reasoning
@@ -195,28 +305,11 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
                       </div>
                       <div className="prose prose-slate max-w-none">
                         <p className="text-slate-700 leading-relaxed font-mono text-sm whitespace-pre-wrap">
-                          {activeAgentId === 'operator' ? (selectedOption.option.reasoning || selectedOption.option.rationale) :
-                            activeAgentId === 'world' ? (selectedOption.simulation.reasoning || selectedOption.simulation.bottlenecks.join('\n')) :
-                              (selectedOption.scores.reasoning || selectedOption.scores.recommendation)}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-8 grid grid-cols-2 gap-4">
-                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Input Context</h4>
-                        <p className="text-xs text-slate-600 font-medium truncate">
-                          {activeAgentId === 'operator' ? 'Scenario + Constraints' :
-                            activeAgentId === 'world' ? 'Staffing Plan + Constraints' :
-                              'Simulation Results + Weights'}
-                        </p>
-                      </div>
-                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Primary Objective</h4>
-                        <p className="text-xs text-slate-600 font-medium truncate">
-                          {activeAgentId === 'operator' ? 'Multi-Objective Strategy' :
-                            activeAgentId === 'world' ? 'Operational Fidelity' :
-                              'Global Optimization Alignment'}
+                          {activeAgentId === 'context' ? (plan.demand_prediction.reasoning || "Contextual demand analysis based on environment.") :
+                            activeAgentId === 'capacity' ? (plan.capacity_analysis.reasoning || "Infrastructure bottleneck & throughput analysis.") :
+                              activeAgentId === 'operator' ? (selectedOption?.option.reasoning || selectedOption?.option.rationale) :
+                                activeAgentId === 'world' ? (selectedOption?.simulation.reasoning || selectedOption?.simulation.bottlenecks.join('\n')) :
+                                  (selectedOption?.scores.reasoning || selectedOption?.scores.recommendation)}
                         </p>
                       </div>
                     </div>
@@ -225,7 +318,7 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-4">
                   <Brain className="h-12 w-12 opacity-20" />
-                  <p className="text-sm font-medium">Select an iteration and option to view reasoning</p>
+                  <p className="text-sm font-medium">Select an agent or iteration to view reasoning</p>
                 </div>
               )}
             </div>
@@ -237,7 +330,6 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
     if (traceMode) {
       return (
         <div className="flex-1 bg-slate-50 flex flex-col overflow-hidden">
-          {/* Header */}
           <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0 bg-white shadow-sm">
             <div className="flex items-center justify-between">
               <div>
@@ -251,36 +343,43 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
                   Full iteration history of agentic decision making
                 </p>
               </div>
-              <div className="flex items-center gap-2">
-                <Badge className="bg-slate-100 text-slate-700 border-slate-200">
-                  {plan.iterations.length} Iterations
-                </Badge>
-                <Badge className="bg-slate-100 text-slate-700 border-slate-200">
-                  {plan.options_evaluated.length} Total Options
-                </Badge>
-              </div>
             </div>
           </div>
 
-          {/* Trace Content */}
           <div className="flex-1 overflow-y-auto px-6 py-8">
             <div className="max-w-5xl mx-auto space-y-12">
+              <div className="relative">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold shadow-lg">
+                    0
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900">Initial Decision</h3>
+                    <p className="text-sm text-slate-500">
+                      Restaurant Operator proposed staffing strategy
+                    </p>
+                  </div>
+                </div>
+                <div className="ml-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+                  <OptionCard evalItem={plan.restaurant_operator_plan} isBest={false} isProposed={true} />
+                </div>
+                <div className="absolute left-[19px] top-10 bottom-[-48px] w-0.5 bg-slate-200 z-0" />
+              </div>
+
               {plan.iterations.map((iteration, iIdx) => (
                 <div key={iIdx} className="relative">
-                  {/* Iteration Header */}
                   <div className="flex items-center gap-4 mb-6">
                     <div className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold shadow-lg">
                       {iteration.iteration_number}
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900">Iteration {iteration.iteration_number}</h3>
+                      <h3 className="text-lg font-bold text-slate-900">Shadow Refinement {iteration.iteration_number}</h3>
                       <p className="text-sm text-slate-500">
-                        {iteration.feedback ? 'Refined based on previous feedback' : 'Initial generation phase'}
+                        Shadow Operator optimizing based on previous feedback
                       </p>
                     </div>
                   </div>
 
-                  {/* Feedback Box */}
                   {iteration.feedback && (
                     <div className="mb-6 ml-14 p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-900 italic">
                       <div className="flex items-center gap-2 mb-1 not-italic font-bold text-amber-600">
@@ -291,73 +390,15 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
                     </div>
                   )}
 
-                  {/* Options Grid */}
                   <div className="ml-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {iteration.evaluations.map((evalItem, eIdx) => (
-                      <div
+                    {iteration.evaluations.map((evalItem) => (
+                      <OptionCard
                         key={evalItem.option.id}
-                        className={`bg-white border rounded-xl overflow-hidden shadow-sm transition-all hover:shadow-md ${plan.best_decision.option.id === evalItem.option.id
-                          ? 'ring-2 ring-blue-500 border-blue-200'
-                          : 'border-slate-200'
-                          }`}
-                      >
-                        <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                            Option {eIdx + 1}
-                          </span>
-                          <Badge className={
-                            evalItem.scores.overall_score > 0.8 ? 'bg-green-100 text-green-700' :
-                              evalItem.scores.overall_score > 0.6 ? 'bg-amber-100 text-amber-700' :
-                                'bg-red-100 text-red-700'
-                          }>
-                            {formatPercentage(evalItem.scores.overall_score)}
-                          </Badge>
-                        </div>
-                        <div className="p-4 space-y-3">
-                          <div className="font-semibold text-slate-900 text-sm h-10 overflow-hidden line-clamp-2">
-                            {evalItem.option.strategy.replace('_', ' ')}
-                          </div>
-
-                          <div className="grid grid-cols-3 gap-2 py-2 border-y border-slate-50">
-                            <div className="text-center">
-                              <div className="text-[10px] text-slate-400 uppercase">DT</div>
-                              <div className="text-xs font-bold">{evalItem.option.staffing.drive_thru}</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-[10px] text-slate-400 uppercase">KT</div>
-                              <div className="text-xs font-bold">{evalItem.option.staffing.kitchen}</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-[10px] text-slate-400 uppercase">FC</div>
-                              <div className="text-xs font-bold">{evalItem.option.staffing.front_counter}</div>
-                            </div>
-                          </div>
-
-                          <div className="space-y-1.5">
-                            <div className="flex justify-between text-[11px]">
-                              <span className="text-slate-500">Wait Time</span>
-                              <span className="font-medium">{evalItem.simulation.predicted_metrics.avg_wait_time_seconds}s</span>
-                            </div>
-                            <div className="flex justify-between text-[11px]">
-                              <span className="text-slate-500">Revenue</span>
-                              <span className="font-medium">{formatCurrency(evalItem.simulation.predicted_metrics.revenue)}</span>
-                            </div>
-                          </div>
-
-                          {plan.best_decision.option.id === evalItem.option.id && (
-                            <div className="pt-2">
-                              <div className="flex items-center gap-1.5 text-[10px] font-bold text-blue-600 uppercase">
-                                <Zap className="h-3 w-3 fill-blue-600" />
-                                Optimal Selection
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                        evalItem={evalItem}
+                        isBest={plan.shadow_operator_best_plan.option.id === evalItem.option.id}
+                      />
                     ))}
                   </div>
-
-                  {/* Connector Line */}
                   {iIdx < plan.iterations.length - 1 && (
                     <div className="absolute left-[19px] top-10 bottom-[-48px] w-0.5 bg-slate-200 z-0" />
                   )}
@@ -369,192 +410,163 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
       );
     }
 
-    const bestDecision = plan.best_decision;
+    const bestDecision = plan.shadow_operator_best_plan;
+    const proposedDecision = plan.restaurant_operator_plan;
     const metrics = bestDecision.simulation.predicted_metrics;
-    const staffing = bestDecision.option.staffing;
+    const proposedMetrics = proposedDecision.simulation.predicted_metrics;
+
+    const bestIteration = plan.iterations.find(it => it.evaluations.some(e => e.option.id === bestDecision.option.id));
+    const iterationRef = bestIteration ? `Iteration ${bestIteration.iteration_number}` : 'Initial Plan';
+
+    const waitState = getQualitativeState('wait', metrics.avg_wait_time_seconds);
+    const csatState = getQualitativeState('csat', metrics.order_accuracy);
+    const utilState = getQualitativeState('utilization', metrics.staff_utilization);
+    const verdict = bestDecision.scores.overall_score > 0.85 ? 'VIABLE' : bestDecision.scores.overall_score > 0.65 ? 'STRESS_DETECTION' : 'SYSTEM_FAILURE';
 
     return (
       <div className="flex-1 bg-white flex flex-col overflow-hidden">
-        {/* Header */}
-        <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0">
+        <div className="border-b border-slate-100 px-8 py-6 flex-shrink-0 bg-white/80 backdrop-blur-md sticky top-0 z-10">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-slate-900">Optimal Shift Plan</h1>
-              <p className="text-sm text-slate-500 mt-1 capitalize">
-                {plan.scenario.shift} Shift • {plan.scenario.weather} • {plan.scenario.day_of_week}, {formatDate(plan.scenario.date)}
-              </p>
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-slate-900 rounded-2xl shadow-lg shadow-slate-200">
+                <FlaskConical className="h-6 w-6 text-blue-400" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight">Simulation Playground</h1>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                    {formatDate(plan.scenario.date)}
+                  </span>
+                </div>
+              </div>
             </div>
             <div className="flex items-center gap-3">
-              <Badge className="bg-purple-100 text-purple-700 border-purple-200">
-                Score: {formatPercentage(bestDecision.scores.overall_score)}
-              </Badge>
-              <Badge className="bg-green-100 text-green-700 border-green-200">
-                Confidence: {formatPercentage(bestDecision.simulation.confidence)}
-              </Badge>
+              <Button variant="outline" size="sm" className="rounded-full text-[10px] font-bold uppercase tracking-widest border-slate-200">
+                <Copy className="h-3 w-3 mr-2 text-slate-400" /> Export
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* Main Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto px-6 py-8">
-          <div className="max-w-4xl space-y-6">
-
-            {/* Strategy Title */}
-            <div className="bg-slate-900 text-white rounded-xl p-6 shadow-lg border-l-4 border-blue-500">
-              <div className="flex items-center gap-2 mb-2">
-                <Zap className="h-4 w-4 text-blue-400" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-blue-400">Winning Strategy</span>
-              </div>
-              <h2 className="text-xl font-bold mb-2 capitalize">{bestDecision.option.strategy.replace('_', ' ')}</h2>
-              <p className="text-slate-300 text-sm italic">"{bestDecision.option.rationale}"</p>
-            </div>
-
-            {/* Key Metrics Grid */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-                <div className="flex items-center gap-2 mb-2">
-                  <Users className="h-5 w-5 text-blue-600" />
-                  <span className="text-xs font-medium text-slate-600">Staff Required</span>
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
+          <div className="max-w-6xl mx-auto p-8 space-y-12">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+              <div className="lg:col-span-12 space-y-8">
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-4xl font-black text-slate-900 leading-[1.1] tracking-tight max-w-4xl italic">
+                      {bestDecision.option.strategy.replace(/_/g, ' ')}
+                    </h2>
+                    <div className="flex items-start gap-3 mt-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl relative">
+                      <MessageSquare className="h-4 w-4 text-slate-300 mt-1 flex-shrink-0" />
+                      <p className="text-base text-slate-500 leading-relaxed font-medium max-w-3xl italic">
+                        {bestDecision.option.rationale}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-2xl font-bold text-slate-900">{staffing.total}</div>
-                <div className="text-xs text-slate-500 mt-1">employees total</div>
-              </div>
 
-              <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-                <div className="flex items-center gap-2 mb-2">
-                  <DollarSign className="h-5 w-5 text-green-600" />
-                  <span className="text-xs font-medium text-slate-600">Expected Profit</span>
-                </div>
-                <div className="text-2xl font-bold text-slate-900">{formatCurrency(metrics.revenue - metrics.labor_cost - metrics.food_cost)}</div>
-                <div className="text-xs text-slate-500 mt-1">projected net</div>
-              </div>
-
-              <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="h-5 w-5 text-amber-600" />
-                  <span className="text-xs font-medium text-slate-600">Revenue</span>
-                </div>
-                <div className="text-2xl font-bold text-slate-900">{formatCurrency(metrics.revenue)}</div>
-                <div className="text-xs text-slate-500 mt-1">gross sales</div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-6">
-              {/* Staffing Breakdown */}
-              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm overflow-hidden flex flex-col">
-                <div className="flex items-center gap-2 mb-4">
-                  <BarChart3 className="h-5 w-5 text-slate-400" />
-                  <h3 className="font-semibold text-slate-900">Station Allocation</h3>
-                </div>
-                <div className="space-y-4 flex-1">
-                  {[
-                    { name: 'Drive-Thru', count: staffing.drive_thru, color: 'bg-blue-500' },
-                    { name: 'Kitchen', count: staffing.kitchen, color: 'bg-orange-500' },
-                    { name: 'Front Counter', count: staffing.front_counter, color: 'bg-purple-500' }
-                  ].map((station, idx) => (
-                    <div key={idx} className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="font-medium text-slate-700">{station.name}</span>
-                        <span className="font-bold text-slate-900">{station.count} staff</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="p-8 bg-white border border-slate-200 rounded-[32px] space-y-6 shadow-sm relative overflow-hidden group flex flex-col justify-center">
+                    <div className="flex items-center justify-between relative z-10">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400 mb-1">Multiple Objective Alignment Gain</span>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-5xl font-black tracking-tighter text-slate-900">+{Math.round((bestDecision.scores.overall_score - proposedDecision.scores.overall_score) * 100)}%</span>
+                          <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 text-[9px] py-0 font-bold uppercase tracking-wider">
+                            via {iterationRef}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full ${station.color}`}
-                          style={{ width: `${(station.count / staffing.total) * 100}%` }}
-                        />
+                      <div className="p-4 bg-emerald-50 rounded-2xl">
+                        <Target className="h-8 w-8 text-emerald-600" />
                       </div>
                     </div>
-                  ))}
-                </div>
-                <div className="mt-6 pt-4 border-t border-slate-100 italic text-[11px] text-slate-400">
-                  * Allocation optimized for {bestDecision.scores.ranking} performance.
-                </div>
-              </div>
+                    <div className="grid grid-cols-2 gap-10 pt-6 border-t border-slate-100 relative z-10">
+                      <div>
+                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 opacity-50">Proposed Performance</div>
+                        <div className="text-2xl font-black text-slate-300 line-through decoration-rose-500/10 decoration-2">{formatPercentage(proposedDecision.scores.overall_score)}</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1.5">Optimized Target</div>
+                        <div className="text-2xl font-black text-blue-600 font-mono italic">{formatPercentage(bestDecision.scores.overall_score)}</div>
+                      </div>
+                    </div>
+                  </div>
 
-              {/* Performance Forecast */}
-              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-                <div className="flex items-center gap-2 mb-4">
-                  <TrendingUp className="h-5 w-5 text-slate-400" />
-                  <h3 className="font-semibold text-slate-900">Performance Forecast</h3>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Clock className="h-4 w-4 text-blue-600" />
-                      <span className="text-sm text-slate-700">Avg Wait Time</span>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
+                      <div className="flex gap-4 items-center">
+                        <div className="p-3 bg-white rounded-xl shadow-sm"><TrendingUp className="h-5 w-5 text-emerald-500" /></div>
+                        <div>
+                          <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Revenue Impact</div>
+                          <div className="text-xl font-bold text-slate-900">{formatCurrency(metrics.revenue)}</div>
+                        </div>
+                      </div>
+                      <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-none">
+                        +{formatCurrency(metrics.revenue - proposedMetrics.revenue)}
+                      </Badge>
                     </div>
-                    <span className="font-bold text-blue-900">{metrics.avg_wait_time_seconds}s</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Smile className="h-4 w-4 text-purple-600" />
-                      <span className="text-sm text-slate-700">Customer Satisfaction</span>
+                    <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-center justify-between">
+                      <div className="flex gap-4 items-center">
+                        <div className="p-3 bg-white rounded-xl shadow-sm"><Clock className="h-5 w-5 text-blue-500" /></div>
+                        <div>
+                          <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Wait Time Reduction</div>
+                          <div className="text-xl font-bold text-slate-900">{metrics.avg_wait_time_seconds}s</div>
+                        </div>
+                      </div>
+                      <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none">
+                        -{proposedMetrics.avg_wait_time_seconds - metrics.avg_wait_time_seconds}s
+                      </Badge>
                     </div>
-                    <span className="font-bold text-purple-900">{formatPercentage(metrics.order_accuracy)}</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Users className="h-4 w-4 text-amber-600" />
-                      <span className="text-sm text-slate-700">Staff Utilization</span>
-                    </div>
-                    <span className="font-bold text-amber-900">{formatPercentage(metrics.staff_utilization)}</span>
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Info className="h-4 w-4 text-slate-600" />
-                      <span className="text-sm text-slate-700">Max Queue</span>
-                    </div>
-                    <span className="font-bold text-slate-900">{metrics.max_queue_length} cars</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* AI Strengths & Weaknesses */}
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-              <h3 className="font-semibold text-slate-900 mb-4">Agent Analysis</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-green-50 rounded-lg p-4">
-                  <h4 className="text-xs font-bold text-green-700 uppercase mb-2">Strengths</h4>
-                  <ul className="space-y-1">
-                    {bestDecision.scores.strengths.map((str, i) => (
-                      <li key={i} className="text-sm text-green-800 flex items-start gap-2">
-                        <span className="mt-1.5 h-1 w-1 bg-green-500 rounded-full flex-shrink-0" />
-                        {str}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="bg-red-50 rounded-lg p-4">
-                  <h4 className="text-xs font-bold text-red-700 uppercase mb-2">Risks</h4>
-                  <ul className="space-y-1">
-                    {bestDecision.scores.weaknesses.map((weak, i) => (
-                      <li key={i} className="text-sm text-red-800 flex items-start gap-2">
-                        <span className="mt-1.5 h-1 w-1 bg-red-500 rounded-full flex-shrink-0" />
-                        {weak}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+            <div className="pt-8">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-8 h-1 bg-slate-900 rounded-full" />
+                <h3 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em]">Optimization Delta</h3>
               </div>
-              <div className="mt-4 p-4 bg-indigo-50 rounded-lg border border-indigo-100">
-                <p className="text-sm text-indigo-900">
-                  <span className="font-bold">Next Best Action:</span> {bestDecision.scores.recommendation}
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  { label: 'System Clog', proposed: `${proposedMetrics.avg_wait_time_seconds}s`, optimized: `${metrics.avg_wait_time_seconds}s`, improved: metrics.avg_wait_time_seconds < proposedMetrics.avg_wait_time_seconds, state: waitState, sub: 'Avg Service Time' },
+                  { label: 'Guest Delight', proposed: formatPercentage(proposedMetrics.order_accuracy), optimized: formatPercentage(metrics.order_accuracy), improved: metrics.order_accuracy > proposedMetrics.order_accuracy, state: csatState, sub: 'Guest Accuracy' },
+                  { label: 'Staff Load', proposed: formatPercentage(proposedMetrics.staff_utilization), optimized: formatPercentage(metrics.staff_utilization), improved: Math.abs(0.75 - metrics.staff_utilization) < Math.abs(0.75 - proposedMetrics.staff_utilization), state: utilState, sub: 'Operational Load' }
+                ].map((item, idx) => (
+                  <div key={idx} className={`p-8 rounded-[32px] border transition-all hover:shadow-xl hover:translate-y--1 group ${item.state.bg} ${item.state.color.replace('text-', 'border-').replace('600', '100')}`}>
+                    <div className="flex items-center justify-between mb-8">
+                      <div className={`p-3 rounded-2xl bg-white shadow-md ${item.state.color}`}><item.state.icon className="h-6 w-6" /></div>
+                      <Badge variant="outline" className={`font-black tracking-widest uppercase text-[8px] border-none opacity-60`}>{item.label}</Badge>
+                    </div>
+                    <div className="space-y-6">
+                      <div className="flex justify-between items-end">
+                        <div className="space-y-1">
+                          <div className="text-[10px] font-black opacity-30 uppercase tracking-widest">Proposed</div>
+                          <div className="text-3xl font-black opacity-20 tracking-tighter decoration-rose-500/50 decoration-2 line-through">{item.proposed}</div>
+                        </div>
+                        <div className="text-right space-y-1">
+                          <div className="text-[10px] font-black opacity-30 uppercase tracking-widest">Optimized</div>
+                          <div className="text-5xl font-black tracking-tighter group-hover:scale-110 transition-transform origin-right">{item.optimized}</div>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest opacity-40">
+                          <span>{item.sub}</span>
+                          <span className={item.improved ? 'text-emerald-600' : 'text-rose-600'}>{item.improved ? 'Improvement' : 'Observation'}</span>
+                        </div>
+                        <div className="h-1.5 bg-white/50 rounded-full overflow-hidden">
+                          <div className={`h-full transition-all duration-1000 ease-out ${item.improved ? 'bg-emerald-500/60' : 'bg-rose-500/60'}`} style={{ width: '100%' }} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="flex items-center gap-2 mt-6 justify-center">
-              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
-                <Copy className="h-4 w-4 mr-2" />
-                Copy JSON
-              </Button>
-              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
-                <BookmarkPlus className="h-4 w-4 mr-2" />
-                Save to Reports
-              </Button>
-            </div>
-
+            <div className="pt-2"> </div>
           </div>
         </div>
       </div>
@@ -563,16 +575,12 @@ export function MainWorkspace({ plan, evaluation, isLoadingPlan, isLoadingEvalua
 
   return (
     <div className="flex-1 bg-white flex flex-col overflow-hidden">
-      {/* Header */}
       <div className="border-b border-slate-200 px-6 py-4 flex-shrink-0">
         <h1 className="text-2xl font-semibold text-slate-900">Canvas</h1>
       </div>
-
       <div className="flex-1 overflow-y-auto px-6 py-8">
         <div className="max-w-4xl mx-auto text-center mt-20">
-          <div className="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl">
-            🧠
-          </div>
+          <div className="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl">🧠</div>
           <h2 className="text-3xl font-bold text-slate-900 mb-4">Ready to Optimize?</h2>
           <p className="text-slate-600 max-w-lg mx-auto mb-8 text-lg">
             Configure your shift parameters in the <span className="font-semibold">Setting</span> panel on the left,
