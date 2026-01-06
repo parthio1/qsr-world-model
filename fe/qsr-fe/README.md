@@ -65,26 +65,30 @@ POST /api/v1/plan
 Content-Type: application/json
 
 {
-  "shift": "lunch",
-  "date": "2026-01-04",  // Optional field
-  "day_of_week": "Sunday",
-  "weather": "sunny",
-  "special_events": ["Holiday"],
-  "restaurant_id": "1",
-  "restaurant_name": "Downtown Atlanta",
-  "has_drive_thru": true,
-  "drive_thru_lanes": 2,
-  "kitchen_capacity": 10,
-  "pos_count": 3,
-  "seating_capacity": 50,
-  "max_staff": 20,
-  "max_labor_cost": 1000,
-  "operator_priority": "balanced",
-  "alignment_weights": {
-    "profit": 40,
-    "customer_satisfaction": 35,
-    "staff_wellbeing": 25
-  }
+  "scenario": {
+    "shift": "lunch",
+    "date": "2026-01-04",
+    "day_of_week": "Sunday",
+    "weather": "sunny",
+    "special_events": ["Holiday"],
+    "restaurant": {
+      "location": "Downtown Atlanta",
+      "has_drive_thru": true,
+      "drive_thru_lanes": 2,
+      "kitchen_staff_capacity": "medium",
+      "dine_in": true,
+      "dine_in_seat_capacity": 50
+    }
+  },
+  "constraints": {
+    "available_staff": 20
+  },
+  "alignment_targets": {
+    "target_labor_cost_percent": 30.0,
+    "target_wait_time_seconds": 180,
+    "target_staff_utilization": 0.82
+  },
+  "operator_priority": "minimize_cost"
 }
 ```
 
