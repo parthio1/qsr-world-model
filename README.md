@@ -62,24 +62,15 @@ A World Model aims to simulate the future in order to predict consequences of ac
 
 This project is a **crude, agentic approximation** of that concept. Instead of deep reinforcement learning, I have leveraged **Chain-of-Thought (CoT) reasoning** and Large Language Models (LLMs) to construct a crude mental model of a restaurant shift. I want to see if a system of agents can "think" through a staffing plan, simulate a Friday dinner rush and refine its decisions.
 
-## 🧪 The Experiment: Learning Loops & Flaws
+## 🧪 The Experiment: Flaws
 This is as much a learning tool for me as it is a software prototype. The domain of QSR operations is much more nuanced than my assumptions. There are inherent flaws in my own understanding of the problem space and the agents themselves are "noob operators"—subject to hallucinations, bad assumptions, and limited context.
 
-### The central loop we are exploring is:**
+### The central loop:**
 1.  **Propose:** An operator agent proposes a staffing plan based on a specific "Operator Priority" or "Primary Goal" (e.g., minimizing costs).
 2.  **Simulate:** A system of "World Model" agents plays out that shift, predicting wait times, revenue, bottlenecks and staff satisfaction.
-3.  **Critique:** A "Scorer" agent evaluates the outcome against multi-objective targets (Profit vs. Customer Satisfaction vs. Staff Wellbeing).
-4.  **Refine:** A "Shadow Operator" (the rational planner) iterates on the plan to find a global optimum that a biased human might miss. This rational planning is indepenet of the operator proposed plan. 
+3.  **Score:** A "Scorer" agent evaluates the outcome against multi-objective targets (Profit vs. Customer Satisfaction vs. Staff Wellbeing).
+4.  **Learn:** A "Shadow Operator" (the rational planner) iterates on the plan to find a global optimum that a biased human might miss. This rational planning is indepenet of the operator proposed plan. 
 
-## 🧠 Approach & Architecture
-
-### Multi-Objective Optimization
-
-We model the tension between three competing goals, using configurable weights to balance them:
-
-1.  **Profit Target Score:** Efficiency and labor cost management (Lower is better).
-2.  **Guest Satisfaction Target Score:** Speed of service and order accuracy (Lower wait time is better).
-3.  **Staff Wellbeing Target Score:** Preventing burnout and under-utilization (Target is a specific range, e.g., 70-85%).
 
 ### The Agentic World Model Loop
 
@@ -114,15 +105,22 @@ graph TD
 6.  **World Context Agent:** Analyzes external factors (weather, events).
 7.  **Restaurant Agent:** Analyzes internal constraints (kitchen capacity).
 
+## 🧠 Approach & Architecture
+
+### Multi-Objective Optimization
+The tension between three competing goals is modeled using configurable weights to balance them:
+1.  **Profit Target Score:** Efficiency and labor cost management (Lower is better).
+2.  **Guest Satisfaction Target Score:** Speed of service and order accuracy (Lower wait time is better).
+3.  **Staff Wellbeing Target Score:** Preventing burnout and under-utilization (Target is a specific range, e.g., 70-85%).
+
 ## 🔑 Key Features
 
 ### Functional
 *   **Multi-Agent Orchestra:** 6+ specialized agents working in concert.
 *   **Iterative Refinement:** The system doesn't just give an answer; it "thinks" and improves its answer over multiple steps.
 *   **Bias Modeling:** Simulate shifts from different perspectives (e.g., "Customer First" vs. "Minimize Cost").
-*   **Different Scenarios:** Handles weather, special events (post-game rush), and day-part variations.
-*   **Transparency:** Full visibility into the "Inner Monologue" of every agent via the UI.
-
+*   **Different Scenarios:** Take into consideration weather, special events (post-game rush), and day-part variations.
+*   **Transparency:** Full visibility into the "Inner Reasoning Monologue" of every agent via the UI.
 
 
 ## 🚧 Known Issues & Learning Gaps
