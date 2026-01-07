@@ -4,18 +4,18 @@ A weekend exploration of world models and agentic AI applied to staffing decisio
 
 ## Table of Contents
 * [🎯 Objective](#objective)
-* [🧐 What This Is](#what-this-is)
 * [🔄 World Model Comparison](#world-model-comparison)
 * [🚀 Quick Start](#quick-start)
 * [🛠️ Implementation Introduction](#implementation-introduction)
 * [🏗️ Approach & Architecture](#approach--architecture)
+* [🏗️ Evals](#evals)
 * [🚧 Known Gaps + Roadmap](#-known-gaps--potential-roadmap-considerations)
 
 
 ##  Objective: 
 Demonstrate AI product development skills. i.e Take academic AI concepts → Design working system → Ship functional prototype → Document learnings.
 
-## What This Is
+### What This Is
 Built to understand how world models (Ha & Schmidhuber 2018) apply to business operations using modern AI tools to accelerate development.
 
 ### Aim of this project:  
@@ -79,11 +79,15 @@ graph TD
 
 ## Quick Start
 
-### Run Instructions
+### App Launch Instructions
 This app consists of two main components. Please refer to their respective READMEs for setup instructions:
 
+1. Launch the backend server
 *   **[Backend (Python/FastAPI)](./be/qsr-be/README.md):** The brain of the operation. Hosts the agents, the orchestration logic and the simulation engine.
+
+2. Launch the frontend server
 *   **[Frontend (React/Vite)](./fe/qsr-fe/README.md):** The visual workspace. Provides a "canvas" for users to tweak scenarios, run the model, and visualize the iterative reasoning process.
+
 
 ### Configure Your Restaurant & Key Parameters using the left panel
 
@@ -122,13 +126,13 @@ This app consists of two main components. Please refer to their respective READM
 ### Problem Identification
 Key assumption and simplification is that QSR managers make a important staffing decision with intuition and limited information rather than simulation
 
-### Gap Addressed / Gap Assumed
-* Existing tools predict demand but does not offer way to see the consequences before decisions are made 
-* Trade-offs between customer delight, staff well-being and profit are implicit, not explicit
+### Gaps & Assumptions
+* Most tools predict demand but does not offer way to see the consequences before decisions are made. This is the core objective of a world model.
+* Trade-offs between customer delight, staff well-being and profit are implicit, not explicit.
+* QSR operations are complex and nuanced. Hence this project is loaded with assumptions to make it work and build a minimum viable product.
 
 ### The Experiment: Flaws & Caveats
 This project as much a learning exercise for me. The domain of QSR operations is much more nuanced and complex than my assumptions. There are inherent flaws in my own understanding of the problem space and the agents themselves are "noob operators" subject to hallucinations and limited capacity of the out of the box model.
-
 
 ### Core Agents
 1.  **Restaurant Operator Agent (The Manager):** "What are my staffing options?" Generates strategic plans based on priorities.
@@ -170,7 +174,8 @@ Claude & OpenAI for documentation and concept refinement
 FastAPI + React + TypeScript (production-quality stack)
 Prep: Google ADK + FunctionGemma (not included here)
 
-### Evals are critial. Sample eval for operator agent provided
+## Evals 
+Evals are critial and absolute bottleneck when it comes to AI product development. Sample eval for operator agent provided as a starting point.
 
 **Running Evals:**
 ```bash
@@ -182,7 +187,7 @@ cd be/qsr-be
 ## 🚧 Known Gaps + Potential Roadmap considerations 
 
 **Conceptual Limitations:**
--   **Not a true world model:** Uses LLM reasoning as an approximation no RL.
+-   **Not a true world model:** Uses LLM reasoning as an approximation, no RL.
 -   **Limited causality:** Relies on correlational patterns in the out of the box model or system prompting, not deep causal understanding of the world
 
 **Implementation Gaps / Roadmap Items:**
@@ -198,7 +203,7 @@ cd be/qsr-be
 
 **Domain Knowledge Gaps:**
 -   Admittedly, I'm not a QSR expert. The model likely oversimplifies staffing complexity (breaks, training) and non-linear demand patterns.
--   **But that's the point**—this is a learning exercise to see how far agentic reasoning can go.
+-   **But that's the point** this is a learning exercise to see how far agentic reasoning can go.
 
 ---
 *Built with curiosity over a weekend. Learning in progress. 
