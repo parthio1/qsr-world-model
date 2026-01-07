@@ -2,6 +2,16 @@
 ### Learning to Simulate Restaurant Operator Decision such as Staff Plan
 A weekend exploration of world models and agentic AI applied to staffing decisions. This is built crudely but meaningfully enough to learn as I don't have prior experience with QSR domain. 
 
+## Table of Contents
+* [🎯 Objective](#objective)
+* [🧐 What This Is](#what-this-is)
+* [🔄 World Model Comparison](#world-model-comparison)
+* [🚀 Quick Start](#quick-start)
+* [🛠️ Implementation Introduction](#implementation-introduction)
+* [🏗️ Approach & Architecture](#approach--architecture)
+* [🚧 Known Gaps + Roadmap](#-known-gaps--potential-roadmap-considerations)
+
+
 ##  Objective: 
 Demonstrate AI product development skills. i.e Take academic AI concepts → Design working system → Ship functional prototype → Document learnings.
 
@@ -29,7 +39,7 @@ Observe → Encode (V) → Predict (M) → Act (C) → Observe...
 
 ### QSR World Model Loop
 
-#### Operator Flow (Huaman decision):
+#### Operator Flow (Human decision):
 Scenario → Encode (World Context) → Simulate World Model (Demand) → Operator Priority → Operator Staffing Decision 
 
 #### Shadow Operator Loop (LLM based scoring & optimization):
@@ -68,6 +78,12 @@ graph TD
 
 
 ## Quick Start
+
+### Run Instructions
+This app consists of two main components. Please refer to their respective READMEs for setup instructions:
+
+*   **[Backend (Python/FastAPI)](./be/qsr-be/README.md):** The brain of the operation. Hosts the agents, the orchestration logic and the simulation engine.
+*   **[Frontend (React/Vite)](./fe/qsr-fe/README.md):** The visual workspace. Provides a "canvas" for users to tweak scenarios, run the model, and visualize the iterative reasoning process.
 
 ### Configure Your Restaurant & Key Parameters using the left panel
 
@@ -163,7 +179,7 @@ cd be/qsr-be
 ```
 *Outputs a detailed JSON report with Pass/Fail rates and alignment scores.*
 
-## 🚧 Known Issues & Learning Gaps
+## 🚧 Known Gaps + Potential Roadmap considerations 
 
 **Conceptual Limitations:**
 -   **Not a true world model:** Uses LLM reasoning as an approximation no RL.
@@ -183,13 +199,6 @@ cd be/qsr-be
 **Domain Knowledge Gaps:**
 -   Admittedly, I'm not a QSR expert. The model likely oversimplifies staffing complexity (breaks, training) and non-linear demand patterns.
 -   **But that's the point**—this is a learning exercise to see how far agentic reasoning can go.
-
-## 📂 Project Structure
-
-This playground consists of two main components. Please refer to their respective READMEs for setup instructions:
-
-*   **[Backend (Python/FastAPI)](./be/qsr-be/README.md):** The brain of the operation. Hosts the agents, the orchestration logic, and the simulation engine.
-*   **[Frontend (React/Vite)](./fe/qsr-fe/README.md):** The visual workspace. Provides a "canvas" for users to tweak scenarios, run the model, and visualize the iterative reasoning process.
 
 ---
 *Built with curiosity over a weekend. Learning in progress. 
