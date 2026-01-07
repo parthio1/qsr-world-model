@@ -15,8 +15,7 @@ A weekend exploration of world models and agentic AI applied to staffing decisio
 ##  Objective: 
 Demonstrate AI product development skills. i.e Take academic AI concepts → Design working system → Ship functional prototype → Document learnings.
 
-### What This Is
-Built to understand how world models (Ha & Schmidhuber 2018) apply to business operations using modern AI tools to accelerate development.
+
 
 ### Aim of this project:  
 The core ambition of this project is to explore the concept of a **World Model** using LLM agents with reasoning instead of deep reinforcement learning or vision intelligence models. Though this concept is applied for robotics or video games or coding, I like to explore it for the high pressure environment of Quick Service Restaurant (QSR) operations.
