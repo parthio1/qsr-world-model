@@ -6,16 +6,17 @@ A weekend exploration of world models and agentic AI applied to staffing decisio
 * [🎯 Objective](#objective)
 * [🔄 World Model Comparison](#world-model-comparison)
 * [🚀 Quick Start](#quick-start)
+* [🏗️ Evals](#evals)
 * [🛠️ Implementation Introduction](#implementation-introduction)
 * [🏗️ Approach & Architecture](#approach--architecture)
-* [🏗️ Evals](#evals)
 * [🚧 Known Gaps + Roadmap](#-known-gaps--potential-roadmap-considerations)
 
 
 ##  Objective: 
 Demonstrate AI product development skills. i.e Take academic AI concepts → Design working system → Ship functional prototype → Document learnings.
 
-
+### What This Is
+Built to understand how world models (Ha & Schmidhuber 2018) apply to business operations using modern AI tools to accelerate development.
 
 ### Aim of this project:  
 The core ambition of this project is to explore the concept of a **World Model** using LLM agents with reasoning instead of deep reinforcement learning or vision intelligence models. Though this concept is applied for robotics or video games or coding, I like to explore it for the high pressure environment of Quick Service Restaurant (QSR) operations.
@@ -112,6 +113,8 @@ This app consists of two main components. Please refer to their respective READM
 
 ### Fiddle with Trace and Reason Modes  
 
+Why & How agents took a decision or action are important for debugging and learning. You can toggle between Trace and Reason modes to see get some visibility into the decision making process.
+
 🎯 Click "Trace and Reason" mode after successful completion of "Run World Model" 
 
 #### Example trace  screenshots
@@ -119,6 +122,16 @@ This app consists of two main components. Please refer to their respective READM
 
 #### Example reasoning screenshots
 ![Reason screenshot](img/qsr_reasoning.png)
+
+## Evals 
+Evals are critial and absolute bottleneck when it comes to AI product development. Sample eval for operator agent provided as a starting point.
+
+**Running Evals:**
+```bash
+cd be/qsr-be
+./qsr_eval.sh agent=operator
+```
+*Outputs a detailed JSON report with Pass/Fail rates and alignment scores.*
 
 ## Implementation Introduction
 
