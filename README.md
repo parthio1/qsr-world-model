@@ -69,7 +69,7 @@ graph TD
 
 ### Comparison of the classical World Model 
 
-Components             |              Theory Role              |           QSR implementation         |          Implementation Approach
+Components                      |                    Theory Role              |           QSR implementation              |           Implementation Approach           |
 :---------------------|:------------------------------------|:------------------------------------|:------------------------------------
 
 ![Comparison Screenshot](img/comparison.png)
