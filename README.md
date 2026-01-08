@@ -67,6 +67,12 @@ graph TD
     Shadow --> |Optimal Plan| Final[Final Output]
 ```
 
+### Comparison of the classical World Model 
+
+Components                Theory Role                QSR implementation           Implementation Approach
+           
+![Comparison Screenshot](img/comparison.png)
+
 ### Inspiration:
 * Ha & Schmidhuber's World Models (2018)
    → Learn compressed representations of environments
