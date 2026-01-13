@@ -14,7 +14,7 @@ This system uses a **world model** approach inspired by Meta's Code World Model 
 
 ## 🏗️ Architecture
 
-### Five Core Agents
+### Core Agents
 
 1. **World Context Agent** (`world_context_agent.py`) - Predict demand based on world context like weather, holidays, events etc 
 2. **Restaurant Agent** (`restaurant_agent.py`) - Simulate operational capacity of restaurant based on infrastructure and constraints.
@@ -25,25 +25,7 @@ This system uses a **world model** approach inspired by Meta's Code World Model 
 7. **Orchestrator** (`coordinator/orchestrator.py`) - Coordinates the entire workflow esp the feedback loop between World Model Agent, Shadow Operator Agent and scorer agent.
 8. **Evaluator Agent** (`evaluator_agent.py`) - Compares predictions vs actual, learns from errors.
 
-### Workflow
 
-```
-Scenario Input → World Context Agent → Demand Prediction
-               ↓
-               → Restaurant Agent → Restaurant Capacity Analysis
-               ↓
-Context & Analysis → Restaurant Operator → Initial BaselinePlan
-                                             ↓
-                        LOOP: Initial Plan → World Model → Predicted Operational Outcomes
-                                             ↓
-                                           Scorer → Feedback
-                                             ↓
-                        Shadow Operator ←  Staffing Plan
-                                             ↓
-                        Scorer → Feedback → World Model (Repeat)
-                                             ↓
-                    Final Best Option → Deploy → Compare vs Actual (Evaluator)
-```
 ## 🚀 Quick Start
 
 ### Prerequisites
