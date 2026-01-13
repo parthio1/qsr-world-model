@@ -1,6 +1,7 @@
 # QSR World Model
 ### Learning to Simulate Restaurant Operations Before They Happen
-A weekend exploration of world models and agentic AI applied to staffing decisions. This is built crudely but meaningfully enough to learn as I don't have prior experience with QSR domain.
+A weekend exploration of world models and agentic AI applied to staffing decisions. This is built to learn as I don't have much experience with QSR domain.
+
 
 ## 🎯 Overview
 
@@ -15,30 +16,31 @@ This system uses a **world model** approach inspired by Meta's Code World Model 
 
 ### Five Core Agents
 
-1. **World Model Agent** (`world_model_agent.py`) - Predicts shift outcomes given scenario and staffing.
-2. **Restaurant Operator Agent** (`restaurant_operator_agent.py`) - Generates the initial baseline staffing plan.
-3. **Shadow Operator Agent** (`shadow_operator_agent.py`) - Iteratively refines the plan based on World Model feedback.
-4. **Scorer Agent** (`scorer_agent.py`) - Evaluates options on profit, customer satisfaction, staff wellbeing.
-5. **Evaluator Agent** (`evaluator_agent.py`) - Compares predictions vs actual, learns from errors.
-6. **World Context Agent** (`world_context_agent.py`) - Analyzes environmental factors like weather and holidays.
-7. **Restaurant Agent** (`restaurant_agent.py`) - Analyzes restaurant-specific capacity and bottlenecks.
+1. **World Context Agent** (`world_context_agent.py`) - Predict demand based on world context like weather, holidays, events etc 
+2. **Restaurant Agent** (`restaurant_agent.py`) - Simulate operational capacity of restaurant based on infrastructure and constraints.
+3. **Restaurant Operator Agent** (`restaurant_operator_agent.py`) - Generates the baseline staffing plan based on human inputs.
+4. **Shadow Operator Agent** (`shadow_operator_agent.py`) - Propose staffing plan based on scoring feedback. Iteratively refines the plan.
+5. **World Model Agent** (`world_model_agent.py`) - Predicts impact of staffing plan based on demand, restaurant capacity and constraints.
+6. **Scorer Agent** (`scorer_agent.py`) - Evaluates options on profit, customer satisfaction, staff wellbeing.
+7. **Orchestrator** (`coordinator/orchestrator.py`) - Coordinates the entire workflow esp the feedback loop between World Model Agent, Shadow Operator Agent and scorer agent.
+8. **Evaluator Agent** (`evaluator_agent.py`) - Compares predictions vs actual, learns from errors.
 
 ### Workflow
 
 ```
 Scenario Input → World Context Agent → Demand Prediction
                ↓
-               → Restaurant Agent → Capacity Analysis
+               → Restaurant Agent → Restaurant Capacity Analysis
                ↓
-Context & Analysis → Restaurant Operator → Initial Plan
+Context & Analysis → Restaurant Operator → Initial BaselinePlan
                                              ↓
-                        LOOP: Initial Plan → World Model → Predicted Outcomes
+                        LOOP: Initial Plan → World Model → Predicted Operational Outcomes
                                              ↓
                                            Scorer → Feedback
                                              ↓
-                        Shadow Operator ← Feedback & Plan
+                        Shadow Operator ←  Staffing Plan
                                              ↓
-                        Updated Plan → World Model (Repeat)
+                        Scorer → Feedback → World Model (Repeat)
                                              ↓
                     Final Best Option → Deploy → Compare vs Actual (Evaluator)
 ```

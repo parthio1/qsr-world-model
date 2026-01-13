@@ -31,7 +31,7 @@ The core ambition of this project is to explore the concept of a **World Model**
  "Predict what staffing decision achieves, not just costs but also customer satisfaction, staff well-being".
 
 ## World Model Comparison
-### Classic World Model Loop
+### Classic World Model Loop using World Model
 Real-time execution loop:
 Observe → Encode (V) → Predict (M) → Act (C) → Observe...
          ↑                                          ↓
@@ -39,12 +39,12 @@ Observe → Encode (V) → Predict (M) → Act (C) → Observe...
 
 ### QSR World Model Loop
 
-#### Operator Flow (Human decision):
-Scenario → Encode (World Context) → Simulate World Model (Demand) → Operator Priority → Operator Staffing Decision 
+#### Human Operator Flow :
+Setup (World Context & Constraints) → Simulate Demand (LLM)  →  Human Operator Staffing Decision  →  Simulate Ops Impact →  Baseline 
 
 #### Shadow Operator Loop (LLM based scoring & optimization):
-Same Scenario → Encode (World Context) → Simulate World Model (Demand) → Optimization Loop (scoring) → Shadow Operator Staffing Decision (best fit) 
-
+Setup (World Context & Constraints) → Simulate Demand (LLM) → Shadow Operator Staffing Decision → Simulate Ops Impact → Score  →  Feedback → Iterate to Optimize Multi-Objective Alignment 
+ 
 ### The Agentic World Model Loop 
 
 ```mermaid
@@ -56,7 +56,7 @@ graph TD
     Rest --> |Capacity Analysis| Orchestrator
     
     Orchestrator --> |Constraints| Operator[Restaurant Operator Agent]
-    Operator --> |Initial Biased Plan| WM[World Model Agent]
+    Operator --> |Initial Baseline Plan| WM[World Model Agent]
     
     subgraph "Reasoning Loop"
         WM --> |Predicted Metrics| Scorer[Scorer Agent]
